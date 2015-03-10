@@ -13,7 +13,6 @@ import java.util.*;
 
 
 public class MainActivity extends ActionBarActivity {
-//hi how are you? Tester
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
