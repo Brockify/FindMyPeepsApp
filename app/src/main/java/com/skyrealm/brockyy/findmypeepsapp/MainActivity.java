@@ -1,10 +1,15 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.gesture.Gesture;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,23 +22,22 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //DECLARATIONS--------------------------------
         final Button btnShowLocation;
-
         GPSTracker gps;
-
-        setContentView(R.layout.activity_main);
-
         btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
+        final View mainView = (View) findViewById(R.id.mainActivity);
+        //END DECLARATIONS----------------------------
 
-
-        //The OnClickListener is so that a GUI object reacts when a user clicks it.
+        //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -57,8 +61,26 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+        // ends the button click------------------------------------------------------
 
-        //getting the street address
+        //declare an OnSwipeListener and then call on the onSwipeLeft function--------
+        OnSwipeTouchListener swipeListener;
+
+        mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
+
+        {
+        public void onSwipeLeft()
+        {
+                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+            startActivity(intent);
+
+        }
+
+        });
+        //ends the OnSwipeListener-----------------------------------------------------
+
+
+        //getting the street address---------------------------------------------------
         GPSTracker gps1 = new GPSTracker(MainActivity.this);
         double latitude = gps1.getLatitude();
         double longitude = gps1.getLongitude();
@@ -66,6 +88,7 @@ public class MainActivity extends ActionBarActivity {
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(this, Locale.getDefault());
+
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
         } catch (IOException e) {
@@ -75,7 +98,8 @@ public class MainActivity extends ActionBarActivity {
         TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
 
         addressTextView.setText(address);
-        //finished getting the street address
+        //finished getting the street address-----------------------------------------
+
     }
 
 
@@ -100,4 +124,7 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }
