@@ -29,12 +29,12 @@ public class MainActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //DECLARATIONS--------------------------------dfgdfgdg
+        //DECLARATIONS-----------------------------------------------------------------------
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
        final GPSTracker gps = null;
         final View mainView = (View) findViewById(R.id.mainActivity);
 
-        //END DECLARATIONS----------------------------
+        //END DECLARATIONS-------------------------------------------------------------------
 
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener()
@@ -122,10 +122,12 @@ public class MainActivity extends ActionBarActivity{
 
         addressTextView.setText(address);
         //finished getting the street address-----------------------------------------
+        //show it on a map----------------------------------------------------------------------------------
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
         Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(uri));
         startActivity(sendLocationToMap);
+        // end showing it on the map ------------------------------------------------------------------------
 
         //--------------------------------------------Finish getLocation()-----------------------------------
 
