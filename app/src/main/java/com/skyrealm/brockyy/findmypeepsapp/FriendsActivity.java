@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 public class FriendsActivity extends ActionBarActivity {
@@ -15,17 +16,14 @@ public class FriendsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
-
         //Does the swipe command for swiping right
         OnSwipeTouchListener swipeRight;
 
         View friendView = (View) findViewById(R.id.friendsActivity);
 
-        friendView.setOnTouchListener(new OnSwipeTouchListener(FriendsActivity.this)
-        {
+        friendView.setOnTouchListener(new OnSwipeTouchListener(FriendsActivity.this) {
             //calls on the swipeRight method
-            public void onSwipeRight()
-            {
+            public void onSwipeRight() {
                 Intent intent = new Intent(FriendsActivity.this, MainActivity.class);
                 startActivity(intent);
             }

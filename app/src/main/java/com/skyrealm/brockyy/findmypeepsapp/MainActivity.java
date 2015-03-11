@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.gesture.Gesture;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -28,10 +29,11 @@ public class MainActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //DECLARATIONS--------------------------------
+        //DECLARATIONS--------------------------------dfgdfgdg
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
-        GPSTracker gps;
+       final GPSTracker gps = null;
         final View mainView = (View) findViewById(R.id.mainActivity);
+
         //END DECLARATIONS----------------------------
 
         //If the update location button is clicked------------------------------------------
@@ -51,7 +53,7 @@ public class MainActivity extends ActionBarActivity{
         {
         public void onSwipeLeft()
         {
-                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+            Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
             startActivity(intent);
         }
         });
@@ -120,6 +122,12 @@ public class MainActivity extends ActionBarActivity{
 
         addressTextView.setText(address);
         //finished getting the street address-----------------------------------------
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+        Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(uri));
+        startActivity(sendLocationToMap);
+
+        //--------------------------------------------Finish getLocation()-----------------------------------
+
             }
-    //--------------------------------------------Finish getLocation()-----------------------------------
     }
