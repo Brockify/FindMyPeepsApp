@@ -18,8 +18,10 @@
         android:text="Get Location"
         android:id="@+id/getLocationButton"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:nestedScrollingEnabled="true"
+        android:onClick="getLocation"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,14 +57,4 @@
         android:layout_alignBottom="@+id/longTextView"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get address"
-        android:id="@+id/getAddressButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/longTextView"
-        android:layout_alignEnd="@+id/longTextView"
-        android:nestedScrollingEnabled="false"
-        android:onClick="getLocationAddress" />
 </RelativeLayout>

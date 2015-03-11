@@ -29,11 +29,8 @@ public class MainActivity extends ActionBarActivity{
         setContentView(R.layout.activity_main);
 
         //DECLARATIONS--------------------------------
-        final Button btnShowLocation;
+        final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         GPSTracker gps;
-        btnShowLocation = (Button) findViewById(R.id.getLocationButton);
-        final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
-        final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         final View mainView = (View) findViewById(R.id.mainActivity);
         //END DECLARATIONS----------------------------
 
@@ -43,62 +40,22 @@ public class MainActivity extends ActionBarActivity{
             @Override
             public void onClick(View v)
             {
-                GPSTracker gps = new GPSTracker(MainActivity.this);
-
-                if(gps.canGetLocation())
-                {
-                    double latitude = gps.getLatitude();
-                    double longitude = gps.getLongitude();
-
-                    latitudeText.setText(Double.toString(latitude));
-                    longitudeText.setText(Double.toString(longitude));
-
-                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
-                } else {
-                    gps.showSettingsAlert();
-                }
-
+                getLocation();
             }
         });
         // ends the button click------------------------------------------------------
 
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         OnSwipeTouchListener swipeListener;
-
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
-
         {
         public void onSwipeLeft()
         {
                 Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
             startActivity(intent);
-
         }
-
         });
         //ends the OnSwipeListener-----------------------------------------------------
-
-
-        //getting the street address---------------------------------------------------
-        GPSTracker gps1 = new GPSTracker(MainActivity.this);
-        double latitude = gps1.getLatitude();
-        double longitude = gps1.getLongitude();
-        //get the street address with a geocoder
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        geocoder = new Geocoder(this, Locale.getDefault());
-
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String address = addresses.get(0).getAddressLine(0);
-        TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-
-        addressTextView.setText(address);
-        //finished getting the street address-----------------------------------------
 
     }
 
@@ -125,6 +82,44 @@ public class MainActivity extends ActionBarActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    //--------------------------------------------getLocation()Function-----------------------------------
+    public void getLocation()
+    {
+       Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
+        final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
+        final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
+        //If the update location button is clicked------------------------------------------
+                GPSTracker gps = new GPSTracker(MainActivity.this);
+        double latitude = gps.getLatitude();
+        double longitude = gps.getLongitude();
 
+                if(gps.canGetLocation())
+                {
 
-}
+                    latitudeText.setText(Double.toString(latitude));
+                    longitudeText.setText(Double.toString(longitude));
+
+                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+                } else {
+                    gps.showSettingsAlert();
+                }
+
+        //getting the street address---------------------------------------------------;
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String address = addresses.get(0).getAddressLine(0);
+        TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+
+        addressTextView.setText(address);
+        //finished getting the street address-----------------------------------------
+            }
+    //--------------------------------------------Finish getLocation()-----------------------------------
+    }
