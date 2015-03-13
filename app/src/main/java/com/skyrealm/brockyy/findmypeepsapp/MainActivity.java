@@ -1,6 +1,8 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.gesture.Gesture;
 import android.location.Address;
@@ -15,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.skyrealm.brockyy.findmypeepsapp.GPSTracker;
@@ -33,32 +36,37 @@ public class MainActivity extends ActionBarActivity{
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
        final GPSTracker gps = null;
         final View mainView = (View) findViewById(R.id.mainActivity);
-
+        final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         //END DECLARATIONS-------------------------------------------------------------------
-
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                getLocation();
+                if(shareSwitch.isChecked() == true)
+                {
+                    postLocationData();
+                } else {
+
+                }
             }
         });
         // ends the button click------------------------------------------------------
-
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         OnSwipeTouchListener swipeListener;
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
         public void onSwipeLeft()
         {
+            final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
             Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+           // EXAMPLE:
+           // intent.putExtra("latitude", latitudeText.getText().toString());
             startActivity(intent);
         }
         });
         //ends the OnSwipeListener-----------------------------------------------------
-
     }
 
 
@@ -132,4 +140,12 @@ public class MainActivity extends ActionBarActivity{
         //--------------------------------------------Finish getLocation()-----------------------------------
 
             }
+    public void postLocationData()
+    {
+        String userFrom = "Brockify";
+        String userTo = "RAGING3K";
+
     }
+    }
+
+

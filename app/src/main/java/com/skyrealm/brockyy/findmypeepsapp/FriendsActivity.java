@@ -19,8 +19,13 @@ public class FriendsActivity extends ActionBarActivity {
         //Does the swipe command for swiping right
         OnSwipeTouchListener swipeRight;
 
-        View friendView = (View) findViewById(R.id.friendsActivity);
+       // EXAMPLE:
+       // final String latitude = getIntent().getExtras().getString("latitude");
 
+
+
+        View friendView = (View) findViewById(R.id.friendsActivity);
+        //On touch swipe listener for swipe right method
         friendView.setOnTouchListener(new OnSwipeTouchListener(FriendsActivity.this) {
             //calls on the swipeRight method
             public void onSwipeRight() {

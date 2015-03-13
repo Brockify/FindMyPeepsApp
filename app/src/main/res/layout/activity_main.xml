@@ -17,11 +17,11 @@
         android:layout_height="wrap_content"
         android:text="Get Location"
         android:id="@+id/getLocationButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:nestedScrollingEnabled="true"
         android:onClick="getLocation"
-        />
+        android:layout_alignBottom="@+id/mainActivity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="124dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,10 +52,29 @@
         android:text="Street Address"
         android:id="@+id/addressTextView"
         android:hint="adressTextView"
-        android:height="300px"
+        android:height="25dp"
         android:width="200dp"
-        android:layout_alignParentTop="true"
+        android:layout_above="@+id/latTextView"
         android:layout_alignLeft="@+id/getLocationButton"
         android:layout_alignStart="@+id/getLocationButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Username"
+        android:id="@+id/usernameTextView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share Locaton"
+        android:id="@+id/shareSwitch"
+        android:layout_above="@+id/getLocationButton"
+        android:layout_centerHorizontal="true"
+        android:checked="true" />
 
 </RelativeLayout>
