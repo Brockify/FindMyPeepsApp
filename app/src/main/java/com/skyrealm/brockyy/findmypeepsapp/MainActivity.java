@@ -34,7 +34,6 @@ public class MainActivity extends ActionBarActivity{
 
         //DECLARATIONS-----------------------------------------------------------------------
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
-       final GPSTracker gps = null;
         final View mainView = (View) findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         //END DECLARATIONS-------------------------------------------------------------------
@@ -46,7 +45,9 @@ public class MainActivity extends ActionBarActivity{
             {
                 if(shareSwitch.isChecked() == true)
                 {
+                    getLocation();
                     postLocationData();
+
                 } else {
 
                 }
@@ -99,7 +100,7 @@ public class MainActivity extends ActionBarActivity{
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         //If the update location button is clicked------------------------------------------
-                GPSTracker gps = new GPSTracker(MainActivity.this);
+        GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
 
