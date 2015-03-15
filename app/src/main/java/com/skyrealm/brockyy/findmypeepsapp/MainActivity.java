@@ -36,24 +36,22 @@ public class MainActivity extends ActionBarActivity{
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = (View) findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+        final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         //END DECLARATIONS-------------------------------------------------------------------
         //If the update location button is clicked------------------------------------------
-        btnShowLocation.setOnClickListener(new View.OnClickListener()
-        {
+        btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if(shareSwitch.isChecked() == true)
-                {
+            public void onClick(View v) {
+                if (shareSwitch.isChecked() == true || myLocationOnMapSwitch.isChecked() == true) {
                     getLocation();
-                    postLocationData();
-
-                } else {
-
+                    if (shareSwitch.isChecked() == true) {
+                        postLocationData();
+                    }
                 }
             }
         });
-        // ends the button click------------------------------------------------------
+
+            // ends the button click------------------------------------------------------
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         OnSwipeTouchListener swipeListener;
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
@@ -99,6 +97,7 @@ public class MainActivity extends ActionBarActivity{
        Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
+        final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         //If the update location button is clicked------------------------------------------
         GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
@@ -132,10 +131,12 @@ public class MainActivity extends ActionBarActivity{
         addressTextView.setText(address);
         //finished getting the street address-----------------------------------------
         //show it on a map----------------------------------------------------------------------------------
-        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
-        Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(uri));
-        startActivity(sendLocationToMap);
+        if(myLocationOnMapSwitch.isChecked() == true) {
+            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+            Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(uri));
+            startActivity(sendLocationToMap);
+        }
         // end showing it on the map ------------------------------------------------------------------------
 
         //--------------------------------------------Finish getLocation()-----------------------------------

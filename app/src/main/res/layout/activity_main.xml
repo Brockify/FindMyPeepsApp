@@ -77,4 +77,16 @@
         android:layout_centerHorizontal="true"
         android:checked="true" />
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show On Map"
+        android:id="@+id/myLocationOnMapSwitch"
+        android:layout_above="@+id/shareSwitch"
+        android:layout_alignRight="@+id/shareSwitch"
+        android:layout_alignEnd="@+id/shareSwitch"
+        android:layout_alignLeft="@+id/shareSwitch"
+        android:layout_alignStart="@+id/shareSwitch"
+        android:checked="true" />
+
 </RelativeLayout>
