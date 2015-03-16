@@ -36,9 +36,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity
+{
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -69,7 +72,6 @@ public class MainActivity extends ActionBarActivity{
         {
         public void onSwipeLeft()
         {
-            final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
             Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
            // EXAMPLE:
            // intent.putExtra("latitude", latitudeText.getText().toString());
@@ -77,6 +79,7 @@ public class MainActivity extends ActionBarActivity{
         }
         });
         //ends the OnSwipeListener-----------------------------------------------------
+
     }
 
 
@@ -110,6 +113,7 @@ public class MainActivity extends ActionBarActivity{
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+        TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
         //If the update location button is clicked------------------------------------------
         GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
@@ -138,12 +142,12 @@ public class MainActivity extends ActionBarActivity{
             e.printStackTrace();
         }
         String address = addresses.get(0).getAddressLine(0);
-        TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
         if (shareSwitch.isChecked()) {
-            postLocationData(address);
+            postLocationData(address, longitude, latitude);
         }
 
         addressTextView.setText(address);
+
         //finished getting the street address-----------------------------------------
         //show it on a map----------------------------------------------------------------------------------
         if(myLocationOnMapSwitch.isChecked()) {
@@ -157,16 +161,14 @@ public class MainActivity extends ActionBarActivity{
         //--------------------------------------------Finish getLocation()-----------------------------------
 
             }
-    public void postLocationData(String address)
+    public void postLocationData(String address, double longitude, double latitude)
     {
-        GPSTracker gps = new GPSTracker(MainActivity.this);
-        double latitude = gps.getLatitude();
-        double longitude = gps.getLongitude();
+        String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
 
         HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(longitude, latitude, address);
+        postSender.Setup(longitude, latitude, address, htmlUrl);
         postSender.execute();
     }
-    }
+}
 
 
