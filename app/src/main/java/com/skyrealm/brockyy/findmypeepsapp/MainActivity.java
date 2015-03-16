@@ -22,7 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.skyrealm.brockyy.findmypeepsapp.GPSTracker;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -37,15 +47,19 @@ public class MainActivity extends ActionBarActivity{
         final View mainView = (View) findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
+        GPSTracker gps = new GPSTracker(MainActivity.this);
+        final double latitude = gps.getLatitude();
+        final double longitude = gps.getLongitude();
+
         //END DECLARATIONS-------------------------------------------------------------------
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shareSwitch.isChecked() == true || myLocationOnMapSwitch.isChecked() == true) {
+                if (shareSwitch.isChecked()|| myLocationOnMapSwitch.isChecked()) {
                     getLocation();
-                    if (shareSwitch.isChecked() == true) {
-                        postLocationData();
+                    if (shareSwitch.isChecked()) {
+                       postLocationData();
                     }
                 }
             }
@@ -131,7 +145,7 @@ public class MainActivity extends ActionBarActivity{
         addressTextView.setText(address);
         //finished getting the street address-----------------------------------------
         //show it on a map----------------------------------------------------------------------------------
-        if(myLocationOnMapSwitch.isChecked() == true) {
+        if(myLocationOnMapSwitch.isChecked()) {
             String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
             Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(uri));
@@ -144,9 +158,13 @@ public class MainActivity extends ActionBarActivity{
             }
     public void postLocationData()
     {
-        String userFrom = "Brockify";
-        String userTo = "RAGING3K";
+        GPSTracker gps = new GPSTracker(MainActivity.this);
+        double latitude = gps.getLatitude();
+        double longitude = gps.getLongitude();
 
+        HTTPSendPost postSender = new HTTPSendPost();
+        postSender.Setup(longitude, latitude);
+        postSender.execute();
     }
     }
 
