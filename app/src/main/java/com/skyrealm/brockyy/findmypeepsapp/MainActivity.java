@@ -58,9 +58,6 @@ public class MainActivity extends ActionBarActivity{
             public void onClick(View v) {
                 if (shareSwitch.isChecked()|| myLocationOnMapSwitch.isChecked()) {
                     getLocation();
-                    if (shareSwitch.isChecked()) {
-                       postLocationData();
-                    }
                 }
             }
         });
@@ -112,6 +109,7 @@ public class MainActivity extends ActionBarActivity{
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
+        final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         //If the update location button is clicked------------------------------------------
         GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
@@ -141,6 +139,9 @@ public class MainActivity extends ActionBarActivity{
         }
         String address = addresses.get(0).getAddressLine(0);
         TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+        if (shareSwitch.isChecked()) {
+            postLocationData(address);
+        }
 
         addressTextView.setText(address);
         //finished getting the street address-----------------------------------------
@@ -156,14 +157,14 @@ public class MainActivity extends ActionBarActivity{
         //--------------------------------------------Finish getLocation()-----------------------------------
 
             }
-    public void postLocationData()
+    public void postLocationData(String address)
     {
         GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
 
         HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(longitude, latitude);
+        postSender.Setup(longitude, latitude, address);
         postSender.execute();
     }
     }

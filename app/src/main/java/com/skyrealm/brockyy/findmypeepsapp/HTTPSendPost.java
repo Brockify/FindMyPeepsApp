@@ -21,12 +21,16 @@ import java.util.List;
  * Created by brock on 3/15/15.
  */
 public class HTTPSendPost extends AsyncTask<String,Double, String> {
+
     private double latitude;
     private double longitude;
-public void Setup(double longitude, double latitude)
+    private String address;
+
+public void Setup(double longitude, double latitude, String address)
 {
  this.latitude = latitude;
  this.longitude = longitude;
+ this.address = address;
 }
     @Override
     protected String doInBackground(String[] params) {
@@ -42,6 +46,7 @@ public void Setup(double longitude, double latitude)
         nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
         nameValuePair.add(new BasicNameValuePair("Latitude", Double.toString(latitude)));
         nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(longitude)));
+        nameValuePair.add(new BasicNameValuePair("Address", address));
 
         // Url Encoding the POST parameters
         try {
