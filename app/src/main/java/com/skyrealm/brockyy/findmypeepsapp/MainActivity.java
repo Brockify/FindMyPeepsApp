@@ -163,11 +163,14 @@ public class MainActivity extends ActionBarActivity
             }
     public void postLocationData(String address, double longitude, double latitude)
     {
+        //website to post too
         String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
 
+        //send the post and execute it
         HTTPSendPost postSender = new HTTPSendPost();
         postSender.Setup(longitude, latitude, address, htmlUrl);
         postSender.execute();
+        //done executing post
     }
 }
 

@@ -1,7 +1,11 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,24 +31,23 @@ import java.util.List;
 /**
  * Created by brock on 3/15/15.
  */
-public class HTTPSendPost extends AsyncTask<String,Double, String>
-{
+public class HTTPSendPost extends AsyncTask<String,Double, String> {
 
     private double latitude;
     private double longitude;
     private String address;
     private String htmlUrl;
+    static String response = null;
 
-public void Setup(double longitude, double latitude, String address, String htmlUrl)
-{
- this.latitude = latitude;
- this.longitude = longitude;
- this.address = address;
- this.htmlUrl = htmlUrl;
+    public void Setup(double longitude, double latitude, String address, String htmlUrl) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
+        this.htmlUrl = htmlUrl;
 
-}
-    @Override
-    protected String doInBackground(String[] params) {
+    }
+
+    protected String doInBackground(String... params) {
         if (htmlUrl == "http://brocksportfolio.com/updatelocation.php") {
             //send a post to the database if the user requests so------------------------------------------------
 // Creating HTTP client
@@ -80,9 +83,34 @@ public void Setup(double longitude, double latitude, String address, String html
             } catch (IOException e) {
                 // writing exception to log
                 e.printStackTrace();
-
             }
+        } else if (htmlUrl == "http://www.brocksportfolio.com/GetPendingRequests.php") {
+
+            HttpResponse response = null;
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost httpPost = new HttpPost(htmlUrl);
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            try {
+                response = httpClient.execute(httpPost);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // writing response to log
+                Log.d("Http Response:", response.toString());
+
         }
-        return "updated";
+        return response;
     }
 }
+
+
