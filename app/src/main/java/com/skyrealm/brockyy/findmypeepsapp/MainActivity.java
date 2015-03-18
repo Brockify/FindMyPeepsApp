@@ -50,9 +50,6 @@ public class MainActivity extends ActionBarActivity
         final View mainView = (View) findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
-        GPSTracker gps = new GPSTracker(MainActivity.this);
-        final double latitude = gps.getLatitude();
-        final double longitude = gps.getLongitude();
 
         //END DECLARATIONS-------------------------------------------------------------------
         //If the update location button is clicked------------------------------------------

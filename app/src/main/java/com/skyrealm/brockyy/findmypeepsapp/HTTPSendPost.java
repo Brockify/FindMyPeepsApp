@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -86,7 +88,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             }
         } else if (htmlUrl == "http://www.brocksportfolio.com/GetPendingRequests.php") {
 
-            HttpResponse response = null;
+            HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpPost httpPost = new HttpPost(htmlUrl);
@@ -101,14 +103,18 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             }
             try {
                 response = httpClient.execute(httpPost);
+
+                // writing response to log
+                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            // writing response to log
-                Log.d("Http Response:", response.toString());
-
         }
+        return response;
+    }
+    protected Void onPostExecute(Void response)
+    {
         return response;
     }
 }

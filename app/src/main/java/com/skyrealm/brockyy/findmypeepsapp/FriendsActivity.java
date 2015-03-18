@@ -17,34 +17,46 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
 public class FriendsActivity extends ActionBarActivity{
 
     private static final String TAG_FROMUSER = "fromUser";
-    JSONArray pendingRequests = null;
     ArrayList<HashMap<String, String>> pendingUsers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
         //DECLARATION
         ListView list = (ListView) findViewById(R.id.friendslistView);
-        OnSwipeTouchListener swipeRight;
         View friendView = findViewById(R.id.friendsActivity);
+        pendingUsers = new ArrayList<HashMap<String, String>>();
 
 
 
-       // EXAMPLE:
-       // final String latitude = getIntent().getExtras().getString("latitude");
+        // EXAMPLE:
+        // final String latitude = getIntent().getExtras().getString("latitude");
         //On touch swipe listener for swipe right method
         friendView.setOnTouchListener(new OnSwipeTouchListener(FriendsActivity.this) {
             //calls on the swipeRight method
@@ -55,24 +67,8 @@ public class FriendsActivity extends ActionBarActivity{
 
         });
         //end the swipe command
-        //send post request
-        String htmlUrl = "http://brocksportfolio.com/GetPendingRequests.php";
-
-        HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(500, 050, "tesT", htmlUrl);
-        postSender.execute();
-        //end sending post request
-
         //create new class object
-        GetPendingRequests pendingRequest = new GetPendingRequests();
-        //do in background
-        pendingRequest.doInBackground(pendingUsers, pendingRequests);
-
-        //create array adapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_friends, (java.util.List<String>) pendingRequests);
-
-        //set list adapter
-        list.setAdapter(adapter);
+        new GetPendingRequests().execute();
     }
 
 
@@ -97,45 +93,73 @@ public class FriendsActivity extends ActionBarActivity{
 
         return super.onOptionsItemSelected(item);
     }
-}
 
-class GetPendingRequests extends AsyncTask<Void, Void, Void> {
+    class GetPendingRequests extends AsyncTask<Void, String, Void> {
 
-    private static final String TAG_FROMUSER = "fromUser";
 
-    protected Void doInBackground(ArrayList<HashMap<String, String>> pendingUsers, JSONArray pendingRequests) {
-        HTTPSendPost httpSendPost = new HTTPSendPost();
-        String jsonStr = httpSendPost.doInBackground("http://www.brocksportfolio.com/GetPendingRequests.php");
+        @Override
+        protected Void doInBackground(Void... params) {
+            String responseBody = null;
+            HttpResponse response = null;
+            HttpClient httpClient = new DefaultHttpClient();
 
-        Log.d("Response: ", "> " + jsonStr);
-        if (jsonStr != null) {
+            HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/GetPendingRequests.php");
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+
             try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-               pendingRequests = jsonObj.getJSONArray(TAG_FROMUSER);
-                for (int i = 0; i < pendingRequests.length(); i++) {
-                    {
-
-                        JSONObject c = pendingRequests.getJSONObject(i);
-                        String fromUser = c.getString(TAG_FROMUSER);
-                        HashMap<String, String> user = new HashMap<String, String>();
-                        user.put(TAG_FROMUSER, fromUser);
-                        pendingUsers.add(user);
-                    }
-                }
-
-
-            } catch (JSONException e) {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        }
-        return null;
-    }
+            try {
+                response = httpClient.execute(httpPost);
+                responseBody = EntityUtils.toString(response.getEntity());
+                // writing response to log
+                Log.d("Http Response:", response.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-    @Override
-    protected Void doInBackground(Void... params) {
-        return null;
+            String jsonStr = responseBody;
+
+            Log.d("Response: ", "> " + jsonStr);
+            if (jsonStr != null) {
+                try {
+                    JSONArray jsonArr = new JSONArray(jsonStr);
+                    for (int i = 0; i < jsonArr.length(); i++) {
+                        {
+
+                            JSONObject c = jsonArr.getJSONObject(i);
+                            String fromUser = c.getString(TAG_FROMUSER);
+                            HashMap<String, String> user = new HashMap<String, String>();
+                            user.put(TAG_FROMUSER, fromUser);
+                            pendingUsers.add(user);
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            {
+                ListView list = (ListView) findViewById(R.id.friendslistView);
+                ListAdapter adapter = new SimpleAdapter(
+                        FriendsActivity.this, pendingUsers,
+                        R.layout.list_item, new String[] { TAG_FROMUSER}, new int[] { R.id.name});
+                list.setAdapter(adapter);
+            }
+        }
     }
 }
+
 
 
 
