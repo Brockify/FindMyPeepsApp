@@ -61,9 +61,9 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             // key and value pair
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
-            nameValuePair.add(new BasicNameValuePair("Latitude", Double.toString(latitude)));
-            nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(longitude)));
-            nameValuePair.add(new BasicNameValuePair("Address", address));
+            nameValuePair.add(new BasicNameValuePair("Latitude", Double.toString(this.latitude)));
+            nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(this.longitude)));
+            nameValuePair.add(new BasicNameValuePair("Address", this.address));
 
             // Url Encoding the POST parameters
             try {
@@ -113,10 +113,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         }
         return response;
     }
-    protected Void onPostExecute(Void response)
-    {
-        return response;
-    }
+
 }
 
 

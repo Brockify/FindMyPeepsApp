@@ -54,10 +54,9 @@
         android:hint="adressTextView"
         android:height="25dp"
         android:width="200dp"
-        android:layout_above="@+id/latTextView"
-        android:layout_alignLeft="@+id/getLocationButton"
-        android:layout_alignStart="@+id/getLocationButton"
-        />
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/latTextView"
+        android:layout_toEndOf="@+id/latTextView" />
 
     <TextView
         android:layout_width="wrap_content"

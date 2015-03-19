@@ -49,7 +49,6 @@ public class FriendsActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
         //DECLARATION
-        ListView list = (ListView) findViewById(R.id.friendslistView);
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
 
@@ -153,7 +152,7 @@ public class FriendsActivity extends ActionBarActivity{
                 ListView list = (ListView) findViewById(R.id.friendslistView);
                 ListAdapter adapter = new SimpleAdapter(
                         FriendsActivity.this, pendingUsers,
-                        R.layout.list_item, new String[] { TAG_FROMUSER}, new int[] { R.id.name});
+                        R.layout.list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
                 list.setAdapter(adapter);
             }
         }

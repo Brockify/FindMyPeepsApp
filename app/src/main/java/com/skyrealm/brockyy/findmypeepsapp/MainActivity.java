@@ -105,7 +105,6 @@ public class MainActivity extends ActionBarActivity
     //--------------------------------------------getLocation()Function-----------------------------------
     public void getLocation()
     {
-       Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
