@@ -39,6 +39,8 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private double longitude;
     private String address;
     private String htmlUrl;
+    private String pendingUser;
+    private double YesOrNo;
     static String response = null;
 
     public void Setup(double longitude, double latitude, String address, String htmlUrl) {
@@ -47,6 +49,12 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         this.address = address;
         this.htmlUrl = htmlUrl;
 
+    }
+    public void SetUpOnlyUrl(String htmlUrl, String pendingUser, double yesorno)
+    {
+        this.htmlUrl = htmlUrl;
+        this.pendingUser = pendingUser;
+        this.YesOrNo = yesorno;
     }
 
     protected String doInBackground(String... params) {
@@ -86,7 +94,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 // writing exception to log
                 e.printStackTrace();
             }
-        } else if (htmlUrl == "http://www.brocksportfolio.com/GetPendingRequests.php") {
+        } else if (htmlUrl == "http://www.brocksportfolio.com/AcceptOrDenyFriendRequest.php") {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
@@ -95,6 +103,8 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Friend", this.pendingUser));
+            nameValuePair.add(new BasicNameValuePair("YesOrNo", Double.toString(YesOrNo)));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));

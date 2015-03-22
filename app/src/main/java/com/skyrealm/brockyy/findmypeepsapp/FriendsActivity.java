@@ -3,6 +3,7 @@ package com.skyrealm.brockyy.findmypeepsapp;
 import android.annotation.TargetApi;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,8 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +54,6 @@ public class FriendsActivity extends ActionBarActivity{
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
-
-
 
         // EXAMPLE:
         // final String latitude = getIntent().getExtras().getString("latitude");
@@ -92,14 +93,16 @@ public class FriendsActivity extends ActionBarActivity{
 
         return super.onOptionsItemSelected(item);
     }
-
+//Asynchronus class to do background data away from the main thread.
     class GetPendingRequests extends AsyncTask<Void, String, Void> {
 
 
+    //call what to do in the asynchronus task
         @Override
         protected Void doInBackground(Void... params) {
+           //start the post to the database
             String responseBody = null;
-            HttpResponse response = null;
+            HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
             HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/GetPendingRequests.php");
@@ -120,7 +123,9 @@ public class FriendsActivity extends ActionBarActivity{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        //end the post response
 
+        //JSON the string that is got from the post.
             String jsonStr = responseBody;
 
             Log.d("Response: ", "> " + jsonStr);
@@ -144,18 +149,80 @@ public class FriendsActivity extends ActionBarActivity{
                 }
             }
             return null;
+            //done
         }
+    //done doing in the background
 
+    //after the asynchronus post is done, execute this method
         @Override
         protected void onPostExecute(Void result) {
             {
+                //setup a list adapter and then set that on the list
                 ListView list = (ListView) findViewById(R.id.friendslistView);
                 ListAdapter adapter = new SimpleAdapter(
                         FriendsActivity.this, pendingUsers,
                         R.layout.list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
                 list.setAdapter(adapter);
+                //done setting on the list adapter
             }
         }
+    }
+
+    //Whenever an ACCEPT button is clicked on the listView it will post to the server.
+    public void addButtonClicked(View view)
+    {
+
+        //get the position of the button
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+        TextView pending =(TextView)vwParentRow.findViewById(R.id.name);
+        Button accepted = (Button)vwParentRow.findViewById(R.id.addButton);
+        Button declined = (Button)vwParentRow.findViewById(R.id.declineButton);
+        TextView acceptedOrDeclined = (TextView)vwParentRow.findViewById(R.id.acceptedOrDeclined);
+
+        //extract the text
+        String pendingUserText = pending.getText().toString();
+        Toast.makeText(FriendsActivity.this, pendingUserText + " added as a friend", Toast.LENGTH_LONG).show();
+
+        //send the post
+        HTTPSendPost httpPost = new HTTPSendPost();
+        httpPost.SetUpOnlyUrl("http://www.brocksportfolio.com/AcceptOrDenyFriendRequest.php", pendingUserText, 1);
+        httpPost.execute();
+        //end post
+
+        //make the buttons not visible
+        accepted.setVisibility(View.GONE);
+        declined.setVisibility(View.GONE);
+        acceptedOrDeclined.setText("Friend added");
+        acceptedOrDeclined.setVisibility(View.VISIBLE);
+        pending.setVisibility(View.GONE);
+
+    }
+
+    public void declineButtonClicked(View view)
+    {
+        //get the position of the button
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+        TextView pending =(TextView)vwParentRow.findViewById(R.id.name);
+        Button accepted = (Button)vwParentRow.findViewById(R.id.addButton);
+        Button declined = (Button)vwParentRow.findViewById(R.id.declineButton);
+        TextView acceptedOrDeclined = (TextView)vwParentRow.findViewById(R.id.acceptedOrDeclined);
+
+        //extract the text
+        String pendingUserText = pending.getText().toString();
+        Toast.makeText(FriendsActivity.this, pendingUserText + " declined", Toast.LENGTH_LONG).show();
+
+        //send the post
+        HTTPSendPost httpPost = new HTTPSendPost();
+        httpPost.SetUpOnlyUrl("http://www.brocksportfolio.com/AcceptOrDenyFriendRequest.php", pendingUserText, 0);
+        httpPost.execute();
+        //end post
+
+        //make the buttons not visible
+        accepted.setVisibility(View.GONE);
+        declined.setVisibility(View.GONE);
+        acceptedOrDeclined.setText("Friend declined");
+        acceptedOrDeclined.setVisibility(View.VISIBLE);
+        pending.setVisibility(View.GONE);
     }
 }
 

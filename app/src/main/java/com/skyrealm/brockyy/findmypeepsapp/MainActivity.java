@@ -8,6 +8,7 @@ import android.gesture.Gesture;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -36,18 +37,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity
-{
+public class MainActivity extends ActionBarActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //DECLARATIONS-----------------------------------------------------------------------
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
-        final View mainView = (View) findViewById(R.id.mainActivity);
+        final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
 
@@ -56,31 +55,29 @@ public class MainActivity extends ActionBarActivity
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shareSwitch.isChecked()|| myLocationOnMapSwitch.isChecked()) {
+                if (shareSwitch.isChecked() || myLocationOnMapSwitch.isChecked()) {
                     getLocation();
                 }
             }
         });
 
-            // ends the button click------------------------------------------------------
+        // ends the button click------------------------------------------------------
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         OnSwipeTouchListener swipeListener;
-        mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
-        {
-        public void onSwipeLeft()
-        {
-            Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-           // EXAMPLE:
-           // intent.putExtra("latitude", latitudeText.getText().toString());
-            startActivity(intent);
-        }
+        mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+                // EXAMPLE:
+                // intent.putExtra("latitude", latitudeText.getText().toString());
+                startActivity(intent);
+            }
         });
         //ends the OnSwipeListener-----------------------------------------------------
 
     }
 
 
-        @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -103,8 +100,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     //--------------------------------------------getLocation()Function-----------------------------------
-    public void getLocation()
-    {
+    public void getLocation() {
         final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
         final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
@@ -115,17 +111,16 @@ public class MainActivity extends ActionBarActivity
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
 
-                if(gps.canGetLocation())
-                {
+        if (gps.canGetLocation()) {
 
-                    latitudeText.setText(Double.toString(latitude));
-                    longitudeText.setText(Double.toString(longitude));
+            latitudeText.setText(Double.toString(latitude));
+            longitudeText.setText(Double.toString(longitude));
 
-                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
-                } else {
-                    gps.showSettingsAlert();
-                }
+        } else {
+            gps.showSettingsAlert();
+        }
 
         //getting the street address---------------------------------------------------;
         Geocoder geocoder;
@@ -146,7 +141,7 @@ public class MainActivity extends ActionBarActivity
 
         //finished getting the street address-----------------------------------------
         //show it on a map----------------------------------------------------------------------------------
-        if(myLocationOnMapSwitch.isChecked()) {
+        if (myLocationOnMapSwitch.isChecked()) {
             String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
             Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(uri));
@@ -156,9 +151,9 @@ public class MainActivity extends ActionBarActivity
 
         //--------------------------------------------Finish getLocation()-----------------------------------
 
-            }
-    public void postLocationData(String address, double longitude, double latitude)
-    {
+    }
+
+    public void postLocationData(String address, double longitude, double latitude) {
         //website to post too
         String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
 

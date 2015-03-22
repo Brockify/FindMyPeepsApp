@@ -15,12 +15,12 @@
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:textColor="#43bd00"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:height="30dp" />
     <Button
         android:id="@+id/addButton"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_width="wrap_content"
         android:text="Accept"
         android:layout_alignTop="@+id/name"
@@ -32,11 +32,13 @@
         android:bottomLeftRadius="8dp"
         android:bottomRightRadius="8dp"
         android:topLeftRadius="8dp"
-        android:topRightRadius="8dp" />
+        android:topRightRadius="8dp"
+        android:onClick="addButtonClicked"
+        />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/declineButton"
         android:text="Decline"
         android:textColor="#B0E0E6"
@@ -49,6 +51,20 @@
         android:layout_alignRight="@+id/name"
         android:layout_alignEnd="@+id/name"
         android:layout_alignBottom="@+id/name"
-        android:clickable="true" />
+        android:clickable="true"
+        android:onClick="declineButtonClicked"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/acceptedOrDeclined"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/declineButton"
+        android:layout_toStartOf="@+id/declineButton"
+        android:layout_alignParentStart="false"
+        android:visibility="invisible"
+        />'
 
 </RelativeLayout>
