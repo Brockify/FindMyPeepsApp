@@ -1,19 +1,13 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
-import android.annotation.TargetApi;
-import android.app.ListActivity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -39,10 +33,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
-public class FriendsActivity extends ActionBarActivity{
+public class PendingFriendsActivity extends ActionBarActivity{
 
     private static final String TAG_FROMUSER = "fromUser";
     ArrayList<HashMap<String, String>> pendingUsers;
@@ -50,7 +43,7 @@ public class FriendsActivity extends ActionBarActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friends);
+        setContentView(R.layout.activity_pendingfriends);
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
@@ -58,10 +51,10 @@ public class FriendsActivity extends ActionBarActivity{
         // EXAMPLE:
         // final String latitude = getIntent().getExtras().getString("latitude");
         //On touch swipe listener for swipe right method
-        friendView.setOnTouchListener(new OnSwipeTouchListener(FriendsActivity.this) {
+        friendView.setOnTouchListener(new OnSwipeTouchListener(PendingFriendsActivity.this) {
             //calls on the swipeRight method
             public void onSwipeRight() {
-                Intent intent = new Intent(FriendsActivity.this, MainActivity.class);
+                Intent intent = new Intent(PendingFriendsActivity.this, MainActivity.class);
                 startActivity(intent);
             }
 
@@ -160,7 +153,7 @@ public class FriendsActivity extends ActionBarActivity{
                 //setup a list adapter and then set that on the list
                 ListView list = (ListView) findViewById(R.id.friendslistView);
                 ListAdapter adapter = new SimpleAdapter(
-                        FriendsActivity.this, pendingUsers,
+                        PendingFriendsActivity.this, pendingUsers,
                         R.layout.list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
                 list.setAdapter(adapter);
                 //done setting on the list adapter
@@ -181,7 +174,7 @@ public class FriendsActivity extends ActionBarActivity{
 
         //extract the text
         String pendingUserText = pending.getText().toString();
-        Toast.makeText(FriendsActivity.this, pendingUserText + " added as a friend", Toast.LENGTH_LONG).show();
+        Toast.makeText(PendingFriendsActivity.this, pendingUserText + " added as a friend", Toast.LENGTH_LONG).show();
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
@@ -209,7 +202,7 @@ public class FriendsActivity extends ActionBarActivity{
 
         //extract the text
         String pendingUserText = pending.getText().toString();
-        Toast.makeText(FriendsActivity.this, pendingUserText + " declined", Toast.LENGTH_LONG).show();
+        Toast.makeText(PendingFriendsActivity.this, pendingUserText + " declined", Toast.LENGTH_LONG).show();
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
