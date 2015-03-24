@@ -24,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Locations Screen");
 
         //DECLARATIONS-----------------------------------------------------------------------
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
@@ -47,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
         OnSwipeTouchListener swipeListener;
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeLeft() {
-                Intent intent = new Intent(MainActivity.this, PendingFriendsActivity.class);
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 // EXAMPLE:
                 // intent.putExtra("latitude", latitudeText.getText().toString());
                 startActivity(intent);

@@ -44,6 +44,7 @@ public class PendingFriendsActivity extends ActionBarActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendingfriends);
+        setTitle("Pending Friend Requests");
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
@@ -54,7 +55,7 @@ public class PendingFriendsActivity extends ActionBarActivity{
         friendView.setOnTouchListener(new OnSwipeTouchListener(PendingFriendsActivity.this) {
             //calls on the swipeRight method
             public void onSwipeRight() {
-                Intent intent = new Intent(PendingFriendsActivity.this, MainActivity.class);
+                Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 startActivity(intent);
             }
 
@@ -154,7 +155,7 @@ public class PendingFriendsActivity extends ActionBarActivity{
                 ListView list = (ListView) findViewById(R.id.friendslistView);
                 ListAdapter adapter = new SimpleAdapter(
                         PendingFriendsActivity.this, pendingUsers,
-                        R.layout.list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
+                        R.layout.pending_requests_list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
                 list.setAdapter(adapter);
                 //done setting on the list adapter
             }
