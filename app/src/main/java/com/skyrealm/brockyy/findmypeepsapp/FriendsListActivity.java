@@ -40,9 +40,7 @@ public class FriendsListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
         setTitle("Friends");
-
         View friendsListView = findViewById(R.id.friendsListActivity);
-
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
             //calls on the swipeRight method
             public void onSwipeLeft() {
@@ -55,11 +53,9 @@ public class FriendsListActivity extends ActionBarActivity {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-
         });
-
-
         FriendsList = new ArrayList<HashMap<String, String>>();
+
         new getFriendsList().execute();
     }
 
