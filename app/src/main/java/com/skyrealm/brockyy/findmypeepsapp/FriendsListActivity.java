@@ -39,23 +39,26 @@ public class FriendsListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+        //set title of the activity
         setTitle("Friends");
         View friendsListView = findViewById(R.id.friendsListActivity);
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
-            //calls on the swipeRight method
+            //calls on the swipeLeft method
             public void onSwipeLeft() {
                 Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
                 startActivity(intent);
             }
-
+            //calls on the swipeRight method
             public void onSwipeRight()
             {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
+        //declare new FriendsList as ArrayList
         FriendsList = new ArrayList<HashMap<String, String>>();
 
+        //Execute the AsynchronusTask for the post request
         new getFriendsList().execute();
     }
 
