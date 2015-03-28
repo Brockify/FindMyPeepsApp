@@ -147,7 +147,5 @@ public class FriendsListActivity extends ActionBarActivity {
                     R.layout.friends_list_items, new String[] {TAG_FRIEND}, new int[] { R.id.username});
             list.setAdapter(adapter);
         }
-        //test
-
     }
 }

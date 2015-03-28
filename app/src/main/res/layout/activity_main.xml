@@ -48,19 +48,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Street Address"
-        android:id="@+id/addressTextView"
-        android:hint="adressTextView"
-        android:height="25dp"
-        android:width="200dp"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/latTextView"
-        android:layout_toEndOf="@+id/latTextView" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Username"
         android:id="@+id/usernameTextView"
@@ -88,5 +75,26 @@
         android:layout_alignLeft="@+id/shareSwitch"
         android:layout_alignStart="@+id/shareSwitch"
         android:checked="true" />
+    <LinearLayout android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Street Address"
+        android:id="@+id/addressTextView"
+        android:hint="adressTextView"
+        android:height="25dp"
+        android:width="200dp"
+        android:layout_below="@+id/longTextView"
+        android:layout_marginTop="41dp"
+        android:layout_alignRight="@+id/mainActivity"
+        android:layout_alignEnd="@+id/mainActivity"
+        android:layout_toEndOf="@+id/linearLayout"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:textAlignment="center" />
+
 
 </RelativeLayout>

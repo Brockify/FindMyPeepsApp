@@ -2,6 +2,7 @@ package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,12 +42,17 @@ public class PendingFriendsActivity extends ActionBarActivity{
 
     private static final String TAG_FROMUSER = "fromUser";
     ArrayList<HashMap<String, String>> pendingUsers;
+    Boolean trueFalse = false;
+    HttpResponse response;
+    String responseBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendingfriends);
         setTitle("Pending Friend Requests");
+        Button addFriendButton = (Button)findViewById(R.id.addFriendButton);
+        final EditText friendEditText = (EditText)findViewById(R.id.friendEditText);
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
@@ -60,9 +68,22 @@ public class PendingFriendsActivity extends ActionBarActivity{
             }
 
         });
+
+            new GetPendingRequests().execute();
+
+            addFriendButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast toast;
+                    if(friendEditText.length() >= 5) {
+                        new addFriendClass().execute();
+                    } else {
+                        Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         //end the swipe command
         //create new class object
-        new GetPendingRequests().execute();
     }
 
 
@@ -218,6 +239,56 @@ public class PendingFriendsActivity extends ActionBarActivity{
         acceptedOrDeclined.setVisibility(View.VISIBLE);
         pending.setVisibility(View.GONE);
     }
+
+    class addFriendClass extends AsyncTask<Void, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            //start the post to the database
+            trueFalse = false;
+            response = null;
+            responseBody = null;
+            HttpClient httpClient = new DefaultHttpClient();
+
+
+            HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/SendFriendRequest.php");
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
+            nameValuePair.add(new BasicNameValuePair("FriendReq", friendEditText.getText().toString()));
+
+
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            try {
+                response = httpClient.execute(httpPost);
+                responseBody = EntityUtils.toString(response.getEntity());
+
+                // writing response to log
+                Log.d("Http Response:", response.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return trueFalse;
+        }
+
+        protected void onPostExecute(Boolean Result)
+        {
+            if (responseBody.equals("Failed")) {
+                //end the post response
+                Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
+            } else {
+
+                Toast.makeText(PendingFriendsActivity.this, "Friend request send.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
 }
 
 

@@ -11,20 +11,25 @@
         android:layout_centerHorizontal="true"
         />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/friendsActivity"
-        android:layout_alignStart="@+id/friendsActivity">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Friend"
+        android:id="@+id/addFriendButton" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/friendEditText"
+        android:layout_gravity="center_horizontal"
+        android:layout_toRightOf="@+id/addFriendButton"
+        android:layout_toEndOf="@+id/addFriendButton" />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/friendslistView" />
-
-    </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/friendslistView"
+        android:layout_below="@+id/addFriendButton"
+        android:longClickable="true" />
 
 </RelativeLayout>
