@@ -3,6 +3,7 @@ package com.skyrealm.brockyy.findmypeepsapp;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,16 +37,18 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 
-public class PendingFriendsActivity extends ActionBarActivity{
+public class PendingFriendsActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG_FROMUSER = "fromUser";
     ArrayList<HashMap<String, String>> pendingUsers;
     Boolean trueFalse = false;
     HttpResponse response;
     String responseBody;
-
+    SwipeRefreshLayout swipeLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,18 @@ public class PendingFriendsActivity extends ActionBarActivity{
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
+
+
+        new GetPendingRequests().execute();
+
+        //set a swipe refresh layout
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        // Configure the swipe refresh layout
 
         // EXAMPLE:
         // final String latitude = getIntent().getExtras().getString("latitude");
@@ -68,8 +83,6 @@ public class PendingFriendsActivity extends ActionBarActivity{
             }
 
         });
-
-            new GetPendingRequests().execute();
 
             addFriendButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -108,7 +121,17 @@ public class PendingFriendsActivity extends ActionBarActivity{
 
         return super.onOptionsItemSelected(item);
     }
-//Asynchronus class to do background data away from the main thread.
+
+    //slide up to refresh
+    @Override
+    public void onRefresh() {
+
+        new GetPendingRequests().execute();
+       swipeLayout.setRefreshing(false);
+
+    }
+
+    //Asynchronus class to do background data away from the main thread.
     class GetPendingRequests extends AsyncTask<Void, String, Void> {
 
 

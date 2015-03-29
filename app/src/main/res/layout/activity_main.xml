@@ -105,7 +105,8 @@
         android:layout_toRightOf="@+id/linearLayout"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:hint="Comment" />
+        android:hint="Comment"
+        android:singleLine="true" />
 
 
 </RelativeLayout>

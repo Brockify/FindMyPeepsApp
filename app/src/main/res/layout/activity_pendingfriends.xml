@@ -1,8 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    tools:context="com.skyrealm.brockyy.findmypeepsapp.PendingFriendsActivity">
-
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<RelativeLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
     <View
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +27,8 @@
         android:id="@+id/friendEditText"
         android:layout_gravity="center_horizontal"
         android:layout_toRightOf="@+id/addFriendButton"
-        android:layout_toEndOf="@+id/addFriendButton" />
+        android:layout_toEndOf="@+id/addFriendButton"
+        android:singleLine="true" />
 
     <ListView
         android:layout_width="match_parent"
@@ -31,5 +36,5 @@
         android:id="@+id/friendslistView"
         android:layout_below="@+id/addFriendButton"
         android:longClickable="true" />
-
-</RelativeLayout>
+    </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
