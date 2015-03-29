@@ -40,14 +40,16 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private String address;
     private String htmlUrl;
     private String pendingUser;
+    private String comments;
     private double YesOrNo;
     static String response = null;
 
-    public void Setup(double longitude, double latitude, String address, String htmlUrl) {
+    public void Setup(double longitude, double latitude, String address, String htmlUrl, String comments) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.htmlUrl = htmlUrl;
+        this.comments = comments;
 
     }
     public void SetUpOnlyUrl(String htmlUrl, String pendingUser, double yesorno)
@@ -72,6 +74,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             nameValuePair.add(new BasicNameValuePair("Latitude", Double.toString(this.latitude)));
             nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(this.longitude)));
             nameValuePair.add(new BasicNameValuePair("Address", this.address));
+            nameValuePair.add(new BasicNameValuePair("Comments", this.comments));
 
             // Url Encoding the POST parameters
             try {

@@ -6,10 +6,12 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,11 +90,12 @@ public class MainActivity extends ActionBarActivity {
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+        final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
         //If the update location button is clicked------------------------------------------
         GPSTracker gps = new GPSTracker(MainActivity.this);
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
-
+        String comments = commentEditText.getText().toString();
         if (gps.canGetLocation()) {
 
             latitudeText.setText(Double.toString(latitude));
@@ -116,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
         }
         String address = addresses.get(0).getAddressLine(0);
         if (shareSwitch.isChecked()) {
-            postLocationData(address, longitude, latitude);
+            postLocationData(address, longitude, latitude, comments);
         }
 
         addressTextView.setText(address);
@@ -135,15 +138,17 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public void postLocationData(String address, double longitude, double latitude) {
+    public void postLocationData(String address, double longitude, double latitude, String comments) {
         //website to post too
         String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
 
         //send the post and execute it
         HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(longitude, latitude, address, htmlUrl);
+        postSender.Setup(longitude, latitude, address, htmlUrl, comments);
         postSender.execute();
         //done executing post
+        EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+        commentEditText.setText(null);
     }
 }
 

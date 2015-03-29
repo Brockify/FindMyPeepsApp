@@ -19,9 +19,10 @@
         android:id="@+id/getLocationButton"
         android:nestedScrollingEnabled="true"
         android:onClick="getLocation"
+        android:layout_marginBottom="71dp"
         android:layout_alignBottom="@+id/mainActivity"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="124dp" />
+        android:layout_alignLeft="@+id/shareSwitch"
+        android:layout_alignStart="@+id/shareSwitch" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -95,6 +96,16 @@
         android:layout_toEndOf="@+id/linearLayout"
         android:layout_toRightOf="@+id/linearLayout"
         android:textAlignment="center" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentEditText"
+        android:layout_above="@+id/myLocationOnMapSwitch"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:hint="Comment" />
 
 
 </RelativeLayout>
