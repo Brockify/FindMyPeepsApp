@@ -70,7 +70,7 @@ public class Logout extends Activity implements OnClickListener{
 
             pDialog.dismiss();
             if (message != null){
-                Toast.makeText(Logout.this, "Successfully logged out.", Toast.LENGTH_LONG).show();
+                Toast.makeText(Logout.this, message, Toast.LENGTH_LONG).show();
 
             }
         }
