@@ -50,6 +50,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     String responseBody;
     SwipeRefreshLayout swipeLayout;
     private String user;
+    GetPendingRequests pendingRequestsExecute = new GetPendingRequests();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +64,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         user = getIntent().getExtras().getString("username");
 
 
-        new GetPendingRequests().execute();
+        pendingRequestsExecute.execute();
 
         //set a swipe refresh layout
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -96,7 +97,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 @Override
                 public void onClick(View v) {
                     Toast toast;
-                    if(friendEditText.length() >= 5) {
+                    if(friendEditText.length() > 0) {
                         new addFriendClass().execute();
                     } else {
                         Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
@@ -133,9 +134,9 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     //slide up to refresh
     @Override
     public void onRefresh() {
-
-        new GetPendingRequests().execute();
-       swipeLayout.setRefreshing(false);
+        swipeLayout.setRefreshing(true);
+    new GetPendingRequests().execute();
+     swipeLayout.setRefreshing(false);
 
     }
 
