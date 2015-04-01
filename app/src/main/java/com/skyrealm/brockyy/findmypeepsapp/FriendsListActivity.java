@@ -34,6 +34,7 @@ import java.util.List;
 public class FriendsListActivity extends ActionBarActivity {
 
     ArrayList<HashMap<String, String>> FriendsList;
+    private String user;
     private static final String TAG_FRIEND = "friend";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +43,19 @@ public class FriendsListActivity extends ActionBarActivity {
         //set title of the activity
         setTitle("Friends");
         View friendsListView = findViewById(R.id.friendsListActivity);
+        user = getIntent().getExtras().getString("username");
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
             //calls on the swipeLeft method
             public void onSwipeLeft() {
                 Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
+                intent.putExtra("username", user);
                 startActivity(intent);
             }
             //calls on the swipeRight method
             public void onSwipeRight()
             {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
+                intent.putExtra("username", user);
                 startActivity(intent);
             }
         });
@@ -97,7 +101,7 @@ public class FriendsListActivity extends ActionBarActivity {
             HttpPost httpPost = new HttpPost("http://brocksportfolio.com/GetPendingFriendsList.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Username", user));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));

@@ -54,6 +54,7 @@ public class MainActivity extends ActionBarActivity {
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+               intent.putExtra("username", user);
                 // EXAMPLE:
                 // intent.putExtra("latitude", latitudeText.getText().toString());
                 startActivity(intent);

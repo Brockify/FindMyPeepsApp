@@ -49,6 +49,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     HttpResponse response;
     String responseBody;
     SwipeRefreshLayout swipeLayout;
+    private String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
+        user = getIntent().getExtras().getString("username");
 
 
         new GetPendingRequests().execute();
@@ -79,6 +81,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             //calls on the swipeRight method
             public void onSwipeRight() {
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
                 startActivity(intent);
             }
 
@@ -146,7 +149,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/GetPendingRequests.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Username", user));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
@@ -277,7 +280,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/SendFriendRequest.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Username", user));
             EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
             nameValuePair.add(new BasicNameValuePair("FriendReq", friendEditText.getText().toString()));
 
