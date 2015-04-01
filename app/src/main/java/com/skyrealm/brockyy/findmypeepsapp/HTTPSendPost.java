@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class HTTPSendPost extends AsyncTask<String,Double, String> {
 
+    private String user;
     private double latitude;
     private double longitude;
     private String address;
@@ -44,12 +45,13 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private double YesOrNo;
     static String response = null;
 
-    public void Setup(double longitude, double latitude, String address, String htmlUrl, String comments) {
+    public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.htmlUrl = htmlUrl;
         this.comments = comments;
+        this.user = user;
 
     }
     public void SetUpOnlyUrl(String htmlUrl, String pendingUser, double yesorno)
@@ -70,7 +72,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             // Building post parameters
             // key and value pair
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Username", user));
             nameValuePair.add(new BasicNameValuePair("Latitude", Double.toString(this.latitude)));
             nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(this.longitude)));
             nameValuePair.add(new BasicNameValuePair("Address", this.address));

@@ -21,7 +21,8 @@ import java.util.*;
 
 
 public class MainActivity extends ActionBarActivity {
-
+    String user;
+    String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,10 +30,12 @@ public class MainActivity extends ActionBarActivity {
         setTitle("Locations Screen");
 
         //DECLARATIONS-----------------------------------------------------------------------
+        final TextView usernameTextView = (TextView)findViewById(R.id.usernameTextView);
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
+        user = getIntent().getExtras().getString("username");
 
         //END DECLARATIONS-------------------------------------------------------------------
         //If the update location button is clicked------------------------------------------
@@ -56,7 +59,8 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-        //ends the OnSwipeListener-----------------------------------------------------
+
+        usernameTextView.setText(user);
 
     }
 
@@ -119,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
         }
         String address = addresses.get(0).getAddressLine(0);
         if (shareSwitch.isChecked()) {
-            postLocationData(address, longitude, latitude, comments);
+            postLocationData(user, address, longitude, latitude, comments);
         }
 
         addressTextView.setText(address);
@@ -138,18 +142,19 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    public void postLocationData(String address, double longitude, double latitude, String comments) {
+    public void postLocationData(String user,String address, double longitude, double latitude, String comments) {
         //website to post too
         String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
 
         //send the post and execute it
         HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(longitude, latitude, address, htmlUrl, comments);
+        postSender.Setup(user,longitude, latitude, address, htmlUrl, comments);
         postSender.execute();
         //done executing post
         EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
         commentEditText.setText(null);
     }
+
 }
 
 

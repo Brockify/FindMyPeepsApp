@@ -25,11 +25,14 @@ public class Login extends Activity implements OnClickListener{
     private boolean Regist = false;
     // Progress Dialog
     private ProgressDialog pDialog;
+    MainActivity setupLogin = new MainActivity();
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://brocksportfolio.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +87,7 @@ public class Login extends Activity implements OnClickListener{
             // TODO Auto-generated method stub
             // here Check for success tag
             int success;
-            String username = user.getText().toString();
+            username = user.getText().toString();
             String password = pass.getText().toString();
             try {
 
@@ -104,8 +107,8 @@ public class Login extends Activity implements OnClickListener{
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     Log.d("Successfully Login!", json.toString());
-
                     Intent ii = new Intent(Login.this,MainActivity.class);
+                    ii.putExtra("username", user.getText().toString());
                     finish();
                     // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
                     startActivity(ii);
@@ -129,6 +132,7 @@ public class Login extends Activity implements OnClickListener{
             pDialog.dismiss();
             if (message != null){
                 Toast.makeText(Login.this, message, Toast.LENGTH_LONG).show();
+
             }
         }
     }
