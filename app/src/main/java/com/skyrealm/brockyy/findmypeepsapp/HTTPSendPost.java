@@ -53,12 +53,14 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         this.comments = comments;
         this.user = user;
 
+
     }
-    public void SetUpOnlyUrl(String htmlUrl, String pendingUser, double yesorno)
+    public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, double yesorno)
     {
         this.htmlUrl = htmlUrl;
         this.pendingUser = pendingUser;
         this.YesOrNo = yesorno;
+        this.user = user;
     }
 
     protected String doInBackground(String... params) {
