@@ -44,13 +44,14 @@ import java.util.logging.LogRecord;
 public class PendingFriendsActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG_FROMUSER = "fromUser";
-    ArrayList<HashMap<String, String>> pendingUsers;
-    Boolean trueFalse = false;
-    HttpResponse response;
-    String responseBody;
-    SwipeRefreshLayout swipeLayout;
+    private ArrayList<HashMap<String, String>> pendingUsers;
+    private Boolean trueFalse = false;
+    private HttpResponse response;
+    private String responseBody;
+    private SwipeRefreshLayout swipeLayout;
     private String user;
-    GetPendingRequests pendingRequestsExecute = new GetPendingRequests();
+    private GetPendingRequests pendingRequestsExecute = new GetPendingRequests();
+    private ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +135,8 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     //slide up to refresh
     @Override
     public void onRefresh() {
+        pendingUsers.clear();
+        pendingListView.setAdapter(null);
         swipeLayout.setRefreshing(true);
     new GetPendingRequests().execute();
      swipeLayout.setRefreshing(false);
