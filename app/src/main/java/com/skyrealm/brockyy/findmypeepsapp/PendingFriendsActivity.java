@@ -83,8 +83,13 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
-            }
 
+            }
+            public void onSwipeLeft(){
+                Intent intent = new Intent(PendingFriendsActivity.this, Logout.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+            }
         });
 
             addFriendButton.setOnClickListener(new View.OnClickListener() {
