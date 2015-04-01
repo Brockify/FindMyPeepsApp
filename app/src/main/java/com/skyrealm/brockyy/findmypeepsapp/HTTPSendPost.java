@@ -107,7 +107,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             HttpPost httpPost = new HttpPost(htmlUrl);
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", "Brock"));
+            nameValuePair.add(new BasicNameValuePair("Username", user));
             nameValuePair.add(new BasicNameValuePair("Friend", this.pendingUser));
             nameValuePair.add(new BasicNameValuePair("YesOrNo", Double.toString(YesOrNo)));
 
