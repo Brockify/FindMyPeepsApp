@@ -43,15 +43,12 @@ import java.util.logging.LogRecord;
 
 public class PendingFriendsActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG_FROMUSER = "fromUser";
-    private ArrayList<HashMap<String, String>> pendingUsers;
-    private Boolean trueFalse = false;
-    private HttpResponse response;
-    private String responseBody;
-    private SwipeRefreshLayout swipeLayout;
-    private String user;
-    private GetPendingRequests pendingRequestsExecute = new GetPendingRequests();
-    private ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
+     static final String TAG_FROMUSER = "fromUser";
+     private ArrayList<HashMap<String, String>> pendingUsers;
+     HttpResponse response;
+     String responseBody;
+     SwipeRefreshLayout swipeLayout;
+     String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +56,14 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         setTitle("Pending Friend Requests");
         Button addFriendButton = (Button)findViewById(R.id.addFriendButton);
         final EditText friendEditText = (EditText)findViewById(R.id.friendEditText);
+        ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
 
 
-        pendingRequestsExecute.execute();
+        new GetPendingRequests().execute();
 
         //set a swipe refresh layout
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -136,6 +134,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     @Override
     public void onRefresh() {
         pendingUsers.clear();
+        ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         pendingListView.setAdapter(null);
         swipeLayout.setRefreshing(true);
     new GetPendingRequests().execute();
@@ -207,12 +206,12 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         @Override
         protected void onPostExecute(Void result) {
             {
+                ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
                 //setup a list adapter and then set that on the list
-                ListView list = (ListView) findViewById(R.id.friendslistView);
                 ListAdapter adapter = new SimpleAdapter(
                         PendingFriendsActivity.this, pendingUsers,
                         R.layout.pending_requests_list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
-                list.setAdapter(adapter);
+                pendingListView.setAdapter(adapter);
                 //done setting on the list adapter
             }
         }
@@ -280,7 +279,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         @Override
         protected Boolean doInBackground(Void... params) {
             //start the post to the database
-            trueFalse = false;
             response = null;
             responseBody = null;
             HttpClient httpClient = new DefaultHttpClient();
@@ -308,7 +306,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return trueFalse;
+            return null;
         }
 
         protected void onPostExecute(Boolean Result)
