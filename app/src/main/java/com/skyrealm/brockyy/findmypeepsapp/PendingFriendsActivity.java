@@ -45,10 +45,10 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
      static final String TAG_FROMUSER = "fromUser";
      private ArrayList<HashMap<String, String>> pendingUsers;
-     HttpResponse response;
-     String responseBody;
-     SwipeRefreshLayout swipeLayout;
-     String user;
+     private HttpResponse response;
+     private String responseBody;
+     private SwipeRefreshLayout swipeLayout;
+     private String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -314,15 +314,25 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             if (responseBody.equals("Failed")) {
                 //end the post response
                 Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
-            } else {
+            }else if(responseBody.equals("Already your friend"))
+            {
+                Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. User already your friend.", Toast.LENGTH_LONG).show();
 
-                Toast.makeText(PendingFriendsActivity.this, "Friend request send.", Toast.LENGTH_LONG).show();
+            }
+          else if(responseBody.equals("Cannot add yourself"))
+
+            {
+                Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Cannot add yourself.", Toast.LENGTH_LONG).show();
+
+            }else if(responseBody.equals("Already pending")) {
+                    Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. User already has request from you.", Toast.LENGTH_LONG).show();
+                } else {
+
+                    Toast.makeText(PendingFriendsActivity.this, "Friend request send.", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
-
-
-}
 
 
 
