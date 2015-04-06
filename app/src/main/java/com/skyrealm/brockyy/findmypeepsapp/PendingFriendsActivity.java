@@ -54,11 +54,13 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendingfriends);
         setTitle("Pending Friend Requests");
+
+        //declare variables
         Button addFriendButton = (Button)findViewById(R.id.addFriendButton);
         final EditText friendEditText = (EditText)findViewById(R.id.friendEditText);
         ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
-        //DECLARATION
         View friendView = findViewById(R.id.friendsActivity);
+        //DECLARATION
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
 

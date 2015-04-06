@@ -42,7 +42,10 @@ public class FriendsListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_friends_list);
         //set title of the activity
         setTitle("Friends");
+
+        //declare variables
         View friendsListView = findViewById(R.id.friendsListActivity);
+        //gets the username of user logged in
         user = getIntent().getExtras().getString("username");
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
             //calls on the swipeLeft method
@@ -59,6 +62,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
         //declare new FriendsList as ArrayList
         FriendsList = new ArrayList<HashMap<String, String>>();
 
