@@ -1,6 +1,9 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -8,9 +11,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -29,13 +35,21 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class FriendsListActivity extends ActionBarActivity {
 
     ArrayList<HashMap<String, String>> FriendsList;
     private String user;
+    private String userBeingClicked;
+    private String latitude;
+    private String longitude;
+    private Double userLatitude;
+    private Double userLongitude;
     private static final String TAG_FRIEND = "friend";
+    private static final String TAG_LATITUDE = "latitude";
+    private static final String TAG_LONGITUDE = "longitude";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +58,7 @@ public class FriendsListActivity extends ActionBarActivity {
         setTitle("Friends");
 
         //declare variables
+        ListView friendsListView2 = (ListView) findViewById(R.id.friendListView);
         View friendsListView = findViewById(R.id.friendsListActivity);
         //gets the username of user logged in
         user = getIntent().getExtras().getString("username");
@@ -62,6 +77,20 @@ public class FriendsListActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        friendsListView2.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3)
+            {
+
+                TextView tv = (TextView)v.findViewById(R.id.username);
+                userBeingClicked = tv.getText().toString();
+
+
+                new getSpecificUserLocation().execute();
+            }
+        });
+
 
         //declare new FriendsList as ArrayList
         FriendsList = new ArrayList<HashMap<String, String>>();
@@ -154,6 +183,96 @@ public class FriendsListActivity extends ActionBarActivity {
                     FriendsListActivity.this, FriendsList,
                     R.layout.friends_list_items, new String[] {TAG_FRIEND}, new int[] { R.id.username});
             list.setAdapter(adapter);
+        }
+    }
+
+    class getSpecificUserLocation extends AsyncTask<Void, Void, Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //start the post to the database
+            String responseBody = null;
+            HttpResponse response;
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost httpPost = new HttpPost("http://brocksportfolio.com/GetSpecificUserLocation.php");
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", userBeingClicked));
+
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            try {
+                response = httpClient.execute(httpPost);
+                responseBody = EntityUtils.toString(response.getEntity());
+                // writing response to log
+                Log.d("Http Response:", response.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //end the post response
+
+            //JSON the string that is got from the post.
+            String jsonStr = responseBody;
+
+            Log.d("Response: ", "> " + jsonStr);
+            if (jsonStr != null) {
+                try {
+                    JSONArray jsonArr = new JSONArray(jsonStr);
+                    for (int i = 0; i < jsonArr.length(); i++) {
+                        {
+
+                            JSONObject c = jsonArr.getJSONObject(i);
+
+                            String userClickedLatitude = c.getString(TAG_LATITUDE);
+                            String userClickedLongitude = c.getString(TAG_LONGITUDE);
+                            longitude = userClickedLongitude;
+                            latitude = userClickedLatitude;
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            if(latitude == null || longitude == null)
+            {
+                Toast.makeText(getApplicationContext(), "User location not updated.", Toast.LENGTH_LONG).show();
+
+            } else {
+                userLatitude = Double.parseDouble(latitude);
+                userLongitude = Double.parseDouble(longitude);
+                List<Address> addresses = null;
+                Geocoder geocoder = new Geocoder(FriendsListActivity.this, Locale.getDefault());
+
+                try {
+                    addresses = geocoder.getFromLocation(userLatitude, userLongitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String address = addresses.get(0).getAddressLine(0);
+
+                Toast.makeText(getApplicationContext(), "Address: " + address, Toast.LENGTH_LONG).show();
+                String label = (userBeingClicked + " Location: " + address);
+                String uriBegin = "geo:" + userLatitude + "," + userLongitude;
+                String query = userLatitude + "," + userLongitude + "(" + label + ")";
+                String encodedQuery = Uri.encode(query);
+                String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+                Uri uri = Uri.parse(uriString);
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+
         }
     }
 }

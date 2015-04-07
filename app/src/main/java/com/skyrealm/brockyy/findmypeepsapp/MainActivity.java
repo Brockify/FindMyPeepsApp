@@ -128,6 +128,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         addressTextView.setText(address);
+        
 
         //finished getting the street address-----------------------------------------
         //show it on a map----------------------------------------------------------------------------------
