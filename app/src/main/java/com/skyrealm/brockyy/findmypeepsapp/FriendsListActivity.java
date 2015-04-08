@@ -105,7 +105,7 @@ public class FriendsListActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friends_list, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -120,7 +120,13 @@ public class FriendsListActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if(id == R.id.action_logout) {
+            Intent ii = new Intent(FriendsListActivity.this, Login.class);
+            finish();
+            // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+            startActivity(ii);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

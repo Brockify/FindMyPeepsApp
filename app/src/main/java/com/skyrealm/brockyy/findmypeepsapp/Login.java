@@ -67,9 +67,7 @@ public class Login extends Activity implements OnClickListener{
     }
 
     class AttemptLogin extends AsyncTask<String, String, String> {
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
+
         boolean failure = false;
 
         @Override
