@@ -37,12 +37,8 @@
             android:label="Register" >
         </activity>
         <activity
-            android:name=".Logout"
-            android:label="Logout" >
-        </activity>
-        <activity
-            android:name=".MainActivity2Activity"
-            android:label="@string/title_activity_main_activity2" >
+            android:name=".Profile"
+            android:label="Profile" >
         </activity>
     </application>
 
