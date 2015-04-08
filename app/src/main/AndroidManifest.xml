@@ -36,10 +36,6 @@
             android:name=".Register"
             android:label="Register" >
         </activity>
-        <activity
-            android:name=".Profile"
-            android:label="Profile" >
-        </activity>
     </application>
 
 </manifest>
