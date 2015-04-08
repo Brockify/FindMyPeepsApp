@@ -47,9 +47,11 @@ public class FriendsListActivity extends ActionBarActivity {
     private String longitude;
     private Double userLatitude;
     private Double userLongitude;
+    private String userComment;
     private static final String TAG_FRIEND = "friend";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
+    private static final String TAG_COMMENTS = "comments";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -230,8 +232,10 @@ public class FriendsListActivity extends ActionBarActivity {
 
                             String userClickedLatitude = c.getString(TAG_LATITUDE);
                             String userClickedLongitude = c.getString(TAG_LONGITUDE);
+                            String comment = c.getString(TAG_COMMENTS);
                             longitude = userClickedLongitude;
                             latitude = userClickedLatitude;
+                            userComment = comment;
                         }
                     }
 
@@ -245,11 +249,6 @@ public class FriendsListActivity extends ActionBarActivity {
 
         protected void onPostExecute(Void result) {
 
-            if(latitude == null || longitude == null)
-            {
-                Toast.makeText(getApplicationContext(), "User location not updated.", Toast.LENGTH_LONG).show();
-
-            } else {
                 userLatitude = Double.parseDouble(latitude);
                 userLongitude = Double.parseDouble(longitude);
                 List<Address> addresses = null;
@@ -263,7 +262,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 String address = addresses.get(0).getAddressLine(0);
 
                 Toast.makeText(getApplicationContext(), "Address: " + address, Toast.LENGTH_LONG).show();
-                String label = (userBeingClicked + " Location: " + address);
+                String label = (userComment);
                 String uriBegin = "geo:" + userLatitude + "," + userLongitude;
                 String query = userLatitude + "," + userLongitude + "(" + label + ")";
                 String encodedQuery = Uri.encode(query);
@@ -271,7 +270,6 @@ public class FriendsListActivity extends ActionBarActivity {
                 Uri uri = Uri.parse(uriString);
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-            }
 
         }
     }
