@@ -93,6 +93,7 @@ public class MainActivity extends ActionBarActivity {
         }
         if(id == R.id.action_profile) {
             Intent ii = new Intent(MainActivity.this, Profile.class);
+            ii.putExtra("username", user);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
