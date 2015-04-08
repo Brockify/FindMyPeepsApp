@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -295,7 +294,6 @@ public class FriendsListActivity extends ActionBarActivity {
                 Uri uri = Uri.parse(uriString);
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-
         }
     }
 }
