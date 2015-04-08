@@ -60,6 +60,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         final EditText friendEditText = (EditText)findViewById(R.id.friendEditText);
         ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         View friendView = findViewById(R.id.friendsActivity);
+        ListView friendsList = (ListView)findViewById(R.id.friendslistView);
         //DECLARATION
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
@@ -101,7 +102,16 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 }
             });
         //end the swipe command
-        //create new class object
+
+        //set on swipe left and right for the listview too
+        friendsList.setOnTouchListener(new OnSwipeTouchListener(PendingFriendsActivity.this) {
+            public void onSwipeRight() {
+                Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+            }
+
+        });
     }
 
 

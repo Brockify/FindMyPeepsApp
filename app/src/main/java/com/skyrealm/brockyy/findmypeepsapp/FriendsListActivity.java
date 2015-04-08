@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -60,8 +61,9 @@ public class FriendsListActivity extends ActionBarActivity {
         setTitle("Friends");
 
         //declare variables
-        ListView friendsListView2 = (ListView) findViewById(R.id.friendListView);
+        ListView friendsList = (ListView) findViewById(R.id.friendListView);
         View friendsListView = findViewById(R.id.friendsListActivity);
+
         //gets the username of user logged in
         user = getIntent().getExtras().getString("username");
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
@@ -80,7 +82,24 @@ public class FriendsListActivity extends ActionBarActivity {
             }
         });
 
-        friendsListView2.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        //set on swipe left and right for the listview too
+        friendsList.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
+            public void onSwipeLeft() {
+                Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+            }
+            public void onSwipeRight() {
+                Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+            }
+
+        });
+
+
+
+        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3)
             {
