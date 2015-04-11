@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -156,9 +157,10 @@ public class FriendsListActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-       public void deleteButtonClicked()
+       public void deleteButtonClicked(View view)
        {
-
+    Button deleteButton = (Button)findViewById(R.id.deleteButton);
+    deleteButton.setText("Test");
        }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>

@@ -28,5 +28,16 @@
         android:layout_alignRight="@+id/username"
         android:layout_alignEnd="@+id/username" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/deleteButton"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/address"
+        android:layout_toEndOf="@+id/address"
+        android:onClick="deleteButtonClicked" />
+
 
 </RelativeLayout>

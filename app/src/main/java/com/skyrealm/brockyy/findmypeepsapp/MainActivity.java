@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,6 +24,11 @@ import java.util.*;
 public class MainActivity extends ActionBarActivity {
     String user;
     String username;
+    double latitude;
+    double longitude;
+    String address;
+    String comments;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+        final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         user = getIntent().getExtras().getString("username");
 
@@ -43,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (shareSwitch.isChecked() || myLocationOnMapSwitch.isChecked()) {
-                    getLocation();
+                    new getLocation().execute();
                 }
             }
         });
@@ -103,74 +110,82 @@ public class MainActivity extends ActionBarActivity {
     }
 
     //--------------------------------------------getLocation()Function-----------------------------------
-    public void getLocation() {
-        final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
-        final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
-        final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
-        final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
-        TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-        final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-        //If the update location button is clicked------------------------------------------
+    public class getLocation extends AsyncTask<Void, Void, Void>{
+
+
         GPSTracker gps = new GPSTracker(MainActivity.this);
-        double latitude = gps.getLatitude();
-        double longitude = gps.getLongitude();
-        String comments = commentEditText.getText().toString();
-        if (gps.canGetLocation()) {
 
-            latitudeText.setText(Double.toString(latitude));
-            longitudeText.setText(Double.toString(longitude));
+        @Override
+        protected Void doInBackground(Void... params) {
+            final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
+            final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-            Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //If the update location button is clicked------------------------------------------
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+            comments = commentEditText.getText().toString();
 
-        } else {
-            gps.showSettingsAlert();
-        }
+            //getting the street address---------------------------------------------------;
+            Geocoder geocoder;
+            List<Address> addresses = null;
+            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
 
-        //getting the street address---------------------------------------------------;
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            address = addresses.get(0).getAddressLine(0);
+            if (shareSwitch.isChecked()) {
+                //website to post too
+                String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
 
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String address = addresses.get(0).getAddressLine(0);
-        if (shareSwitch.isChecked()) {
-            postLocationData(user, address, longitude, latitude, comments);
-        }
+                //send the post and execute it
+                HTTPSendPost postSender = new HTTPSendPost();
+                postSender.Setup(user,longitude, latitude, address, htmlUrl, comments);
+                postSender.execute();
+                //done executing post
+            }
 
-        addressTextView.setText(address);
-        
 
-        //finished getting the street address-----------------------------------------
-        //show it on a map----------------------------------------------------------------------------------
-        if (myLocationOnMapSwitch.isChecked()) {
-            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
-            Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(uri));
-            startActivity(sendLocationToMap);
+            //finished getting the street address-----------------------------------------
+            //show it on a map----------------------------------------------------------------------------------
+            if (myLocationOnMapSwitch.isChecked()) {
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+                Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(uri));
+                startActivity(sendLocationToMap);
+            }
+            return null;
         }
         // end showing it on the map ------------------------------------------------------------------------
 
+        public void onPostExecute(Void result)
+        {
+            final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
+            final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
+            TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+            EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
+
+            if (gps.canGetLocation()) {
+
+                latitudeText.setText(Double.toString(latitude));
+                longitudeText.setText(Double.toString(longitude));
+
+                Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+            } else {
+                gps.showSettingsAlert();
+            }
+            addressTextView.setText(address);
+            commentEditText.setText(null);
+
+        }
         //--------------------------------------------Finish getLocation()-----------------------------------
 
     }
-
-    public void postLocationData(String user,String address, double longitude, double latitude, String comments) {
-        //website to post too
-        String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
-
-        //send the post and execute it
-        HTTPSendPost postSender = new HTTPSendPost();
-        postSender.Setup(user,longitude, latitude, address, htmlUrl, comments);
-        postSender.execute();
-        //done executing post
-        EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-        commentEditText.setText(null);
-    }
-
 }
 
 
