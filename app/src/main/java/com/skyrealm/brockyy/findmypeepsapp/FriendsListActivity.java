@@ -8,8 +8,10 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -60,7 +62,7 @@ public class FriendsListActivity extends ActionBarActivity {
         setTitle("Friends");
 
         //declare variables
-        ListView friendsList = (ListView) findViewById(R.id.friendListView);
+        final ListView friendsList = (ListView) findViewById(R.id.friendListView);
         View friendsListView = findViewById(R.id.friendsListActivity);
 
         //gets the username of user logged in
@@ -72,9 +74,9 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("username", user);
                 startActivity(intent);
             }
+
             //calls on the swipeRight method
-            public void onSwipeRight()
-            {
+            public void onSwipeRight() {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
@@ -88,6 +90,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("username", user);
                 startActivity(intent);
             }
+
             public void onSwipeRight() {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("username", user);
@@ -97,13 +100,11 @@ public class FriendsListActivity extends ActionBarActivity {
         });
 
 
+        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
 
-            public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3)
-            {
-
-                TextView tv = (TextView)v.findViewById(R.id.username);
+                TextView tv = (TextView) v.findViewById(R.id.username);
                 userBeingClicked = tv.getText().toString();
 
 
@@ -155,6 +156,10 @@ public class FriendsListActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+       public void deleteButtonClicked()
+       {
+
+       }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>
     {
@@ -165,7 +170,7 @@ public class FriendsListActivity extends ActionBarActivity {
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost httpPost = new HttpPost("http://brocksportfolio.com/GetPendingFriendsList.php");
+            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetPendingFriendsList.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", user));
@@ -230,7 +235,7 @@ public class FriendsListActivity extends ActionBarActivity {
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost httpPost = new HttpPost("http://brocksportfolio.com/GetSpecificUserLocation.php");
+            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetSpecificUserLocation.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", userBeingClicked));

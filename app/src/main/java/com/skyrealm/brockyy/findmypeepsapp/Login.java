@@ -28,7 +28,7 @@ public class Login extends Activity implements OnClickListener{
     MainActivity setupLogin = new MainActivity();
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://brocksportfolio.com/login.php";
+    private static final String LOGIN_URL = "http://skyrealmstudio.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String username;

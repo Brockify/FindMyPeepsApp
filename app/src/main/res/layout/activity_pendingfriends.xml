@@ -35,6 +35,7 @@
         android:layout_height="400dp"
         android:id="@+id/friendslistView"
         android:layout_below="@+id/addFriendButton"
-        android:longClickable="true" />
+        android:longClickable="true"
+        />
     </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>

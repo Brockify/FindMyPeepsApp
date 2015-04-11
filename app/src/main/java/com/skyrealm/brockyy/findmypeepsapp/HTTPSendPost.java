@@ -64,7 +64,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     }
 
     protected String doInBackground(String... params) {
-        if (htmlUrl == "http://brocksportfolio.com/updatelocation.php") {
+        if (htmlUrl == "http://skyrealmstudio.com/updatelocation.php") {
             //send a post to the database if the user requests so------------------------------------------------
 // Creating HTTP client
             HttpClient httpClient = new DefaultHttpClient();
@@ -101,7 +101,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 // writing exception to log
                 e.printStackTrace();
             }
-        } else if (htmlUrl == "http://www.brocksportfolio.com/AcceptOrDenyFriendRequest.php") {
+        } else if (htmlUrl == "http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php") {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();

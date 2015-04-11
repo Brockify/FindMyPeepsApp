@@ -27,7 +27,7 @@ public class Register extends Activity implements OnClickListener{
 
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://brocksportfolio.com/register.php";
+    private static final String LOGIN_URL = "http://skyrealmstudio.com/register.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     @Override

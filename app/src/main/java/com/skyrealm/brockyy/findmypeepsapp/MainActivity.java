@@ -160,7 +160,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void postLocationData(String user,String address, double longitude, double latitude, String comments) {
         //website to post too
-        String htmlUrl = "http://brocksportfolio.com/updatelocation.php";
+        String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
 
         //send the post and execute it
         HTTPSendPost postSender = new HTTPSendPost();
