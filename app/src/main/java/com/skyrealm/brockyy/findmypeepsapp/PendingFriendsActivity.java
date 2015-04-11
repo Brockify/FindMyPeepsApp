@@ -175,7 +175,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost httpPost = new HttpPost("http://www.brocksportfolio.com/GetPendingRequests.php");
+            HttpPost httpPost = new HttpPost("http://www.skyrealmstudio.com/GetPendingRequests.php");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", user));
