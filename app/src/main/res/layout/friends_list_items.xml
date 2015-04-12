@@ -32,12 +32,16 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
         android:id="@+id/deleteButton"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/address"
         android:layout_toEndOf="@+id/address"
-        android:onClick="deleteButtonClicked" />
+        android:onClick="deleteButtonClicked"
+        android:focusable="false"
+        android:textSize="20dp"
+        android:focusableInTouchMode="false"
+        android:background="#66FF0000"
+        android:text="X" />
 
 
 </RelativeLayout>
