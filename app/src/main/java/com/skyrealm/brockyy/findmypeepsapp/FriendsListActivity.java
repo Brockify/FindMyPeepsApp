@@ -288,6 +288,10 @@ public class FriendsListActivity extends ActionBarActivity {
 
         protected void onPostExecute(Void result) {
 
+            if (latitude.isEmpty() || longitude.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "User has not updated their location.", Toast.LENGTH_LONG).show();
+
+            } else {
                 userLatitude = Double.parseDouble(latitude);
                 userLongitude = Double.parseDouble(longitude);
                 List<Address> addresses = null;
@@ -309,6 +313,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 Uri uri = Uri.parse(uriString);
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
                 startActivity(intent);
+            }
         }
     }
 }
