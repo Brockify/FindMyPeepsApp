@@ -47,5 +47,35 @@
         android:layout_toLeftOf="@+id/Change"
         android:layout_toStartOf="@+id/Change" />
 
+    <Button
+
+        android:id="@+id/Delete"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:text="Delete Account"
+        android:background="#3366CC"
+        android:textColor="#B0E0E6"
+        android:bottomLeftRadius="8dp"
+        android:bottomRightRadius="8dp"
+        android:topLeftRadius="8dp"
+        android:topRightRadius="8dp"
+        android:layout_marginTop="64dp"
+        android:layout_below="@+id/Newuser"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:id="@+id/Verify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:focusable="true"
+        android:hint="Confirm Username"
+        android:imeOptions="actionNext"
+        android:layout_alignTop="@+id/Delete"
+        android:layout_toLeftOf="@+id/Delete"
+        android:layout_toStartOf="@+id/Delete" />
+
+
 
 </RelativeLayout>

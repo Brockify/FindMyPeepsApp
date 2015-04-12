@@ -22,9 +22,9 @@ import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Profile extends Activity implements OnClickListener{
     String user;
-    private EditText userchange;
+    private EditText userchange, userverify;
     TextView usernameTextView;
-    private Button bChange;
+    private Button bChange, bDelete;
 
     // Progress Dialog
     private ProgressDialog pDialog;
@@ -32,8 +32,10 @@ public class Profile extends Activity implements OnClickListener{
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/ChangeUser.php";
+    private static final String LOGIN_URL2 = "http://skyrealmstudio.com/Delete.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,11 @@ public class Profile extends Activity implements OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         userchange = (EditText)findViewById(R.id.Newuser);
+        userverify = (EditText)findViewById(R.id.Verify);
         bChange = (Button)findViewById(R.id.Change);
         bChange.setOnClickListener(this);
+        bDelete = (Button)findViewById(R.id.Delete);
+        bDelete.setOnClickListener(this);
         user = getIntent().getExtras().getString("username");
         final View mainView = findViewById(R.id.Profileview);
         usernameTextView = (TextView)findViewById(R.id.usernameTextView);
@@ -70,8 +75,10 @@ public class Profile extends Activity implements OnClickListener{
         switch (v.getId()) {
             case R.id.Change:
                 new AttemptChange().execute();
+            break;
+            case R.id.Delete:
+                new AttemptDelete().execute();
 
-                // here we have used, switch case, because on login activity you may //also want to show registration button, so if the user is new ! we can go the //registration activity , other than this we could also do this without switch //case.
             default:
                 break;
         }
@@ -105,7 +112,7 @@ public class Profile extends Activity implements OnClickListener{
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("Newuser", newuser));
                 params.add(new BasicNameValuePair("username", user));
-                user = newuser;
+
                 Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
@@ -117,7 +124,8 @@ public class Profile extends Activity implements OnClickListener{
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    Log.d("You are Registered!", json.toString());
+                    user = newuser;
+                    Log.d("Username Changed!", json.toString());
                     return json.getString(TAG_MESSAGE);
                 }else{
 
@@ -127,6 +135,8 @@ public class Profile extends Activity implements OnClickListener{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
 
             return null;
         }
@@ -139,6 +149,79 @@ public class Profile extends Activity implements OnClickListener{
             if (message != null){
 
                 usernameTextView.setText(user);
+                Toast.makeText(Profile.this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    class AttemptDelete extends AsyncTask<String, String, String> {
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        boolean failure = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(Profile.this);
+            pDialog.setMessage("Attempting to delete account...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            // TODO Auto-generated method stub
+            // here Check for success tag
+
+            int success;
+            String vuser = userverify.getText().toString();
+            try {
+
+                List<NameValuePair> delete = new ArrayList<NameValuePair>();
+                delete.add(new BasicNameValuePair("Verify", vuser));
+                delete.add(new BasicNameValuePair("username", user));
+
+                Log.d("request!", "starting");
+
+                JSONObject json = jsonParser.makeHttpRequest(
+                        LOGIN_URL2, "POST", delete);
+
+                // checking  log for json response
+                Log.d("Registry attempt", json.toString());
+
+                // success tag for json
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    Intent ii = new Intent(Profile.this, Login.class);
+                    finish();
+                    // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+                    startActivity(ii);
+                    Log.d("Account Deleted", json.toString());
+                    return json.getString(TAG_MESSAGE);
+                }else{
+
+                    return json.getString(TAG_MESSAGE);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            return null;
+        }
+        /**
+         * Once the background process is done we need to  Dismiss the progress dialog asap
+         * **/
+        protected void onPostExecute(String message) {
+
+            pDialog.dismiss();
+            if (message != null){
+
+
                 Toast.makeText(Profile.this, message, Toast.LENGTH_LONG).show();
             }
         }
