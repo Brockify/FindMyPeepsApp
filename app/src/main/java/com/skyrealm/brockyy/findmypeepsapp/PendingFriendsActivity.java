@@ -1,6 +1,9 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -49,6 +52,8 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
      private String responseBody;
      private SwipeRefreshLayout swipeLayout;
      private String user;
+    public static final int LIGHT_BLUE = Color.rgb(135,206,250);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

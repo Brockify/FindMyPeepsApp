@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
-        final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
         final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         user = getIntent().getExtras().getString("username");
 
@@ -163,17 +162,11 @@ public class MainActivity extends ActionBarActivity {
 
         public void onPostExecute(Void result)
         {
-            final TextView latitudeText = (TextView) findViewById(R.id.latTextView);
-            final TextView longitudeText = (TextView) findViewById(R.id.longTextView);
             TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
             EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
 
             if (gps.canGetLocation()) {
-
-                latitudeText.setText(Double.toString(latitude));
-                longitudeText.setText(Double.toString(longitude));
-
                 Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
             } else {
