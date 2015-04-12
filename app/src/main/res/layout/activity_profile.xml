@@ -34,8 +34,9 @@
         android:layout_below="@+id/usernameTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
     <EditText
-        android:id="@+id/user"
+        android:id="@+id/Newuser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -46,32 +47,5 @@
         android:layout_toLeftOf="@+id/Change"
         android:layout_toStartOf="@+id/Change" />
 
-    <Button
 
-        android:id="@+id/Changepass"
-        android:layout_width="100dp"
-        android:layout_height="25dp"
-        android:text="Reset"
-        android:background="#3366CC"
-        android:textColor="#B0E0E6"
-        android:bottomLeftRadius="8dp"
-        android:bottomRightRadius="8dp"
-        android:topLeftRadius="8dp"
-        android:topRightRadius="8dp"
-        android:layout_marginTop="55dp"
-        android:layout_below="@+id/user"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-    <EditText
-
-        android:id="@+id/pass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:focusable="true"
-        android:hint="Change Password"
-        android:imeOptions="actionNext"
-        android:layout_alignTop="@+id/Changepass"
-        android:layout_alignLeft="@+id/user"
-        android:layout_alignStart="@+id/user" />
 </RelativeLayout>
