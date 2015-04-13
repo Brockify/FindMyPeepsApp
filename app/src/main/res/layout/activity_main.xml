@@ -10,7 +10,18 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/mainActivity"
-        />
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout" />
+
+    <fragment
+        android:id="@+id/googleMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.MapFragment"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout"
+        android:layout_above="@+id/commentEditText"
+        android:layout_below="@+id/addressTextView" />
 
     <Button
         android:layout_width="wrap_content"
@@ -42,17 +53,6 @@
         android:layout_centerHorizontal="true"
         android:checked="true" />
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show On Map"
-        android:id="@+id/myLocationOnMapSwitch"
-        android:layout_above="@+id/shareSwitch"
-        android:layout_alignRight="@+id/shareSwitch"
-        android:layout_alignEnd="@+id/shareSwitch"
-        android:layout_alignLeft="@+id/shareSwitch"
-        android:layout_alignStart="@+id/shareSwitch"
-        android:checked="true" />
     <LinearLayout android:layout_height="match_parent"
         android:layout_width="wrap_content"
         android:id="@+id/linearLayout"
@@ -77,13 +77,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commentEditText"
-        android:layout_above="@+id/myLocationOnMapSwitch"
         android:layout_toRightOf="@+id/linearLayout"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:hint="Comment"
         android:singleLine="true"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:layout_above="@+id/shareSwitch" />
+
 
 
 </RelativeLayout>

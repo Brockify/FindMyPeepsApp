@@ -16,32 +16,40 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
     String user;
-    String username;
     double latitude;
     double longitude;
     String address;
     String comments;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Locations Screen");
-        
-
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+        mapFragment.getMapAsync(this);
         //DECLARATIONS-----------------------------------------------------------------------
-        final TextView usernameTextView = (TextView)findViewById(R.id.usernameTextView);
+        final TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
-        final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
         user = getIntent().getExtras().getString("username");
 
         //END DECLARATIONS-------------------------------------------------------------------
@@ -49,7 +57,8 @@ public class MainActivity extends ActionBarActivity {
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shareSwitch.isChecked() || myLocationOnMapSwitch.isChecked()) {
+
+                if (shareSwitch.isChecked()) {
                     new getLocation().execute();
                 }
             }
@@ -61,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
-               intent.putExtra("username", user);
+                intent.putExtra("username", user);
                 // EXAMPLE:
                 // intent.putExtra("latitude", latitudeText.getText().toString());
                 startActivity(intent);
@@ -91,14 +100,14 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        if(id == R.id.action_logout) {
+        if (id == R.id.action_logout) {
             Intent ii = new Intent(MainActivity.this, Login.class);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
             return true;
         }
-        if(id == R.id.action_profile) {
+        if (id == R.id.action_profile) {
             Intent ii = new Intent(MainActivity.this, Profile.class);
             ii.putExtra("username", user);
             finish();
@@ -109,7 +118,23 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //--------------------------------------------getLocation()Function-----------------------------------
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        GPSTracker gps = new GPSTracker(MainActivity.this);
+
+      //If the update location button is clicked------------------------------------------
+        latitude = gps.getLatitude();
+        longitude = gps.getLongitude();
+
+        LatLng userCurrentLocation = new LatLng(latitude, longitude);
+        googleMap.setMyLocationEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+
+        googleMap.addMarker(new MarkerOptions()
+                .title("Your location")
+                .position(userCurrentLocation));
+    }
+
     public class getLocation extends AsyncTask<Void, Void, Void>{
 
 
@@ -117,7 +142,6 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            final Switch myLocationOnMapSwitch = (Switch) findViewById(R.id.myLocationOnMapSwitch);
             final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
@@ -149,20 +173,17 @@ public class MainActivity extends ActionBarActivity {
             }
 
 
+
             //finished getting the street address-----------------------------------------
-            //show it on a map----------------------------------------------------------------------------------
-            if (myLocationOnMapSwitch.isChecked()) {
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
-                Intent sendLocationToMap = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(uri));
-                startActivity(sendLocationToMap);
-            }
             return null;
         }
         // end showing it on the map ------------------------------------------------------------------------
 
         public void onPostExecute(Void result)
         {
+            MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+            mapFragment.getMapAsync(MainActivity.this);
+
             TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
             EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
