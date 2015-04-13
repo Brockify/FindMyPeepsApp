@@ -34,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Locations Screen");
+        
 
         //DECLARATIONS-----------------------------------------------------------------------
         final TextView usernameTextView = (TextView)findViewById(R.id.usernameTextView);
