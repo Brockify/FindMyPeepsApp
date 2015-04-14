@@ -1,5 +1,7 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -36,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     double longitude;
     String address;
     String comments;
+    Marker userMarker;
 
 
     @Override
@@ -121,18 +124,39 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         GPSTracker gps = new GPSTracker(MainActivity.this);
-
       //If the update location button is clicked------------------------------------------
         latitude = gps.getLatitude();
         longitude = gps.getLongitude();
 
-        LatLng userCurrentLocation = new LatLng(latitude, longitude);
-        googleMap.setMyLocationEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+        if(latitude == 0|| longitude == 0)
+        {
+            //show a dialog box
+            showLocationAlert();
+        } else {
+            //get the location and put it on the map
+            Geocoder geocoder;
+            List<Address> addresses = null;
+            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
 
-        googleMap.addMarker(new MarkerOptions()
-                .title("Your location")
-                .position(userCurrentLocation));
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            address = addresses.get(0).getAddressLine(0);
+
+
+            LatLng userCurrentLocation = new LatLng(latitude, longitude);
+            googleMap.setMyLocationEnabled(true);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+
+
+            userMarker = googleMap.addMarker(new MarkerOptions()
+                    .title("Your location is: " + address)
+                    .position(userCurrentLocation));
+
+        }
     }
 
     public class getLocation extends AsyncTask<Void, Void, Void>{
@@ -144,6 +168,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected Void doInBackground(Void... params) {
             final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+            MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
             //If the update location button is clicked------------------------------------------
             latitude = gps.getLatitude();
@@ -181,25 +206,41 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         public void onPostExecute(Void result)
         {
-            MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-            mapFragment.getMapAsync(MainActivity.this);
-
-            TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-            EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-
-
-            if (gps.canGetLocation()) {
-                Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            if(latitude == 0 || longitude == 0)
+            {
 
             } else {
-                gps.showSettingsAlert();
+                MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+                TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+                EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
+
+                if (gps.canGetLocation()) {
+                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+                } else {
+                    gps.showSettingsAlert();
+                }
+                addressTextView.setText(address);
+                commentEditText.setText(null);
             }
-            addressTextView.setText(address);
-            commentEditText.setText(null);
 
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
 
+    }
+
+    public void showLocationAlert()
+    {
+        //show a dialog box
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Location services");
+        alertDialog.setMessage("Go to Settings>Location to turn on location.");
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        alertDialog.show();
     }
 }
 

@@ -202,8 +202,10 @@ public class FriendsListActivity extends ActionBarActivity {
 
                             JSONObject c = jsonArr.getJSONObject(i);
                             String Friend = c.getString(TAG_FRIEND);
+                            String Comments = c.getString(TAG_COMMENTS);
                             HashMap<String, String> user = new HashMap<String, String>();
                             user.put(TAG_FRIEND, Friend);
+                            user.put(TAG_COMMENTS, Comments);
                             FriendsList.add(user);
                         }
                     }
