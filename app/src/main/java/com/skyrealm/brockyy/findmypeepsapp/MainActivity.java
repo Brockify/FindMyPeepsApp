@@ -33,12 +33,15 @@ import java.util.*;
 
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
+    //Global variables declaration
     String user;
     double latitude;
     double longitude;
     String address;
     String comments;
     Marker userMarker;
+    int markerCounter = 0;
+
 
 
     @Override
@@ -124,7 +127,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         GPSTracker gps = new GPSTracker(MainActivity.this);
-      //If the update location button is clicked------------------------------------------
+        //If the update location button is clicked------------------------------------------
         latitude = gps.getLatitude();
         longitude = gps.getLongitude();
 
@@ -133,28 +136,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //show a dialog box
             showLocationAlert();
         } else {
-            //get the location and put it on the map
-            Geocoder geocoder;
-            List<Address> addresses = null;
-            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-
-            try {
-                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            address = addresses.get(0).getAddressLine(0);
 
 
             LatLng userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
 
-
-            userMarker = googleMap.addMarker(new MarkerOptions()
-                    .title("Your location is: " + address)
-                    .position(userCurrentLocation));
 
         }
     }
@@ -168,6 +155,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected Void doInBackground(Void... params) {
             final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
             MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
             //If the update location button is clicked------------------------------------------
@@ -206,6 +194,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         public void onPostExecute(Void result)
         {
+            LatLng userCurrentLocation = new LatLng(latitude, longitude);
+
             if(latitude == 0 || longitude == 0)
             {
 
@@ -216,13 +206,31 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
 
                 if (gps.canGetLocation()) {
+                    //if it is the first time clicking get location
+                if(markerCounter==0) {
                     Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                    addressTextView.setText(address);
+                    commentEditText.setText(null);
+                    userMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .title("Your location is:" + address + "\nComment:" + comments));
+                    markerCounter++;
 
-                } else {
+                    //else it is not the first time
+                    } else {
+                    userMarker.remove();
+                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                    addressTextView.setText(address);
+                    commentEditText.setText(null);
+                    userMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .title("Your location is:" + address + "\nComment:" + comments));
+
+                }
+                        } else {
                     gps.showSettingsAlert();
                 }
-                addressTextView.setText(address);
-                commentEditText.setText(null);
+
             }
 
         }
@@ -243,5 +251,3 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         alertDialog.show();
     }
 }
-
-
