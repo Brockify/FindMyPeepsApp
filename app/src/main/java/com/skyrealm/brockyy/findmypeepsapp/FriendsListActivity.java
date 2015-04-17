@@ -311,6 +311,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("otherLong", userLongitude);
                 intent.putExtra("isTrue", true);
                 intent.putExtra("username", user);
+                intent.putExtra("otherComment", userComment);
                 intent.putExtra("userUsername", userUsername);
                 startActivity(intent);
             }

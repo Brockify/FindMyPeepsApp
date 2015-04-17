@@ -37,6 +37,7 @@ public class Login extends Activity implements OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle("Login");
         user = (EditText)findViewById(R.id.username);
         pass = (EditText)findViewById(R.id.password);
         bLogin = (Button)findViewById(R.id.login);

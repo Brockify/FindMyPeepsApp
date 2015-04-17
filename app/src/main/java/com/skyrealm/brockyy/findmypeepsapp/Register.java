@@ -33,6 +33,7 @@ public class Register extends Activity implements OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Register");
         setContentView(R.layout.activity_register);
         userreg = (EditText)findViewById(R.id.user);
         passreg = (EditText)findViewById(R.id.pass);

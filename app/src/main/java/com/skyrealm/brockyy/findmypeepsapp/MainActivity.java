@@ -37,11 +37,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     String user;
     double latitude;
     double longitude;
+    LatLng otherUserLocation;
     String address;
     String comments;
     Marker userMarker;
     Marker otherUserMarker;
     int markerCounter = 0;
+    boolean isTrue;
 
 
 
@@ -50,7 +52,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Locations Screen");
-        boolean isTrue = getIntent().getExtras().getBoolean("isTrue");
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         mapFragment.getMapAsync(this);
         //DECLARATIONS-----------------------------------------------------------------------
@@ -60,50 +61,55 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
+        isTrue = getIntent().getExtras().getBoolean("isTrue");
         double otherUserLat;
         double otherUserLong;
         String otherUserUsername;
+        String otherUserComment;
 
-        if(isTrue == true)
-        {
+        if(isTrue == true) {
             otherUserLat = getIntent().getExtras().getDouble("otherLat");
             otherUserLong = getIntent().getExtras().getDouble("otherLong");
             otherUserUsername = getIntent().getExtras().getString("userUsername");
+            otherUserComment = getIntent().getExtras().getString("otherComment");
+
             otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
                     .position(new LatLng(otherUserLat, otherUserLong))
-                    .title(otherUserUsername));
+                    .title(otherUserUsername +"Comments:" + otherUserComment));
 
+            otherUserLocation = new LatLng(otherUserLat, otherUserLong);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(otherUserLocation).zoom(12.0f).build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+            googleMap.getMap().moveCamera(cameraUpdate);
         }
         //END DECLARATIONS-------------------------------------------------------------------
-        //If the update location button is clicked------------------------------------------
-        btnShowLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            //If the update location button is clicked------------------------------------------
+            btnShowLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                if (shareSwitch.isChecked()) {
-                    new getLocation().execute();
+                    if (shareSwitch.isChecked()) {
+                        new getLocation().execute();
+                    }
                 }
-            }
-        });
+            });
 
-        // ends the button click------------------------------------------------------
-        //declare an OnSwipeListener and then call on the onSwipeLeft function--------
-        OnSwipeTouchListener swipeListener;
-        mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            public void onSwipeLeft() {
-                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
-                intent.putExtra("username", user);
-                // EXAMPLE:
-                // intent.putExtra("latitude", latitudeText.getText().toString());
-                startActivity(intent);
-            }
-        });
+            // ends the button click------------------------------------------------------
+            //declare an OnSwipeListener and then call on the onSwipeLeft function--------
+            OnSwipeTouchListener swipeListener;
+            mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+                public void onSwipeLeft() {
+                    Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                    intent.putExtra("username", user);
+                    // EXAMPLE:
+                    // intent.putExtra("latitude", latitudeText.getText().toString());
+                    startActivity(intent);
+                }
+            });
 
 
-        usernameTextView.setText(user);
-
-    }
-
+            usernameTextView.setText(user);
+        }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,8 +163,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             LatLng userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+            if(!isTrue)
+            {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
 
+            }
 
         }
     }
@@ -212,6 +221,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         public void onPostExecute(Void result)
         {
             LatLng userCurrentLocation = new LatLng(latitude, longitude);
+
 
             if(latitude == 0 || longitude == 0)
             {
