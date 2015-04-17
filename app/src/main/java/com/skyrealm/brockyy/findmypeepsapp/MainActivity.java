@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     String address;
     String comments;
     Marker userMarker;
+    Marker otherUserMarker;
     int markerCounter = 0;
 
 
@@ -49,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Locations Screen");
+        boolean isTrue = getIntent().getExtras().getBoolean("isTrue");
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         mapFragment.getMapAsync(this);
         //DECLARATIONS-----------------------------------------------------------------------
@@ -56,8 +58,22 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+        MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
+        double otherUserLat;
+        double otherUserLong;
+        String otherUserUsername;
 
+        if(isTrue == true)
+        {
+            otherUserLat = getIntent().getExtras().getDouble("otherLat");
+            otherUserLong = getIntent().getExtras().getDouble("otherLong");
+            otherUserUsername = getIntent().getExtras().getString("userUsername");
+            otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                    .position(new LatLng(otherUserLat, otherUserLong))
+                    .title(otherUserUsername));
+
+        }
         //END DECLARATIONS-------------------------------------------------------------------
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +98,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
+
 
         usernameTextView.setText(user);
 

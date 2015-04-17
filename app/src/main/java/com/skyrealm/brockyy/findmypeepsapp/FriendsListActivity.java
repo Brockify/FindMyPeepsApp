@@ -51,6 +51,7 @@ public class FriendsListActivity extends ActionBarActivity {
     private Double userLatitude;
     private Double userLongitude;
     private String userComment;
+    private String userUsername;
     private static final String TAG_FRIEND = "friend";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
@@ -108,7 +109,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 TextView tv = (TextView) v.findViewById(R.id.username);
                 userBeingClicked = tv.getText().toString();
 
-
+                userUsername = userBeingClicked;
                 new getSpecificUserLocation().execute();
             }
         });
@@ -305,13 +306,12 @@ public class FriendsListActivity extends ActionBarActivity {
                 String address = addresses.get(0).getAddressLine(0);
 
                 Toast.makeText(getApplicationContext(), "Address: " + address, Toast.LENGTH_LONG).show();
-                String label = (userComment);
-                String uriBegin = "geo:" + userLatitude + "," + userLongitude;
-                String query = userLatitude + "," + userLongitude + "(" + label + ")";
-                String encodedQuery = Uri.encode(query);
-                String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
-                Uri uri = Uri.parse(uriString);
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
+                intent.putExtra("otherLat", userLatitude);
+                intent.putExtra("otherLong", userLongitude);
+                intent.putExtra("isTrue", true);
+                intent.putExtra("username", user);
+                intent.putExtra("userUsername", userUsername);
                 startActivity(intent);
             }
         }
