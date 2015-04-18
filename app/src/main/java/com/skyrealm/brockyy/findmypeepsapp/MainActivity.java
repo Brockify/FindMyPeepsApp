@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
                     .position(new LatLng(otherUserLat, otherUserLong))
-                    .title(otherUserUsername +"Comments:" + otherUserComment));
+                    .title(otherUserUsername +" Comments: " + otherUserComment));
 
             otherUserLocation = new LatLng(otherUserLat, otherUserLong);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(otherUserLocation).zoom(12.0f).build();
