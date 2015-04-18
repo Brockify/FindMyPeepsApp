@@ -52,6 +52,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
      private String responseBody;
      private SwipeRefreshLayout swipeLayout;
      private String user;
+    public static final int LIGHT_BLUE = Color.rgb(135,206,250);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
