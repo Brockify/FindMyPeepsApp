@@ -1,15 +1,18 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,16 +49,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     int markerCounter = 0;
     MapFragment googleMap;
     boolean isTrue;
-
-
+    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setTitle("Locations Screen");
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-        mapFragment.getMapAsync(this);
         //DECLARATIONS-----------------------------------------------------------------------
         final TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
@@ -64,13 +65,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
-
         //END DECLARATIONS-------------------------------------------------------------------
+
+
+        //set the map when created
+        googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+        googleMap.getMapAsync(this);
+        //
             //If the update location button is clicked------------------------------------------
             btnShowLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                   //update users location if they want that
                     if (shareSwitch.isChecked()) {
                         new getLocation().execute();
                     }
@@ -90,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             });
 
-
+            //set the users username
             usernameTextView.setText(user);
         }
 
@@ -130,26 +136,31 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    //called when the activity is created
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         GPSTracker gps = new GPSTracker(MainActivity.this);
         //If the update location button is clicked------------------------------------------
         latitude = gps.getLatitude();
         longitude = gps.getLongitude();
 
+        //if latitude or longitude is 0, show an alert
         if(latitude == 0|| longitude == 0)
         {
             //show a dialog box
             showLocationAlert();
         } else {
 
-
+            //get the current users location
             userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
+            //if the a user from friend list was not clicked, just set the zoom to the user
             if(!isTrue)
             {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
 
+                //else show the users location that was clicked
             } else {
                 double otherUserLat;
                 double otherUserLong;
@@ -161,10 +172,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     otherUserUsername = getIntent().getExtras().getString("userUsername");
                     otherUserComment = getIntent().getExtras().getString("otherComment");
 
+                //add the other users location to the map
                     otherUserMarker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(otherUserLat, otherUserLong))
-                            .title(otherUserUsername +"Comments:" + otherUserComment));
+                            .title(otherUserUsername + "Comments:" + otherUserComment));
 
+                //zoom to show both the users location and the user clicked location
                     otherUserLocation = new LatLng(otherUserLat, otherUserLong);
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                     builder.include(userCurrentLocation);
@@ -177,6 +190,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         }
 
+    //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
 
 
@@ -223,9 +237,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         // end showing it on the map ------------------------------------------------------------------------
 
+        //this happens whenever an async task is done
         public void onPostExecute(Void result)
         {
-            LatLng userCurrentLocation = new LatLng(latitude, longitude);
+            userCurrentLocation = new LatLng(latitude, longitude);
 
 
             if(latitude == 0 || longitude == 0)
