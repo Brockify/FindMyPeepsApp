@@ -170,7 +170,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     builder.include(userCurrentLocation);
                     builder.include(otherUserLocation);
                     LatLngBounds bounds = builder.build();
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
                 }
             }
 
