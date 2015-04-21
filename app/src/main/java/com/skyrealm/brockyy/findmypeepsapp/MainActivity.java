@@ -42,7 +42,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     String comments;
     Marker userMarker;
     Marker otherUserMarker;
+    LatLng userCurrentLocation;
     int markerCounter = 0;
+    MapFragment googleMap;
     boolean isTrue;
 
 
@@ -59,29 +61,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
-        MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+        googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
-        double otherUserLat;
-        double otherUserLong;
-        String otherUserUsername;
-        String otherUserComment;
 
-        if(isTrue == true) {
-            otherUserLat = getIntent().getExtras().getDouble("otherLat");
-            otherUserLong = getIntent().getExtras().getDouble("otherLong");
-            otherUserUsername = getIntent().getExtras().getString("userUsername");
-            otherUserComment = getIntent().getExtras().getString("otherComment");
-
-            otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
-                    .position(new LatLng(otherUserLat, otherUserLong))
-                    .title(otherUserUsername +"Comments:" + otherUserComment));
-
-            otherUserLocation = new LatLng(otherUserLat, otherUserLong);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(otherUserLocation).zoom(12.0f).build();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
-            googleMap.getMap().moveCamera(cameraUpdate);
-        }
         //END DECLARATIONS-------------------------------------------------------------------
             //If the update location button is clicked------------------------------------------
             btnShowLocation.setOnClickListener(new View.OnClickListener() {
@@ -161,16 +144,38 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         } else {
 
 
-            LatLng userCurrentLocation = new LatLng(latitude, longitude);
+            userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
             if(!isTrue)
             {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
 
+            } else {
+                double otherUserLat;
+                double otherUserLong;
+                String otherUserUsername;
+                String otherUserComment;
+
+                    otherUserLat = getIntent().getExtras().getDouble("otherLat");
+                    otherUserLong = getIntent().getExtras().getDouble("otherLong");
+                    otherUserUsername = getIntent().getExtras().getString("userUsername");
+                    otherUserComment = getIntent().getExtras().getString("otherComment");
+
+                    otherUserMarker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(otherUserLat, otherUserLong))
+                            .title(otherUserUsername +"Comments:" + otherUserComment));
+
+                    otherUserLocation = new LatLng(otherUserLat, otherUserLong);
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    builder.include(userCurrentLocation);
+                    builder.include(otherUserLocation);
+                    LatLngBounds bounds = builder.build();
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+                }
             }
 
+
         }
-    }
 
     public class getLocation extends AsyncTask<Void, Void, Void>{
 
