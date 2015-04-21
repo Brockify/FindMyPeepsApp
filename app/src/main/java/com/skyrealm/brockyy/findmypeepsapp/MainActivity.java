@@ -146,11 +146,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         longitude = gps.getLongitude();
 
         //if latitude or longitude is 0, show an alert
-        if(latitude == 0|| longitude == 0)
+        if(latitude != 0|| longitude != 0)
         {
-            //show a dialog box
-            showLocationAlert();
-        } else {
 
             //get the current users location
             userCurrentLocation = new LatLng(latitude, longitude);
