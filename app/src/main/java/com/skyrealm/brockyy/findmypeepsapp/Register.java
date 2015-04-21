@@ -73,14 +73,20 @@ public class Register extends Activity implements OnClickListener{
         protected String doInBackground(String... args) {
             // TODO Auto-generated method stub
             // here Check for success tag
+
+
             int success;
+
             String user = userreg.getText().toString();
             String pass = passreg.getText().toString();
+
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("user", user));
                 params.add(new BasicNameValuePair("pass", pass));
+
+
 
                 Log.d("request!", "starting");
 
