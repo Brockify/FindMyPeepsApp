@@ -99,6 +99,56 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //set the users username
             usernameTextView.setText(user);
         }
+    //called when the activity is created
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        GPSTracker gps = new GPSTracker(MainActivity.this);
+        //If the update location button is clicked------------------------------------------
+        latitude = gps.getLatitude();
+        longitude = gps.getLongitude();
+
+        //if latitude or longitude is 0, show an alert
+        if(latitude != 0|| longitude != 0)
+        {
+
+            //get the current users location
+            userCurrentLocation = new LatLng(latitude, longitude);
+            googleMap.setMyLocationEnabled(true);
+            //if the a user from friend list was not clicked, just set the zoom to the user
+            if(!isTrue)
+            {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+
+                //else show the users location that was clicked
+            } else {
+                double otherUserLat;
+                double otherUserLong;
+                String otherUserUsername;
+                String otherUserComment;
+
+                //get the extra
+                otherUserLat = getIntent().getExtras().getDouble("otherLat");
+                otherUserLong = getIntent().getExtras().getDouble("otherLong");
+                otherUserUsername = getIntent().getExtras().getString("userUsername");
+                otherUserComment = getIntent().getExtras().getString("otherComment");
+
+                //add the other users location to the map
+                otherUserMarker = googleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(otherUserLat, otherUserLong))
+                        .title(otherUserUsername + "Comments:" + otherUserComment));
+
+                //zoom to show both the users location and the user clicked location
+                otherUserLocation = new LatLng(otherUserLat, otherUserLong);
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(userCurrentLocation);
+                builder.include(otherUserLocation);
+                LatLngBounds bounds = builder.build();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 22));
+                //
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -136,56 +186,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    //called when the activity is created
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        GPSTracker gps = new GPSTracker(MainActivity.this);
-        //If the update location button is clicked------------------------------------------
-        latitude = gps.getLatitude();
-        longitude = gps.getLongitude();
-
-        //if latitude or longitude is 0, show an alert
-        if(latitude != 0|| longitude != 0)
-        {
-
-            //get the current users location
-            userCurrentLocation = new LatLng(latitude, longitude);
-            googleMap.setMyLocationEnabled(true);
-            //if the a user from friend list was not clicked, just set the zoom to the user
-            if(!isTrue)
-            {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
-
-                //else show the users location that was clicked
-            } else {
-                double otherUserLat;
-                double otherUserLong;
-                String otherUserUsername;
-                String otherUserComment;
-
-                    otherUserLat = getIntent().getExtras().getDouble("otherLat");
-                    otherUserLong = getIntent().getExtras().getDouble("otherLong");
-                    otherUserUsername = getIntent().getExtras().getString("userUsername");
-                    otherUserComment = getIntent().getExtras().getString("otherComment");
-
-                //add the other users location to the map
-                    otherUserMarker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(otherUserLat, otherUserLong))
-                            .title(otherUserUsername + "Comments:" + otherUserComment));
-
-                //zoom to show both the users location and the user clicked location
-                    otherUserLocation = new LatLng(otherUserLat, otherUserLong);
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    builder.include(userCurrentLocation);
-                    builder.include(otherUserLocation);
-                    LatLngBounds bounds = builder.build();
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-                }
-            }
-
-
-        }
 
     //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
