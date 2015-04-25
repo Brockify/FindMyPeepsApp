@@ -1,5 +1,7 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +55,7 @@ public class FriendsListActivity extends ActionBarActivity {
     private Double userLongitude;
     private String userComment;
     private String userUsername;
+    final String[] userDelete = {null};
     private static final String TAG_FRIEND = "friend";
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
@@ -107,10 +111,11 @@ public class FriendsListActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
 
                 TextView tv = (TextView) v.findViewById(R.id.username);
-                userBeingClicked = tv.getText().toString();
 
-                userUsername = userBeingClicked;
-                new getSpecificUserLocation().execute();
+                    userBeingClicked = tv.getText().toString();
+
+                    userUsername = userBeingClicked;
+                    new getSpecificUserLocation().execute();
             }
         });
 
@@ -158,11 +163,46 @@ public class FriendsListActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-       public void deleteButtonClicked(View view)
-       {
-    Button deleteButton = (Button)findViewById(R.id.deleteButton);
-    deleteButton.setText("Test");
-       }
+
+    public void deleteFriend(View view)
+    {
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+
+        final Button deleteButton = (Button) vwParentRow.findViewById(R.id.deleteButton);
+        final TextView userDeleteText = (TextView) vwParentRow.findViewById(R.id.username);
+
+        //sends a alert dialog making sure they want to delete the user
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        // send post
+                        String htmlUrl = "http://www.skyrealmstudio.com/DeleteFriend.php";
+                        HTTPSendPost sendPost = new HTTPSendPost();
+                        userDelete[0] = userDeleteText.getText().toString();
+                        sendPost.setUpOnDeleteFriend(user, userDelete[0], htmlUrl);
+                        sendPost.execute();
+                        Toast.makeText(getApplicationContext(), userDelete[0] + " deleted.", Toast.LENGTH_LONG).show();
+                        //set everything to be not visible
+                        deleteButton.setVisibility(View.GONE);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+        //
+
+        //show the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(FriendsListActivity.this);
+        builder.setMessage("Are you sure you would like to delete " + userDeleteText.getText().toString() + " as a friend.").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+        //
+    }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>
     {

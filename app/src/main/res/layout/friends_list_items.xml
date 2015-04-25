@@ -24,7 +24,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/deleteButton"
-        android:onClick="deleteButtonClicked"
         android:focusable="false"
         android:textSize="20dp"
         android:focusableInTouchMode="false"
@@ -32,7 +31,8 @@
         android:text="X"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/username" />
+        android:layout_alignBottom="@+id/username"
+        android:onClick="deleteFriend" />
 
 
 </RelativeLayout>

@@ -279,19 +279,5 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
-
-    }
-
-    public void showLocationAlert()
-    {
-        //show a dialog box
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Location services");
-        alertDialog.setMessage("Go to Settings>Location to turn on location.");
-        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        alertDialog.show();
     }
 }

@@ -139,7 +139,7 @@ public class GPSTracker implements LocationListener
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("Location services");
 
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
 

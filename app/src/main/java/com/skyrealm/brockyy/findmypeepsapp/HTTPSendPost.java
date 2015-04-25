@@ -42,6 +42,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private String htmlUrl;
     private String pendingUser;
     private String comments;
+    private String friend;
     private double YesOrNo;
     static String response = null;
 
@@ -61,6 +62,12 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         this.pendingUser = pendingUser;
         this.YesOrNo = yesorno;
         this.user = user;
+    }
+    public void setUpOnDeleteFriend(String user,String friend, String htmlUrl)
+    {
+        this.user = user;
+        this.friend = friend;
+        this.htmlUrl = htmlUrl;
     }
 
     protected String doInBackground(String... params) {
@@ -127,6 +134,29 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 e.printStackTrace();
             }
 
+        }else if (htmlUrl == "http://www.skyrealmstudio.com/DeleteFriend.php") {
+
+            HttpResponse response;
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost httpPost = new HttpPost(htmlUrl);
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", user));
+            nameValuePair.add(new BasicNameValuePair("Friend", this.friend));
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            try {
+                response = httpClient.execute(httpPost);
+
+                // writing response to log
+                Log.d("Http Response:", response.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return response;
     }
