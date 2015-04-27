@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
@@ -22,11 +21,6 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
@@ -41,7 +35,7 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
     //Global variables declaration
     String user;
     double latitude;
@@ -55,10 +49,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     int markerCounter = 0;
     MapFragment googleMap;
     boolean isTrue;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    FusedLocationProviderApi fusedLocationProviderApi;
-
     //
 
     @Override
@@ -77,11 +67,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         isTrue = getIntent().getExtras().getBoolean("isTrue");
         //END DECLARATIONS-------------------------------------------------------------------
 
-        buildGoogleApiClient();
-        fusedLocationProviderApi = LocationServices.FusedLocationApi;
-        mLastLocation = fusedLocationProviderApi.getLastLocation(mGoogleApiClient);
 
-        //test
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         googleMap.getMapAsync(this);
@@ -113,35 +99,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //set the users username
             usernameTextView.setText(user);
         }
-<<<<<<< HEAD
-
-    public void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    public void onConnected(Bundle connectionHint)
-    {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-
-        }
-    }
-
-
     //called when the activity is created
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         GPSTracker gps = new GPSTracker(MainActivity.this);
         //If the update location button is clicked------------------------------------------
-
-        latitude = googleMap.getMyLocation().getLatitude();
-        longitude = googleMap.get.getLongitude();
+        latitude = gps.getLatitude();
+        longitude = gps.getLongitude();
 
         //if latitude or longitude is 0, show an alert
         if(latitude != 0|| longitude != 0)
@@ -184,14 +149,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         }
     }
-=======
->>>>>>> parent of 5a65da1... v.9.9.9.9.9
-
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -229,64 +186,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-<<<<<<< HEAD
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-=======
-    //called when the activity is created
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        GPSTracker gps = new GPSTracker(MainActivity.this);
-        //If the update location button is clicked------------------------------------------
-        latitude = gps.getLatitude();
-        longitude = gps.getLongitude();
-
-        //if latitude or longitude is 0, show an alert
-        if(latitude != 0|| longitude != 0)
-        {
-
-            //get the current users location
-            userCurrentLocation = new LatLng(latitude, longitude);
-            googleMap.setMyLocationEnabled(true);
-            //if the a user from friend list was not clicked, just set the zoom to the user
-            if(!isTrue)
-            {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
-
-                //else show the users location that was clicked
-            } else {
-                double otherUserLat;
-                double otherUserLong;
-                String otherUserUsername;
-                String otherUserComment;
-
-                    otherUserLat = getIntent().getExtras().getDouble("otherLat");
-                    otherUserLong = getIntent().getExtras().getDouble("otherLong");
-                    otherUserUsername = getIntent().getExtras().getString("userUsername");
-                    otherUserComment = getIntent().getExtras().getString("otherComment");
-
-                //add the other users location to the map
-                    otherUserMarker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(otherUserLat, otherUserLong))
-                            .title(otherUserUsername + "Comments:" + otherUserComment));
-
-                //zoom to show both the users location and the user clicked location
-                    otherUserLocation = new LatLng(otherUserLat, otherUserLong);
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    builder.include(userCurrentLocation);
-                    builder.include(otherUserLocation);
-                    LatLngBounds bounds = builder.build();
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-                }
-            }
-
-
-        }
->>>>>>> parent of 5a65da1... v.9.9.9.9.9
 
     //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
@@ -302,7 +201,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
             //If the update location button is clicked------------------------------------------
-            latitude = gps.getLatitude();
+            latitude = googleMap.
             longitude = gps.getLongitude();
             comments = commentEditText.getText().toString();
 
