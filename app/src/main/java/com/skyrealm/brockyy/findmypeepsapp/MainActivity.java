@@ -201,7 +201,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
             //If the update location button is clicked------------------------------------------
-            latitude = gps.getLatitude();
+            latitude = googleMap.
             longitude = gps.getLongitude();
             comments = commentEditText.getText().toString();
 
