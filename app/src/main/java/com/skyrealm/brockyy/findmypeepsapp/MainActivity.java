@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
@@ -21,6 +22,11 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
@@ -35,7 +41,7 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     //Global variables declaration
     String user;
     double latitude;
@@ -49,6 +55,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     int markerCounter = 0;
     MapFragment googleMap;
     boolean isTrue;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    FusedLocationProviderApi fusedLocationProviderApi;
+
     //
 
     @Override
@@ -67,7 +77,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         isTrue = getIntent().getExtras().getBoolean("isTrue");
         //END DECLARATIONS-------------------------------------------------------------------
 
+        buildGoogleApiClient();
+        fusedLocationProviderApi = LocationServices.FusedLocationApi;
+        mLastLocation = fusedLocationProviderApi.getLastLocation(mGoogleApiClient);
 
+        //test
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         googleMap.getMapAsync(this);
@@ -99,14 +113,34 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //set the users username
             usernameTextView.setText(user);
         }
+
+    public void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    public void onConnected(Bundle connectionHint)
+    {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+
+        }
+    }
+
+
     //called when the activity is created
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         GPSTracker gps = new GPSTracker(MainActivity.this);
         //If the update location button is clicked------------------------------------------
-        latitude = gps.getLatitude();
-        longitude = gps.getLongitude();
+
+        latitude = googleMap.getMyLocation().getLatitude();
+        longitude = googleMap.get.getLongitude();
 
         //if latitude or longitude is 0, show an alert
         if(latitude != 0|| longitude != 0)
@@ -150,6 +184,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
     }
 
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -186,6 +226,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
 
     //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
@@ -201,7 +246,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
             //If the update location button is clicked------------------------------------------
-            latitude = googleMap.
+            latitude = gps.getLatitude();
             longitude = gps.getLongitude();
             comments = commentEditText.getText().toString();
 
