@@ -1,11 +1,16 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import com.google.android.gms.location.LocationListener;
+
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
@@ -21,6 +26,11 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
@@ -33,9 +43,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //Global variables declaration
     String user;
     double latitude;
@@ -49,6 +60,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     int markerCounter = 0;
     MapFragment googleMap;
     boolean isTrue;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    LocationRequest mLocationRequest;
+    LocationManager locationManager;
+
     //
 
     @Override
@@ -62,43 +78,70 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
         final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
+        final Switch requestLocationSwitch = (Switch) findViewById(R.id.locationUpdateSwitch);
+        final EditText intervalEditText = (EditText) findViewById(R.id.locationInterval);
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
         //END DECLARATIONS-------------------------------------------------------------------
 
+        buildGoogleApiClient();
+        mGoogleApiClient.connect();
 
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         googleMap.getMapAsync(this);
         //
-            //If the update location button is clicked------------------------------------------
-            btnShowLocation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                   //update users location if they want that
-                    if (shareSwitch.isChecked()) {
-                        new getLocation().execute();
+        //If the update location button is clicked------------------------------------------
+        btnShowLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //update users location if they want that
+                if (shareSwitch.isChecked()) {
+                    new getLocation().execute();
+                }
+            }
+        });
+
+        // ends the button click------------------------------------------------------
+        //declare an OnSwipeListener and then call on the onSwipeLeft function--------
+        mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeLeft() {
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
+                // EXAMPLE:
+                // intent.putExtra("latitude", latitudeText.getText().toString());
+                startActivity(intent);
+            }
+        });
+
+        requestLocationSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(requestLocationSwitch.isChecked())
+                {
+                    if(intervalEditText.getText().toString().matches("")){
+                        Toast.makeText(getApplicationContext(), "Enter in a valid number.", Toast.LENGTH_LONG).show();
+                    } else {
+                        createLocationRequest();
                     }
-                }
-            });
+                } else {
 
-            // ends the button click------------------------------------------------------
-            //declare an OnSwipeListener and then call on the onSwipeLeft function--------
-            OnSwipeTouchListener swipeListener;
-            mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-                public void onSwipeLeft() {
-                    Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
-                    intent.putExtra("username", user);
-                    // EXAMPLE:
-                    // intent.putExtra("latitude", latitudeText.getText().toString());
-                    startActivity(intent);
                 }
-            });
+            }
+        });
+        //set the users username
+        usernameTextView.setText(user);
+    }
 
-            //set the users username
-            usernameTextView.setText(user);
-        }
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
     //called when the activity is created
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -109,15 +152,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         longitude = gps.getLongitude();
 
         //if latitude or longitude is 0, show an alert
-        if(latitude != 0|| longitude != 0)
-        {
+        if (latitude != 0 || longitude != 0) {
 
             //get the current users location
             userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
             //if the a user from friend list was not clicked, just set the zoom to the user
-            if(!isTrue)
-            {
+            if (!isTrue) {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
 
                 //else show the users location that was clicked
@@ -186,6 +227,40 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    //FUNCTIONS FOR GOOGLE MAPS API ------------
+    public void createLocationRequest()
+    {
+        final EditText updateInterval = (EditText) findViewById(R.id.locationInterval);
+        int interval;
+
+            interval = Integer.parseInt(updateInterval.getText().toString());
+            interval = interval * 1000;
+            LocationRequest mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(interval);
+            mLocationRequest.setFastestInterval(interval);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+
+        }
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        final Switch locationUpdateSwitch = (Switch)findViewById(R.id.locationUpdateSwitch);
+        if(locationUpdateSwitch.isChecked()) {
+            mLastLocation = location;
+            new getLocation().execute();
+        } else {
+        }
+    }
+//-------------------------------------------------
 
     //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
@@ -198,11 +273,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-            MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-
             //If the update location button is clicked------------------------------------------
-            latitude = googleMap.
-            longitude = gps.getLongitude();
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
             comments = commentEditText.getText().toString();
 
             //getting the street address---------------------------------------------------;
@@ -280,4 +353,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
     }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+
+
 }
