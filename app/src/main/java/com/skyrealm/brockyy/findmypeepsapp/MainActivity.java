@@ -62,9 +62,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     boolean isTrue;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    LocationRequest mLocationRequest;
-    LocationManager locationManager;
-
     //
 
     @Override
@@ -83,15 +80,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
-        //END DECLARATIONS-------------------------------------------------------------------
 
+        //build the google api client and connect too it (for the map)
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         googleMap.getMapAsync(this);
-        //
+
+
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +101,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-        // ends the button click------------------------------------------------------
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeLeft() {
@@ -115,6 +112,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
+        //when the auto update request button is tapped on
         requestLocationSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,10 +128,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             }
         });
+
         //set the users username
         usernameTextView.setText(user);
     }
 
+    //function to build the client
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -142,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .build();
     }
 
-    //called when the activity is created
+    //called when the activity is created (for the map)
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
