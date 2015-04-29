@@ -1,7 +1,10 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +16,9 @@ import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,6 +31,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -45,8 +51,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
+import static android.support.v7.app.ActionBar.NAVIGATION_MODE_TABS;
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ActionBar.TabListener {
     //Global variables declaration
     String user;
     double latitude;
@@ -62,7 +70,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     boolean isTrue;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    //
+    private ProgressDialog pDialog;
+    ActionBar actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +84,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         final TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
         final Button btnShowLocation = (Button) findViewById(R.id.getLocationButton);
         final View mainView = findViewById(R.id.mainActivity);
-        final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
         final Switch requestLocationSwitch = (Switch) findViewById(R.id.locationUpdateSwitch);
         final EditText intervalEditText = (EditText) findViewById(R.id.locationInterval);
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
+
+
 
         //build the google api client and connect too it (for the map)
         buildGoogleApiClient();
@@ -95,10 +106,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 //update users location if they want that
-                if (shareSwitch.isChecked()) {
-                    new getLocation().execute();
-                }
+                new getLocation().execute();
             }
+
         });
 
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
@@ -129,8 +139,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-        //set the users username
-        usernameTextView.setText(user);
+
     }
 
     //function to build the client
@@ -177,7 +186,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 //add the other users location to the map
                 otherUserMarker = googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(otherUserLat, otherUserLong))
-                        .title(otherUserUsername + "Comments:" + otherUserComment));
+                        .title(otherUserUsername)
+                        .snippet(otherUserComment));
 
                 //zoom to show both the users location and the user clicked location
                 otherUserLocation = new LatLng(otherUserLat, otherUserLong);
@@ -257,8 +267,22 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         if(locationUpdateSwitch.isChecked()) {
             mLastLocation = location;
             new getLocation().execute();
-        } else {
         }
+    }
+
+    @Override
+    public void onTabSelected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabUnselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 //-------------------------------------------------
 
@@ -269,8 +293,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         GPSTracker gps = new GPSTracker(MainActivity.this);
 
         @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Sharing your location...");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+
+        @Override
         protected Void doInBackground(Void... params) {
-            final Switch shareSwitch = (Switch) findViewById(R.id.shareSwitch);
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
             //If the update location button is clicked------------------------------------------
@@ -289,7 +322,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
             address = addresses.get(0).getAddressLine(0);
-            if (shareSwitch.isChecked()) {
+
                 //website to post too
                 String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
 
@@ -298,7 +331,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 postSender.Setup(user,longitude, latitude, address, htmlUrl, comments);
                 postSender.execute();
                 //done executing post
-            }
 
 
 
@@ -310,6 +342,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //this happens whenever an async task is done
         public void onPostExecute(Void result)
         {
+            pDialog.dismiss();
             userCurrentLocation = new LatLng(latitude, longitude);
 
 
@@ -330,9 +363,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     commentEditText.setText(null);
                     userMarker = googleMap.getMap().addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
-                            .title("Your location is:" + address + "\nComment:" + comments));
+                            .title("Your location is:" + address)
+                            .snippet(comments));
                     markerCounter++;
-
                     //else it is not the first time
                     } else {
                     userMarker.remove();
@@ -341,7 +374,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     commentEditText.setText(null);
                     userMarker = googleMap.getMap().addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
-                            .title("Your location is:" + address + "\nComment:" + comments));
+                            .title("Your location is:" + address)
+                            .snippet(comments));
+
+
 
                 }
                         } else {
@@ -353,12 +389,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
     }
-
     @Override
     public void onConnectionSuspended(int i) {
 
     }
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 

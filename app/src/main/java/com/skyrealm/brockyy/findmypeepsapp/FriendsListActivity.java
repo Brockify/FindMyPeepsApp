@@ -1,6 +1,7 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
@@ -60,6 +61,8 @@ public class FriendsListActivity extends ActionBarActivity {
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
     private static final String TAG_COMMENTS = "comments";
+    private ProgressDialog pDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,6 +210,15 @@ public class FriendsListActivity extends ActionBarActivity {
     class getFriendsList extends AsyncTask<Void, Void, Void>
     {
         @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(FriendsListActivity.this);
+            pDialog.setMessage("Getting friends...");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+        @Override
         protected Void doInBackground(Void... params) {
             //start the post to the database
             String responseBody = null;
@@ -260,6 +272,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void result) {
+            pDialog.dismiss();
             ListView list = (ListView) findViewById(R.id.friendListView);
             ListAdapter adapter = new SimpleAdapter(
                     FriendsListActivity.this, FriendsList,
@@ -270,6 +283,16 @@ public class FriendsListActivity extends ActionBarActivity {
 
     class getSpecificUserLocation extends AsyncTask<Void, Void, Void>
     {
+
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(FriendsListActivity.this);
+            pDialog.setMessage("Getting " + userBeingClicked + "'s location..");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -329,6 +352,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
         protected void onPostExecute(Void result) {
 
+            pDialog.dismiss();
             if (latitude.isEmpty() || longitude.isEmpty()) {
                 Toast.makeText(getApplicationContext(), "User has not updated their location.", Toast.LENGTH_LONG).show();
 

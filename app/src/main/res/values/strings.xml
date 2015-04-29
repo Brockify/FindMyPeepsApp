@@ -9,4 +9,5 @@
     <string name="title_activity_friends_list">FriendsListActivity</string>
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_tabs">Tabs</string>
 </resources>

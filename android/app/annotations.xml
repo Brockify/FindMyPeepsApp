@@ -1,0 +1,8 @@
+<root>
+    <item name='android.app.Activity android.app.ActionBar getActionBar()'>
+        <annotation name='org.jetbrains.annotations.Nullable' />
+    </item>
+    <item name='android.app.Fragment'>
+        <annotation name='java.lang.annotation.Deprecated' />
+    </item>
+</root>
