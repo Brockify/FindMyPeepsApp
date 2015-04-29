@@ -16,17 +16,27 @@
         android:text="login"
         android:nestedScrollingEnabled="false" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Login"
+        android:id="@+id/Log"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
     <EditText
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/password"
-
+        android:layout_marginTop="30dp"
         android:ems="10"
         android:focusable="true"
         android:hint="Enter username"
         android:imeOptions="actionNext"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/password"
@@ -50,5 +60,7 @@
         android:layout_alignStart="@+id/login"
         android:layout_alignRight="@+id/login"
         android:layout_alignEnd="@+id/login" />
+
+
 
 </RelativeLayout>

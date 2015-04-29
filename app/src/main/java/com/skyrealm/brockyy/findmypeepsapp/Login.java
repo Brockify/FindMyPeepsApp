@@ -6,7 +6,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +34,7 @@ public class Login extends Activity implements OnClickListener{
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String username;
-
+    private Toast backtoast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,7 @@ public class Login extends Activity implements OnClickListener{
 
     @Override
     public void onClick(View v) {
+
         // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.login:
@@ -66,6 +69,21 @@ public class Login extends Activity implements OnClickListener{
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+
+            if(backtoast!=null&&backtoast.getView().getWindowToken()!=null) {
+                finish();
+            } else {
+                backtoast = Toast.makeText(this, "Press back to exit", Toast.LENGTH_SHORT);
+                backtoast.show();
+            }
+
+    }
+
+
+
 
     class AttemptLogin extends AsyncTask<String, String, String> {
 
