@@ -196,6 +196,7 @@ public class Profile extends Activity implements OnClickListener{
                 if (success == 1) {
                     Intent ii = new Intent(Profile.this, Login.class);
                     finish();
+
                     // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
                     startActivity(ii);
                     Log.d("Account Deleted", json.toString());

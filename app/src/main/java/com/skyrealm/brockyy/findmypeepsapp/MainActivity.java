@@ -139,7 +139,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
+                    usernameTextView.setText(user);
     }
 
     //function to build the client

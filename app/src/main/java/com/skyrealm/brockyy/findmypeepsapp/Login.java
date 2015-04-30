@@ -1,4 +1,10 @@
 package com.skyrealm.brockyy.findmypeepsapp;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.NameValuePair;
@@ -8,21 +14,26 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.skyrealm.brockyy.findmypeepsapp.R;
 
 public class Login extends Activity implements OnClickListener{
-    private EditText user, pass;
+    private EditText users, pass;
+
     private Button bLogin, bRegister;
     private boolean Regist = false;
     // Progress Dialog
@@ -33,28 +44,74 @@ public class Login extends Activity implements OnClickListener{
     private static final String LOGIN_URL = "http://skyrealmstudio.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
     private String username;
+    private String password;
     private Toast backtoast;
+
+    private CheckBox saveLoginCheckBox;
+    private SharedPreferences loginPreferences;
+    private SharedPreferences.Editor loginPrefsEditor;
+    private Boolean saveLogin;
+
+
+
+    public int checks;
+
+
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("Login");
-        user = (EditText)findViewById(R.id.username);
+
+
+
+        users = (EditText)findViewById(R.id.username);
         pass = (EditText)findViewById(R.id.password);
         bLogin = (Button)findViewById(R.id.login);
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.remember);
         bLogin.setOnClickListener(this);
 
         bRegister = (Button)findViewById(R.id.registerlog);
         bRegister.setOnClickListener(this);
+
+        saveLoginCheckBox = (CheckBox)findViewById(R.id.remember);
+        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+        loginPrefsEditor = loginPreferences.edit();
+
+        saveLogin = loginPreferences.getBoolean("saveLogin", false);
+        if (saveLogin == true) {
+           users.setText(loginPreferences.getString("username", ""));
+            pass.setText(loginPreferences.getString("password", ""));
+            saveLoginCheckBox.setChecked(true);
+        }
     }
+
+
 
     @Override
     public void onClick(View v) {
-
         // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.login:
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(users.getWindowToken(), 0);
+
+                username = users.getText().toString();
+                password = pass.getText().toString();
+
+                if (saveLoginCheckBox.isChecked()) {
+                    loginPrefsEditor.putBoolean("saveLogin", true);
+                    loginPrefsEditor.putString("username", username);
+                    loginPrefsEditor.putString("password", password);
+                    loginPrefsEditor.commit();
+                } else {
+                    loginPrefsEditor.clear();
+                    loginPrefsEditor.commit();
+                }
                 new AttemptLogin().execute();
                 break;
             case R.id.registerlog:
@@ -69,6 +126,8 @@ public class Login extends Activity implements OnClickListener{
                 break;
         }
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -87,7 +146,6 @@ public class Login extends Activity implements OnClickListener{
 
     class AttemptLogin extends AsyncTask<String, String, String> {
 
-        boolean failure = false;
 
         @Override
         protected void onPreExecute() {
@@ -104,8 +162,15 @@ public class Login extends Activity implements OnClickListener{
             // TODO Auto-generated method stub
             // here Check for success tag
             int success;
-            username = user.getText().toString();
-            String password = pass.getText().toString();
+
+            boolean failure = false;
+
+
+
+
+
+
+
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -122,13 +187,20 @@ public class Login extends Activity implements OnClickListener{
 
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
+
+
+
+
+
+
                 if (success == 1) {
                     Log.d("Successfully Login!", json.toString());
                     Intent ii = new Intent(Login.this,MainActivity.class);
-                    ii.putExtra("username", user.getText().toString());
+                    ii.putExtra("username", users.getText().toString());
                     finish();
                     // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
                     startActivity(ii);
+
                     return json.getString(TAG_MESSAGE);
                 }else{
 
@@ -141,8 +213,11 @@ public class Login extends Activity implements OnClickListener{
 
             return null;
         }
+
+
+
         /**
-         * Once the background process is done we need to  Dismiss the progress dialog asap
+         * Once the background process is done we need to  Dismiss the progress dialog
          * **/
         protected void onPostExecute(String message) {
 

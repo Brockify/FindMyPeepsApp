@@ -29,14 +29,14 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:ems="10"
         android:focusable="true"
         android:hint="Enter username"
         android:imeOptions="actionNext"
         android:singleLine="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/Log"
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignStart="@+id/password" />
 
     <EditText
         android:id="@+id/password"
@@ -48,7 +48,8 @@
         android:hint="Enter Password"
         android:imeOptions="actionDone"
         android:password="true"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_marginBottom="40dp"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -61,6 +62,14 @@
         android:layout_alignRight="@+id/login"
         android:layout_alignEnd="@+id/login" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remember Me"
+        android:id="@+id/remember"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/login"
+        android:layout_alignStart="@+id/login" />
 
 
 </RelativeLayout>
