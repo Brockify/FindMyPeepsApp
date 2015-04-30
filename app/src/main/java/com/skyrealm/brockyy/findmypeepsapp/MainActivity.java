@@ -1,20 +1,38 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
+<<<<<<< HEAD
+=======
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+>>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import com.google.android.gms.location.LocationListener;
 
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
+<<<<<<< HEAD
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+=======
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.text.Editable;
+>>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +43,13 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,10 +61,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.*;
+<<<<<<< HEAD
 import java.util.zip.Inflater;
+=======
+import java.util.concurrent.locks.Lock;
+>>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
+
+import static android.support.v7.app.ActionBar.NAVIGATION_MODE_TABS;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ActionBar.TabListener {
     //Global variables declaration
     String user;
     double latitude;
@@ -63,7 +89,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private ProgressDialog pDialog;
     private Toast backtoast;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +108,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
+
+
 
         //build the google api client and connect too it (for the map)
         buildGoogleApiClient();
@@ -104,6 +135,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+<<<<<<< HEAD
+=======
+                // EXAMPLE:
+                // intent.putExtra("latitude", latitudeText.getText().toString());
+>>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
                 startActivity(intent);
             }
         });
@@ -112,23 +148,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         requestLocationSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(requestLocationSwitch.isChecked()) {
-                    if (intervalEditText.getText().toString().matches("")) {
+                if(requestLocationSwitch.isChecked())
+                {
+                    if(intervalEditText.getText().toString().matches("")){
                         Toast.makeText(getApplicationContext(), "Enter in a valid number.", Toast.LENGTH_LONG).show();
                     } else {
                         createLocationRequest();
                     }
                 } else {
-                    stopLocationUpdates();
+
                 }
             }
         });
 
-<<<<<<< HEAD
                     usernameTextView.setText(user);
-=======
-        usernameTextView.setText(user);
->>>>>>> origin/master
     }
 
     //function to build the client
@@ -254,11 +287,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     mGoogleApiClient, mLocationRequest, this);
     }
 
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-    }
-
     @Override
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
@@ -274,6 +302,21 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             mLastLocation = location;
             new getLocation().execute();
         }
+    }
+
+    @Override
+    public void onTabSelected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabUnselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 //-------------------------------------------------
 

@@ -128,7 +128,6 @@ public class FriendsListActivity extends ActionBarActivity {
 
         //Execute the AsynchronusTask for the post request
         new getFriendsList().execute();
-
     }
 
 
