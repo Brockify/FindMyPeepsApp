@@ -1,12 +1,10 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
-<<<<<<< HEAD
-=======
+
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
->>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,20 +18,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
-<<<<<<< HEAD
+
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-=======
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.text.Editable;
->>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,16 +48,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.*;
-<<<<<<< HEAD
+
 import java.util.zip.Inflater;
-=======
+
 import java.util.concurrent.locks.Lock;
->>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
+
 
 import static android.support.v7.app.ActionBar.NAVIGATION_MODE_TABS;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //Global variables declaration
     String user;
     double latitude;
@@ -89,10 +76,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private ProgressDialog pDialog;
     private Toast backtoast;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,11 +119,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
-<<<<<<< HEAD
-=======
+
                 // EXAMPLE:
                 // intent.putExtra("latitude", latitudeText.getText().toString());
->>>>>>> parent of f50c293... Merge remote-tracking branch 'origin/master'
+
                 startActivity(intent);
             }
         });
@@ -304,20 +287,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    public void onTabSelected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
 
-    }
-
-    @Override
-    public void onTabUnselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(android.app.ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
 //-------------------------------------------------
 
     //gets the location class (ASYNC)
