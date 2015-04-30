@@ -1,7 +1,5 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,10 +11,15 @@ import com.google.android.gms.location.LocationListener;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -38,6 +41,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -57,9 +61,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private ProgressDialog pDialog;
-    ActionBar actionBar;
     private Toast backtoast;
-
 
 
     @Override
@@ -86,12 +88,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         googleMap.getMapAsync(this);
 
-        //setup shared pref for autoupdate save
-        SharedPreferences sharedPrefs = getSharedPreferences("com.skyrealm.brockyy.findmypeepsapp", MODE_PRIVATE);
-        requestLocationSwitch.setChecked(sharedPrefs.getBoolean("AutoUpdate", false));
-
-
-
 
         //If the update location button is clicked------------------------------------------
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
@@ -108,21 +104,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
-
-                //if the auto update request switch is checked, save the state as true
-                if (requestLocationSwitch.isChecked())
-                {
-                    SharedPreferences.Editor editor = getSharedPreferences("com.skyrealm.brockyy.findmypeepsapp", MODE_PRIVATE).edit();
-                    editor.putBoolean("AutoUpdate", true);
-                    editor.commit();
-                }
-                else
-                {
-                    SharedPreferences.Editor editor = getSharedPreferences("com.skyrealm.brockyy.findmypeepsapp", MODE_PRIVATE).edit();
-                    editor.putBoolean("AutoUpdate", false);
-                    editor.commit();
-                }
-
                 startActivity(intent);
             }
         });
