@@ -72,7 +72,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     private ProgressDialog pDialog;
     ActionBar actionBar;
-
+    private Toast backtoast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +149,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(backtoast!=null&&backtoast.getView().getWindowToken()!=null) {
+            finish();
+        } else {
+            backtoast = Toast.makeText(this, "Press back to logout", Toast.LENGTH_SHORT);
+            backtoast.show();
+        }
+
     }
 
     //called when the activity is created (for the map)
