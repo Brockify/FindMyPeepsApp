@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 
@@ -52,7 +54,6 @@ public class GPSTracker implements LocationListener
 
             if(!isGPSEnabled && !isNetworkEnabled)
             {
-                showSettingsAlert();
             } else {
                 this.canGetLocation = true;
                 if(isNetworkEnabled)
@@ -139,9 +140,9 @@ public class GPSTracker implements LocationListener
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialog.setTitle("Location services");
+        alertDialog.setTitle("Location and Connection services");
 
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+        alertDialog.setMessage("GPS is not enabled or there is no connection. Do you want to go to settings menu?");
 
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
 
@@ -181,5 +182,23 @@ public class GPSTracker implements LocationListener
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+
+    public boolean canConnect()
+    {
+     if(!isNetworkAvailable()|| !isGPSEnabled)
+     {
+         return false;
+     } else {
+         return true;
+     }
     }
 }

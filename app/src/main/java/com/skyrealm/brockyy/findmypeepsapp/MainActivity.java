@@ -75,12 +75,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     private ProgressDialog pDialog;
     private Toast backtoast;
+    GPSTracker gps;
+    Intent MainIntent;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MainIntent = new Intent(MainActivity.this, MainActivity.class);
+
 
         setTitle("Locations Screen");
         //DECLARATIONS-----------------------------------------------------------------------
@@ -93,11 +98,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         user = getIntent().getExtras().getString("username");
         isTrue = getIntent().getExtras().getBoolean("isTrue");
 
-
-
         //build the google api client and connect too it (for the map)
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+        MainIntent = getIntent();
+        gps = new GPSTracker(this);
 
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
@@ -108,7 +114,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         btnShowLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //update users location if they want that
                 new getLocation().execute();
             }
 
@@ -172,7 +177,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        GPSTracker gps = new GPSTracker(MainActivity.this);
+        gps = new GPSTracker(MainActivity.this);
         //If the update location button is clicked------------------------------------------
         latitude = gps.getLatitude();
         longitude = gps.getLongitude();
@@ -293,6 +298,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     //gets the location class (ASYNC)
     public class getLocation extends AsyncTask<Void, Void, Void>{
 
+        boolean alertSettingsFlag = false;
 
         GPSTracker gps = new GPSTracker(MainActivity.this);
 
@@ -308,35 +314,41 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         protected Void doInBackground(Void... params) {
-            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-            //If the update location button is clicked------------------------------------------
-            latitude = mLastLocation.getLatitude();
-            longitude = mLastLocation.getLongitude();
-            comments = commentEditText.getText().toString();
+            if(!gps.canConnect())
+            {
+                alertSettingsFlag = true;
+            } else {
+                final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-            //getting the street address---------------------------------------------------;
-            Geocoder geocoder;
-            List<Address> addresses = null;
-            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                //If the update location button is clicked------------------------------------------
+                latitude = mLastLocation.getLatitude();
+                longitude = mLastLocation.getLongitude();
+                comments = commentEditText.getText().toString();
 
-            try {
-                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            address = addresses.get(0).getAddressLine(0);
+                //getting the street address---------------------------------------------------;
+                Geocoder geocoder;
+                List<Address> addresses = null;
+                geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+
+                try {
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                address = addresses.get(0).getAddressLine(0);
 
                 //website to post too
                 String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
 
                 //send the post and execute it
                 HTTPSendPost postSender = new HTTPSendPost();
-                postSender.Setup(user,longitude, latitude, address, htmlUrl, comments);
+                postSender.Setup(user, longitude, latitude, address, htmlUrl, comments);
                 postSender.execute();
                 //done executing post
 
-
+                alertSettingsFlag = false;
+            }
 
             //finished getting the street address-----------------------------------------
             return null;
@@ -346,50 +358,49 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         //this happens whenever an async task is done
         public void onPostExecute(Void result)
         {
+
             pDialog.dismiss();
-            userCurrentLocation = new LatLng(latitude, longitude);
-
-
-            if(latitude == 0 || longitude == 0)
+            if(alertSettingsFlag)
             {
-
+                gps.showSettingsAlert();
             } else {
-                MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-                TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-                EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+                userCurrentLocation = new LatLng(latitude, longitude);
 
 
-                if (gps.canGetLocation()) {
-                    //if it is the first time clicking get location
-                if(markerCounter==0) {
-                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                    addressTextView.setText(address);
-                    commentEditText.setText(null);
-                    userMarker = googleMap.getMap().addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .title("Your location is:" + address)
-                            .snippet(comments));
-                    markerCounter++;
-                    //else it is not the first time
-                    } else {
-                    userMarker.remove();
-                    Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                    addressTextView.setText(address);
-                    commentEditText.setText(null);
-                    userMarker = googleMap.getMap().addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .title("Your location is:" + address)
-                            .snippet(comments));
+                if (latitude == 0 || longitude == 0) {
+
+                } else {
+                    MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+                    TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+                    EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
 
-
-                }
+                        //if it is the first time clicking get location
+                        if (markerCounter == 0) {
+                            Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                            addressTextView.setText(address);
+                            commentEditText.setText(null);
+                            userMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longitude))
+                                    .title("Your location is:" + address)
+                                    .snippet(comments));
+                            markerCounter++;
+                            //else it is not the first time
                         } else {
-                    gps.showSettingsAlert();
+                            userMarker.remove();
+                            Toast.makeText(getApplicationContext(), "Your Location is -\nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                            addressTextView.setText(address);
+                            commentEditText.setText(null);
+                            userMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longitude))
+                                    .title("Your location is:" + address)
+                                    .snippet(comments));
+
+
+                        }
                 }
 
             }
-
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
     }
