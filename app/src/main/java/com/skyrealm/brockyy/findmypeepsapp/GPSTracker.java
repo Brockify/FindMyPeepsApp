@@ -137,18 +137,14 @@ public class GPSTracker implements LocationListener
 
 
     public void showSettingsAlert() {
-
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
         alertDialog.setTitle("Location and Connection services");
-
         alertDialog.setMessage("GPS is not enabled or there is no connection. Do you want to go to settings menu?");
-
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                context.startActivity(intent);
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        context.startActivity(intent);
             }
         });
 
@@ -190,11 +186,26 @@ public class GPSTracker implements LocationListener
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
 
     public boolean canConnect()
     {
-     if(!isNetworkAvailable()|| !isGPSEnabled)
+     if(!haveNetworkConnection()|| !isGPSEnabled)
      {
          return false;
      } else {

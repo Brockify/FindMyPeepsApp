@@ -81,6 +81,7 @@ public class FriendsListActivity extends ActionBarActivity {
             public void onSwipeLeft() {
                 Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
                 intent.putExtra("username", user);
+                finish();
                 startActivity(intent);
             }
 
@@ -88,6 +89,7 @@ public class FriendsListActivity extends ActionBarActivity {
             public void onSwipeRight() {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("username", user);
+                finish();
                 startActivity(intent);
             }
         });
@@ -351,7 +353,7 @@ public class FriendsListActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(Void result) {
-
+            String address = null;
             pDialog.dismiss();
             if (latitude.isEmpty() || longitude.isEmpty()) {
                 Toast.makeText(getApplicationContext(), "User has not updated their location.", Toast.LENGTH_LONG).show();
@@ -364,12 +366,11 @@ public class FriendsListActivity extends ActionBarActivity {
 
                 try {
                     addresses = geocoder.getFromLocation(userLatitude, userLongitude, 1);
+                    address = addresses.get(0).getAddressLine(0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String address = addresses.get(0).getAddressLine(0);
-
-                Toast.makeText(getApplicationContext(), "Address: " + address, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), userUsername + "'s address: " + address, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("otherLat", userLatitude);
                 intent.putExtra("otherLong", userLongitude);
@@ -377,6 +378,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("username", user);
                 intent.putExtra("otherComment", userComment);
                 intent.putExtra("userUsername", userUsername);
+                finish();
                 startActivity(intent);
             }
         }
