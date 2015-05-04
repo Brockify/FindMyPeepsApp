@@ -21,7 +21,9 @@ import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Register extends Activity implements OnClickListener{
     private EditText userreg, passreg;
+    GPSTracker gps = new GPSTracker(this);
     private Button bRegister;
+    MainActivity setupLogin = new MainActivity();
     // Progress Dialog
     private ProgressDialog pDialog;
 
@@ -46,9 +48,12 @@ public class Register extends Activity implements OnClickListener{
         // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.registerbutton:
-                new AttemptRegister().execute();
-                // here we have used, switch case, because on login activity you may //also want to show registration button, so if the user is new ! we can go the //registration activity , other than this we could also do this without switch //case.
-            default:
+                if(gps.haveNetworkConnection()) {
+                    new AttemptRegister().execute();
+                }else{
+                    gps.LoginAlert();
+                }
+               default:
                 break;
         }
     }

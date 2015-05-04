@@ -160,6 +160,31 @@ public class GPSTracker implements LocationListener
         alertDialog.show();
     }
 
+    public void LoginAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle("Location and Connection services");
+        alertDialog.setMessage("Wifi/Data not enabled. Do you want to go to settings menu?");
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                context.startActivity(intent);
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+    }
+
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -186,7 +211,7 @@ public class GPSTracker implements LocationListener
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private boolean haveNetworkConnection() {
+    public boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 

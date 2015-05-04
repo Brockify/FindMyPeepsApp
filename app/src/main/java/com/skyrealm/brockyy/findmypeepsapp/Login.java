@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,7 +33,7 @@ import android.widget.Toast;
 
 import com.skyrealm.brockyy.findmypeepsapp.R;
 
-public class Login extends Activity implements OnClickListener{
+public class Login extends Activity implements OnClickListener {
     private EditText users, pass;
 
     private Button bLogin, bRegister;
@@ -48,14 +50,11 @@ public class Login extends Activity implements OnClickListener{
     private String username;
     private String password;
     private Toast backtoast;
-
+    GPSTracker gps = new GPSTracker(this);
     private CheckBox saveLoginCheckBox;
     private SharedPreferences loginPreferences;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
-
-
-
     public int checks;
 
 
@@ -69,27 +68,26 @@ public class Login extends Activity implements OnClickListener{
 
 
 
-        users = (EditText)findViewById(R.id.username);
-        pass = (EditText)findViewById(R.id.password);
-        bLogin = (Button)findViewById(R.id.login);
+        users = (EditText) findViewById(R.id.username);
+        pass = (EditText) findViewById(R.id.password);
+        bLogin = (Button) findViewById(R.id.login);
         final CheckBox checkBox = (CheckBox) findViewById(R.id.remember);
         bLogin.setOnClickListener(this);
 
-        bRegister = (Button)findViewById(R.id.registerlog);
+        bRegister = (Button) findViewById(R.id.registerlog);
         bRegister.setOnClickListener(this);
 
-        saveLoginCheckBox = (CheckBox)findViewById(R.id.remember);
+        saveLoginCheckBox = (CheckBox) findViewById(R.id.remember);
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
 
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
         if (saveLogin == true) {
-           users.setText(loginPreferences.getString("username", ""));
+            users.setText(loginPreferences.getString("username", ""));
             pass.setText(loginPreferences.getString("password", ""));
             saveLoginCheckBox.setChecked(true);
         }
     }
-
 
 
     @Override
@@ -97,8 +95,9 @@ public class Login extends Activity implements OnClickListener{
         // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.login:
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(users.getWindowToken(), 0);
+
+
+
 
                 username = users.getText().toString();
                 password = pass.getText().toString();
@@ -112,14 +111,21 @@ public class Login extends Activity implements OnClickListener{
                     loginPrefsEditor.clear();
                     loginPrefsEditor.commit();
                 }
-                new AttemptLogin().execute();
+                if(gps.haveNetworkConnection())
+                {
+                    new AttemptLogin().execute();
+                }else
+                {
+                    gps.LoginAlert();
+                }
+
+
                 break;
             case R.id.registerlog:
 
-                    Intent ii = new Intent(Login.this, Register.class);
-                    finish();
-                    // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
-                    startActivity(ii);
+                Intent ii = new Intent(Login.this, Register.class);
+                finish();
+                startActivity(ii);
 
                 break;
             default:
@@ -128,20 +134,17 @@ public class Login extends Activity implements OnClickListener{
     }
 
 
-
     @Override
     public void onBackPressed() {
 
-            if(backtoast!=null&&backtoast.getView().getWindowToken()!=null) {
-                finish();
-            } else {
-                backtoast = Toast.makeText(this, "Press back to exit", Toast.LENGTH_SHORT);
-                backtoast.show();
-            }
+        if (backtoast != null && backtoast.getView().getWindowToken() != null) {
+            finish();
+        } else {
+            backtoast = Toast.makeText(this, "Press back to exit", Toast.LENGTH_SHORT);
+            backtoast.show();
+        }
 
     }
-
-
 
 
     class AttemptLogin extends AsyncTask<String, String, String> {
@@ -166,11 +169,6 @@ public class Login extends Activity implements OnClickListener{
             boolean failure = false;
 
 
-
-
-
-
-
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -189,20 +187,18 @@ public class Login extends Activity implements OnClickListener{
                 success = json.getInt(TAG_SUCCESS);
 
 
-
-
-
-
                 if (success == 1) {
                     Log.d("Successfully Login!", json.toString());
-                    Intent ii = new Intent(Login.this,MainActivity.class);
+                    Intent ii = new Intent(Login.this, MainActivity.class);
                     ii.putExtra("username", users.getText().toString());
+
+
                     finish();
-                    // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
-                    startActivity(ii);
+
+                  startActivity(ii);
 
                     return json.getString(TAG_MESSAGE);
-                }else{
+                } else {
 
                     return json.getString(TAG_MESSAGE);
 
@@ -216,14 +212,12 @@ public class Login extends Activity implements OnClickListener{
 
 
 
-        /**
-         * Once the background process is done we need to  Dismiss the progress dialog
-         * **/
         protected void onPostExecute(String message) {
 
             pDialog.dismiss();
-            if (message != null){
+            if (message != null) {
                 Toast.makeText(Login.this, message, Toast.LENGTH_LONG).show();
+
 
             }
         }
