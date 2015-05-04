@@ -59,7 +59,6 @@
         android:bottomRightRadius="8dp"
         android:topLeftRadius="8dp"
         android:topRightRadius="8dp"
-        android:layout_marginTop="64dp"
         android:layout_below="@+id/Newuser"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -72,10 +71,50 @@
         android:focusable="true"
         android:hint="Confirm Username"
         android:imeOptions="actionNext"
-        android:layout_alignTop="@+id/Delete"
-        android:layout_toLeftOf="@+id/Delete"
-        android:layout_toStartOf="@+id/Delete" />
+        android:layout_below="@+id/Newuser"
+        android:layout_alignLeft="@+id/Newuser"
+        android:layout_alignStart="@+id/Newuser" />
 
 
+
+
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="uploadImage"
+        android:text="Upload"
+        android:id="@+id/button"
+        android:layout_below="@+id/imgView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image"
+        android:checked="false"
+        android:layout_above="@+id/button"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView" />
+
+    <ImageView
+        android:id="@+id/imgView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:onClick="loadImagefromGallery"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true">
+    </ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Edit Profile Picture"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

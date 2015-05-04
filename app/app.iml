@@ -86,6 +86,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="android-async-http-1.4.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-plus-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-cast-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-7.0.0" level="project" />

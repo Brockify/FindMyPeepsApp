@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <permission android:name="com.skyrealm.brockyy.findmypeepsapp.permission.C2D_MESSAGE" />
 
     <uses-permission android:name="com.google.android.c2dm.intent.RECEIVE" />
