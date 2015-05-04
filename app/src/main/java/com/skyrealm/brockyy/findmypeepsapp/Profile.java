@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -78,13 +79,9 @@ public class Profile extends Activity implements OnClickListener{
         final View mainView = findViewById(R.id.Profileview);
         usernameTextView = (TextView)findViewById(R.id.usernameTextView);
 
-        // Set the Image in ImageView
-
-
-
         OnSwipeTouchListener swipeListener;
         mainView.setOnTouchListener(new OnSwipeTouchListener(Profile.this) {
-            public void onSwipeLeft() {
+            public void onSwipeRight() {
                 Intent intent = new Intent(Profile.this, MainActivity.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
@@ -92,8 +89,12 @@ public class Profile extends Activity implements OnClickListener{
         });
 
         usernameTextView.setText(user);
+        // show The Image
+        new DownloadImageTask((ImageView) findViewById(R.id.imgView))
+                .execute("http://skyrealmstudio.com/img/Andrew.jpg");
 
     }
+
 
 
     public void onClick(View v) {
@@ -109,7 +110,30 @@ public class Profile extends Activity implements OnClickListener{
                 break;
         }
     }
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
 
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
 
     public void loadImagefromGallery(View view) {
         // Create intent to Open Image applications like Gallery, Google Photos
