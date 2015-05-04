@@ -96,7 +96,9 @@
         android:checked="false"
         android:layout_above="@+id/button"
         android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView" />
+        android:layout_toEndOf="@+id/textView"
+        android:clickable = "false"
+        />
 
     <ImageView
         android:id="@+id/imgView"

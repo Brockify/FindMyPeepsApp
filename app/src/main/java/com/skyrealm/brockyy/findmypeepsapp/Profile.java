@@ -91,7 +91,7 @@ public class Profile extends Activity implements OnClickListener{
         usernameTextView.setText(user);
         // show The Image
         new DownloadImageTask((ImageView) findViewById(R.id.imgView))
-                .execute("http://skyrealmstudio.com/img/Andrew.jpg");
+                .execute("http://skyrealmstudio.com/img/"+user+".jpg");
 
     }
 
@@ -110,6 +110,16 @@ public class Profile extends Activity implements OnClickListener{
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent ii = new Intent(Profile.this, MainActivity.class);
+        ii.putExtra("username", user);
+        startActivity(ii);
+
+    }
+
+
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
@@ -167,6 +177,9 @@ public class Profile extends Activity implements OnClickListener{
                 cursor.close();
                 final CheckBox checkBox = (CheckBox) findViewById(R.id.image);
                 checkBox.setChecked(true);
+                ImageView imgView = (ImageView) findViewById(R.id.imgView);
+                imgView.setImageBitmap(BitmapFactory
+                        .decodeFile(imgPath));
 
                 fileName = user;
                 // Put file name in Async Http Post Param which will used in Php web app
@@ -252,8 +265,13 @@ public class Profile extends Activity implements OnClickListener{
                     public void onSuccess(String response) {
                         // Hide Progress Dialog
                         prgDialog.hide();
+                        Intent ii = new Intent(Profile.this, Profile.class);
+                        ii.putExtra("username", user);
+                        finish();
+                        startActivity(ii);
                         Toast.makeText(getApplicationContext(), response,
                                 Toast.LENGTH_LONG).show();
+
                     }
 
                     // When the response returned by REST has Http
@@ -296,6 +314,7 @@ public class Profile extends Activity implements OnClickListener{
         if (prgDialog != null) {
             prgDialog.dismiss();
         }
+
     }
 
 
