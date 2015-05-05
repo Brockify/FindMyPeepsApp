@@ -25,6 +25,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -104,7 +106,6 @@ public class FriendsListActivity extends ActionBarActivity {
 
             public void onSwipeRight() {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
-                intent.putExtra("username", user);
                 startActivity(intent);
             }
 
@@ -374,7 +375,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("otherLat", userLatitude);
                 intent.putExtra("otherLong", userLongitude);
-                intent.putExtra("isTrue", true);
+                intent.putExtra("isOtherUserClicked", true);
                 intent.putExtra("username", user);
                 intent.putExtra("otherComment", userComment);
                 intent.putExtra("userUsername", userUsername);

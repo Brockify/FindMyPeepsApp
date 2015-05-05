@@ -10,4 +10,12 @@
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_tabs">Tabs</string>
+
+    <string-array name="autoUpdate">
+        <item>Minutes</item>
+        <item>5</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
 </resources>

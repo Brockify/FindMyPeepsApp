@@ -215,6 +215,7 @@ public class GPSTracker implements LocationListener
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
+
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
