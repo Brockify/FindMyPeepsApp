@@ -218,6 +218,7 @@ public class FriendsListActivity extends ActionBarActivity {
             super.onPreExecute();
             pDialog = new ProgressDialog(FriendsListActivity.this);
             pDialog.setMessage("Getting friends...");
+            pDialog.setCancelable(false);
             pDialog.setIndeterminate(false);
             pDialog.show();
         }
@@ -300,7 +301,7 @@ public class FriendsListActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... params) {
             //start the post to the database
-            String responseBody = null;
+            String   responseBody = null;
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 

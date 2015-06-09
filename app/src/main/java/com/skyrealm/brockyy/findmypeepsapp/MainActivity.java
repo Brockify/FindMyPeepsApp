@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -43,8 +48,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,12 +72,12 @@ import java.util.*;
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
     //Global variables declaration
     String user;
+    Marker tempMarker;
     double latitude;
     double longitude;
     LatLng otherUserLocation;
     String address;
     String comments;
-    Marker userMarker;
     Marker otherUserMarker;
     LatLng userCurrentLocation;
     int markerCounter = 0;
@@ -74,12 +92,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     LatLngBounds bounds;
     Button getLocationButton;
     Spinner spinner;
-    int spinnerId = 0;
     boolean locationUpdatingOrNot = false;
     double otherUserLat;
     double otherUserLong;
     String otherUserUsername;
     String otherUserComment;
+    private static final String TAG_FRIEND = "friend";
+    private static final String TAG_LATITUDE = "latitude";
+    private static final String TAG_LONGITUDE = "longitude";
+    private static final String TAG_COMMENTS = "comments";
+    ArrayList<HashMap<String, String>> FriendsList;
 
 
     @Override
@@ -99,7 +121,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
 
         SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
 
         if (isOtherUserClicked) {
             app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -145,10 +166,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
-
-        if (locationUpdatingOrNot) {
-            spinner.setSelection(app_preferences.getInt("spinnerId", 0));
-        }
         //get the spinners onItemClick
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -156,7 +173,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                spinnerId = spinner.getSelectedItemPosition();
                 if (spinner.getSelectedItem().equals("Minutes")) {
                     if (locationUpdatingOrNot)
                         stopLocationUpdates();
@@ -176,18 +192,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
-                SharedPreferences app_preferences =
-                        PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-
-                SharedPreferences.Editor editor = app_preferences.edit();
-                editor.putBoolean("autoUpdate", locationUpdatingOrNot);
-                editor.putInt("spinnerId", spinner.getSelectedItemPosition());
-                editor.commit(); // Very important
 
                 startActivity(intent);
             }
         });
+
 
         //set username
         usernameTextView.setText(user);
@@ -260,7 +269,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             case R.id.getLocationButton:
                 String urlTest = "http://skyrealmstudio.com/img/"+user+".jpg";
                 new getLocation().execute();
-                new DownloadImageTask().execute(urlTest, user);
                 break;
         }
     }
@@ -331,7 +339,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //when location is changed
     @Override
     public void onLocationChanged(Location location) {
-
         mLastLocation = location;
         new getLocation().execute();
     }
@@ -352,7 +359,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Sharing your location...");
             pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
+            pDialog.setCancelable(false);
             pDialog.show();
         }
 
@@ -463,18 +470,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        boolean isUserLoggedIn;
 
-        public void setUpDownloadImageTask(String userMarker)
-        {
-            if(user == userMarker)
-            {
-                isUserLoggedIn = true;
-            } else {
-                isUserLoggedIn = false;
-            }
-        }
+    //gets the profile pictures of a user when clicked
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
@@ -492,33 +490,145 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected void onPostExecute(Bitmap result) {
             //add the other users location to the map
 
-            if (!isUserLoggedIn)
-            {
-                Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth()/7, result.getHeight()/7, false);
+            Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth() / 7, result.getHeight() / 7, false);
+            bhalfsize = getCroppedBitmap(bhalfsize);
 
-
-                otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
-                        .position(new LatLng(otherUserLat, otherUserLong))
-                        .title(otherUserUsername)
-                        .snippet(otherUserComment)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bhalfsize)));
-
-        } else {
-                Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth() / 7, result.getHeight() / 7, false);
-                if (markerCounter > 0)
-                {
-                    userMarker.remove();
-                }
-                userMarker = googleMap.getMap().addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title("Your location is: " + address)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bhalfsize))
-                        .snippet(comments));
-
-            }
+            otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                    .position(new LatLng(otherUserLat, otherUserLong))
+                    .title(otherUserUsername)
+                    .snippet(otherUserComment)
+                    .icon(BitmapDescriptorFactory.fromBitmap(bhalfsize)));
 
 
         }
     }
+    public Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
+    }
+    class getFriendsList extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //start the post to the database
+            String responseBody = null;
+            HttpResponse response;
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetPendingFriendsList.php");
+
+            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+            nameValuePair.add(new BasicNameValuePair("Username", user));
+
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            try {
+                response = httpClient.execute(httpPost);
+                responseBody = EntityUtils.toString(response.getEntity());
+                // writing response to log
+                Log.d("Http Response:", response.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //end the post response
+            String jsonStr = responseBody;
+
+            Log.d("Response: ", "> " + jsonStr);
+            if (jsonStr != null) {
+                try {
+                    JSONArray jsonArr = new JSONArray(jsonStr);
+                    for (int i = 0; i < jsonArr.length(); i++) {
+                        {
+
+                            JSONObject c = jsonArr.getJSONObject(i);
+                            String Friend = c.getString(TAG_FRIEND);
+                            HashMap<String, String> user = new HashMap<String, String>();
+                            user.put(TAG_FRIEND, Friend);
+                            FriendsList.add(user);
+                        }
+                    }
+
+                    for(int i =0; i < FriendsList.size(); i++)
+                    {
+                                            //start the post to the database
+                        String responseBody1 = null;
+                        httpClient = new DefaultHttpClient();
+
+                        httpPost = new HttpPost("http://skyrealmstudio.com/GetSpecificUserLocation.php");
+
+                        List<NameValuePair> nameValuePair1 = new ArrayList<NameValuePair>();
+                        String friendToFind = FriendsList.get(i).toString();
+                        nameValuePair.add(new BasicNameValuePair("Username", friendToFind));
+
+                        try {
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            response = httpClient.execute(httpPost);
+                            responseBody = EntityUtils.toString(response.getEntity());
+                            // writing response to log
+                            Log.d("Http Response:", response.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        //end the post response
+
+                        //JSON the string that is got from the post.
+                         jsonStr = responseBody1;
+
+                        Log.d("Response: ", "> " + jsonStr);
+                        if (jsonStr != null){
+                            jsonArr = new JSONArray(jsonStr);
+
+
+
+                            JSONObject c = jsonArr.getJSONObject(i);
+
+                           tempMarker = googleMap.getMap().addMarker(new MarkerOptions()
+                                    .position(new LatLng(Double.parseDouble(c.getString(TAG_LATITUDE)), Double.parseDouble(c.getString(TAG_LONGITUDE))))
+                                    .title(c.getString(TAG_FRIEND))
+                                    .snippet(c.getString(TAG_COMMENTS)));
+
+
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
+    }
+
 }
 
