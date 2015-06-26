@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Register extends Activity implements OnClickListener{
-    private EditText userreg, passreg;
+    private EditText userreg, passreg, emailreg;
     GPSTracker gps = new GPSTracker(this);
     private Button bRegister;
     MainActivity setupLogin = new MainActivity();
@@ -39,6 +39,7 @@ public class Register extends Activity implements OnClickListener{
         setContentView(R.layout.activity_register);
         userreg = (EditText)findViewById(R.id.user);
         passreg = (EditText)findViewById(R.id.pass);
+        emailreg = (EditText)findViewById(R.id.email);
         bRegister = (Button)findViewById(R.id.registerbutton   );
         bRegister.setOnClickListener(this);
     }
@@ -53,7 +54,7 @@ public class Register extends Activity implements OnClickListener{
                 }else{
                     gps.LoginAlert();
                 }
-               default:
+            default:
                 break;
         }
     }
@@ -84,12 +85,14 @@ public class Register extends Activity implements OnClickListener{
 
             String user = userreg.getText().toString();
             String pass = passreg.getText().toString();
+            String email = emailreg.getText().toString();
 
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("user", user));
                 params.add(new BasicNameValuePair("pass", pass));
+                params.add(new BasicNameValuePair("email", email));
 
 
 
