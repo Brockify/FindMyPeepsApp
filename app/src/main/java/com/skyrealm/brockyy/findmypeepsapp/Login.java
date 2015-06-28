@@ -188,6 +188,8 @@ public class Login extends Activity implements OnClickListener {
 
 
                 if (success == 1) {
+
+
                     Log.d("Successfully Login!", json.toString());
                     Intent ii = new Intent(Login.this, MainActivity.class);
                     ii.putExtra("username", users.getText().toString());
@@ -220,6 +222,7 @@ public class Login extends Activity implements OnClickListener {
 
 
             }
+
         }
     }
 }
