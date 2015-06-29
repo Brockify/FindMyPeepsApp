@@ -39,9 +39,9 @@ import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Profile extends Activity implements OnClickListener{
     String user;
-    private EditText userchange, userverify;
+    private EditText userchange, userverify, oldpasswrd, newpasswrd;
     TextView usernameTextView;
-    private Button bChange, bDelete;
+    private Button bChange, bDelete, bReset;
 
     String encodedString;
     RequestParams params = new RequestParams();
@@ -56,6 +56,7 @@ public class Profile extends Activity implements OnClickListener{
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/ChangeUser.php";
     private static final String LOGIN_URL2 = "http://skyrealmstudio.com/Delete.php";
+    private static final String LOGIN_URL3 = "http://skyrealmstudio.com/rest.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -71,10 +72,14 @@ public class Profile extends Activity implements OnClickListener{
         setContentView(R.layout.activity_profile);
         userchange = (EditText)findViewById(R.id.Newuser);
         userverify = (EditText)findViewById(R.id.Verify);
+        oldpasswrd = (EditText) findViewById(R.id.oldpass);
+        newpasswrd = (EditText) findViewById(R.id.newpass);
         bChange = (Button)findViewById(R.id.Change);
         bChange.setOnClickListener(this);
         bDelete = (Button)findViewById(R.id.Delete);
         bDelete.setOnClickListener(this);
+        bReset = (Button)findViewById(R.id.restpass);
+        bReset.setOnClickListener(this);
         user = getIntent().getExtras().getString("username");
         final View mainView = findViewById(R.id.Profileview);
         usernameTextView = (TextView)findViewById(R.id.usernameTextView);
@@ -105,7 +110,10 @@ public class Profile extends Activity implements OnClickListener{
             break;
             case R.id.Delete:
                 new AttemptDelete().execute();
-
+                break;
+            case R.id.restpass:
+                new Attemptrest().execute();
+                break;
             default:
                 break;
         }
@@ -448,6 +456,7 @@ public class Profile extends Activity implements OnClickListener{
 
             return null;
         }
+
         /**
          * Once the background process is done we need to  Dismiss the progress dialog asap
          * **/
@@ -461,4 +470,77 @@ public class Profile extends Activity implements OnClickListener{
             }
         }
     }
+    class Attemptrest extends AsyncTask<String, String, String> {
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        boolean failure = false;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(Profile.this);
+            pDialog.setMessage("Attempting to reset password...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            // TODO Auto-generated method stub
+            // here Check for success tag
+
+            int success;
+            String newpsw = newpasswrd.getText().toString();
+            String oldpsw = oldpasswrd.getText().toString();
+            String usr = user;
+            try {
+
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("olduser", oldpsw));
+                params.add(new BasicNameValuePair("newuser", newpsw));
+                params.add(new BasicNameValuePair("user", user));
+
+                Log.d("request!", "starting");
+
+                JSONObject json = jsonParser.makeHttpRequest(
+                        LOGIN_URL3, "POST", params);
+
+                // checking  log for json response
+                Log.d("Registry attempt", json.toString());
+
+                // success tag for json
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    Log.d("Password Changed!", json.toString());
+                    return json.getString(TAG_MESSAGE);
+                }else{
+
+                    return json.getString(TAG_MESSAGE);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            return null;
+        }
+        /**
+         * Once the background process is done we need to  Dismiss the progress dialog asap
+         * **/
+        protected void onPostExecute(String message) {
+
+            pDialog.dismiss();
+            if (message != null){
+
+                usernameTextView.setText(user);
+                Toast.makeText(Profile.this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
 }

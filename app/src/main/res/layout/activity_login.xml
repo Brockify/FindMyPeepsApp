@@ -71,5 +71,20 @@
         android:layout_alignLeft="@+id/login"
         android:layout_alignStart="@+id/login" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Forgot Password"
+        android:id="@+id/forgotbut"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/registerlog"
+        android:layout_alignLeft="@+id/login"
+        android:layout_alignStart="@+id/login"
+        android:layout_alignRight="@+id/login"
+        android:layout_alignEnd="@+id/login"
+        android:textAlignment="center"
+        android:clickable="true" />
+
 
 </RelativeLayout>

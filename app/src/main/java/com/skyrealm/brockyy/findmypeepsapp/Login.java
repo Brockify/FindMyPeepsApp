@@ -23,20 +23,23 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skyrealm.brockyy.findmypeepsapp.R;
 
-public class Login extends Activity implements OnClickListener {
+public class Login extends Activity implements OnClickListener, View.OnTouchListener {
     private EditText users, pass;
 
     private Button bLogin, bRegister;
+    private TextView tvforgot;
     private boolean Regist = false;
     // Progress Dialog
     private ProgressDialog pDialog;
@@ -73,10 +76,10 @@ public class Login extends Activity implements OnClickListener {
         bLogin = (Button) findViewById(R.id.login);
         final CheckBox checkBox = (CheckBox) findViewById(R.id.remember);
         bLogin.setOnClickListener(this);
-
         bRegister = (Button) findViewById(R.id.registerlog);
         bRegister.setOnClickListener(this);
-
+        tvforgot = (TextView) findViewById(R.id.forgotbut);
+        tvforgot.setOnTouchListener(this);
         saveLoginCheckBox = (CheckBox) findViewById(R.id.remember);
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
@@ -89,6 +92,19 @@ public class Login extends Activity implements OnClickListener {
         }
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.forgotbut:
+                Intent ii = new Intent(Login.this, Forgot.class);
+                finish();
+                startActivity(ii);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
 
     @Override
     public void onClick(View v) {
