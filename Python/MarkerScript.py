@@ -1,4 +1,8 @@
+#! /usr/bin/python
+
+
 import MySQLdb
+
 
 db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
@@ -11,6 +15,7 @@ def get_password(username):
         return "User does not exist"
     else:
         return result[0]
+        
 def get_comment(username):
     sql = "select Comments from Users where Username=%s"
     CUR.execute(sql, username)
@@ -20,7 +25,6 @@ def get_comment(username):
     else:
         return result[0]
 
-
 def get_email(username):
     sql = "select Email from Users where Username=%s"
     CUR.execute(sql, username)
@@ -29,6 +33,7 @@ def get_email(username):
         return "User does not exist"
     else:
         return result[0]
+        
 def get_longitude(username):
     sql = "select Longitude from Users where Username=%s"
     CUR.execute(sql, username)
@@ -71,9 +76,11 @@ def friends_list(username):
 
 def markers_on_map(username):
     friendsList = friends_list(username)
-
     for friend in friendsList:
         print "Username" + " : " + friend
         print "Comment" + " : " + str(get_comment(friend))
         print "Latitude" + " : " + get_latitude(friend)
         print "Longitude" + " : " + get_longitude(friend)
+
+print "Content-type: text/html\n\n"
+print markers_on_map("brock")
