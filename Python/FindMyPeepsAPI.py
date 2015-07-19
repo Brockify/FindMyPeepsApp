@@ -5,6 +5,15 @@ import MySQLdb
 db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
 
+def check_user(username):
+    sql = "select Username from Users where Username=%s"
+    CUR.execute(sql, username)
+    result = CUR.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+
 def get_password(username):
     sql = "select Password from Users where Username=%s"
     CUR.execute(sql, [username])
@@ -18,7 +27,7 @@ def get_comment(username):
     sql = "select Comments from Users where Username=%s"
     CUR.execute(sql, [username])
     result = CUR.fetchone()
-    if result == None:
+    if result == None or result == "":
         return "User has not updated comment"
     else:
         return result[0]
@@ -27,7 +36,7 @@ def get_email(username):
     sql = "select Email from Users where Username=%s"
     CUR.execute(sql, [username])
     result = CUR.fetchone()
-    if result == None:
+    if result == None or result == "":
         return "User does not exist"
     else:
         return result[0]
@@ -36,7 +45,7 @@ def get_longitude(username):
     sql = "select Longitude from Users where Username=%s"
     CUR.execute(sql, [username])
     result = CUR.fetchone()
-    if result == None:
+    if result == None or result == "":
         return "User did not update location"
     else:
         return result[0]
@@ -45,7 +54,7 @@ def get_latitude(username):
     sql = "select Latitude from Users where Username=%s"
     CUR.execute(sql, [username])
     result = CUR.fetchone()
-    if result == None:
+    if result == None or result == "":
         return "User did not update location"
     else:
         return result[0]
@@ -54,7 +63,7 @@ def get_address(username):
     sql = "select Address from Users where Username=%s"
     CUR.execute(sql, [username])
     result = CUR.fetchone()
-    if result == None:
+    if result == None or result == "":
         return "User did not update email"
     else:
         return result[0]
@@ -64,7 +73,7 @@ def friends_list(username):
     CUR.execute(sql, [username])
     result=[]
     query = CUR.fetchall()
-    if query == None:
+    if query == None or query == []:
         return "User has no friends"
     else:
         for friend in query:
@@ -84,3 +93,26 @@ def markers_on_map(username):
         fullFriendsList.append(UserDictionary123)
 
     return fullFriendsList
+
+def check_if_two_users_are_friends(fromUser, toUser):
+    sql = "select userLoggedIn from accepted_req where userLoggedIn=%s and friend=%s";
+    CUR.execute(sql, (fromUser, toUser))
+    result = CUR.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+
+def check_if_two_users_are_pending(fromUser, toUser):
+    sql = "select fromUser from pending_req where fromUser=%s and toUser=%s"
+    CUR.execute(sql, (fromUser, toUser))
+    result = CUR.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+
+def send_friend_request(fromUser, toUser):
+    sql = "insert into pending_req(fromUser, toUser) values (%s, %s)"
+    CUR.execute(sql, (fromUser, toUser))
+    return True

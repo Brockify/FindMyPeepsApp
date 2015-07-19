@@ -1,16 +1,14 @@
 #! /usr/bin/python
 import FindMyPeepsAPI
 import cgi
+import json
 
 print "Content-type: text/html\r\n\r\n"
 
 arguments = cgi.FieldStorage()
-username = arguments.keys()
+username = arguments.getvalue('username')
 
-if username == []:
+if username == None:
     print "Missing parameter"
 else:
-    for i in username:
-        print json.dumps(FindMyPeepsAPI.markers_on_map(arguments[i].value))
-
-
+    print json.dumps(FindMyPeepsAPI.markers_on_map(username))
