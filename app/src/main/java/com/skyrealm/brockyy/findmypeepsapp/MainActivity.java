@@ -60,6 +60,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -72,7 +73,6 @@ import java.util.*;
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
     //Global variables declaration
     String user;
-    Marker tempMarker;
     double latitude;
     double longitude;
     LatLng otherUserLocation;
@@ -101,7 +101,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
     private static final String TAG_COMMENTS = "comments";
-    ArrayList<HashMap<String, String>> FriendsList;
+    ArrayList<HashMap<String, String>> FriendsList = new ArrayList<HashMap<String, String>>();
+    List<MarkerOptions> markers;
+
 
 
     @Override
@@ -119,14 +121,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
-
-        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-        if (isOtherUserClicked) {
-            app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            locationUpdatingOrNot = app_preferences.getBoolean("autoUpdate", false);// The 0 is there for if the user hastn played before it is set to 0 automatically or you can set it to 1
-        }
-
 
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
@@ -173,12 +167,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                if (spinner.getSelectedItem().equals("Minutes")) {
-                    if (locationUpdatingOrNot)
-                        stopLocationUpdates();
-                } else {
-                    createLocationRequest();
-                }
+                //if (spinner.getSelectedItem().equals("Minutes")) {
+                //  if (locationUpdatingOrNot)
+                //    stopLocationUpdates();
+                //} else {
+                //  createLocationRequest();
+                //}
             }
 
             @Override
@@ -197,6 +191,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
+
+        new getFriendsList().execute();
 
         //set username
         usernameTextView.setText(user);
@@ -232,7 +228,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //get the current users location
             userCurrentLocation = new LatLng(latitude, longitude);
-            googleMap.setMyLocationEnabled(true);
+            googleMap.setMyLocationEnabled(false);
 
             //if the a user from friend list was not clicked, just set the zoom to the user
             if (!isOtherUserClicked) {
@@ -533,6 +529,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         @Override
         protected Void doInBackground(Void... params) {
             //start the post to the database
+            MarkerOptions tempMarker;
             String responseBody = null;
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
@@ -582,17 +579,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         httpPost = new HttpPost("http://skyrealmstudio.com/GetSpecificUserLocation.php");
 
                         List<NameValuePair> nameValuePair1 = new ArrayList<NameValuePair>();
-                        String friendToFind = FriendsList.get(i).toString();
-                        nameValuePair.add(new BasicNameValuePair("Username", friendToFind));
+                        String friendToFind = FriendsList.get(i).values().toString();
+                        nameValuePair1.add(new BasicNameValuePair("Username", friendToFind));
+
 
                         try {
-                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair1));
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
                         try {
                             response = httpClient.execute(httpPost);
-                            responseBody = EntityUtils.toString(response.getEntity());
+                            responseBody1 = EntityUtils.toString(response.getEntity());
                             // writing response to log
                             Log.d("Http Response:", response.toString());
                         } catch (IOException e) {
@@ -608,15 +606,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             jsonArr = new JSONArray(jsonStr);
 
 
-
                             JSONObject c = jsonArr.getJSONObject(i);
 
-                           tempMarker = googleMap.getMap().addMarker(new MarkerOptions()
+
+                           tempMarker = new MarkerOptions()
                                     .position(new LatLng(Double.parseDouble(c.getString(TAG_LATITUDE)), Double.parseDouble(c.getString(TAG_LONGITUDE))))
-                                    .title(c.getString(TAG_FRIEND))
-                                    .snippet(c.getString(TAG_COMMENTS)));
-
-
+                                    .title(friendToFind)
+                                    .snippet(c.getString(TAG_COMMENTS));
+                            markers.add(i, tempMarker);
                         }
                     }
 
@@ -627,6 +624,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
 
             return null;
+        }
+
+        public void onPostExecute(Void Result)
+        {
+            for(int i = 0; i < markers.size(); i++)
+            {
+                googleMap.getMap().addMarker(new MarkerOptions().title(markers.get(i).getTitle())
+                      .position(new LatLng(markers.get(i).getPosition().latitude, markers.get(i).getPosition().longitude)));
+            }
         }
     }
 
