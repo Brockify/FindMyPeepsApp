@@ -116,3 +116,10 @@ def send_friend_request(fromUser, toUser):
     sql = "insert into pending_req(fromUser, toUser) values (%s, %s)"
     CUR.execute(sql, (fromUser, toUser))
     return True
+
+def delete_friend(userLoggedIn, friend):
+    sql = "delete from accepted_req where userLoggedIn=%s and friend=%s"
+    CUR.execute(sql, (userLoggedIn, friend))
+    sql = "delete from accepted_req where userLoggedIn=%s and friend=%s"
+    CUR.execute(sql, (friend, userLoggedIn))
+    return "Friend deleted"
