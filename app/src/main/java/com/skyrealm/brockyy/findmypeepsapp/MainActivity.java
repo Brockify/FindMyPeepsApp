@@ -134,6 +134,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
+        /*
         //sets a listener for the map
         googleMap.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -145,6 +146,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             }
         });
+*/
 
         googleMap.getMapAsync(this);
 
@@ -192,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
 
 
-        new getFriendsList().execute();
+       // new getFriendsList().execute();
 
         //set username
         usernameTextView.setText(user);

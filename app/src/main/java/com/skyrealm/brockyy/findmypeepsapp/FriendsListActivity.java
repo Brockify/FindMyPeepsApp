@@ -229,10 +229,10 @@ public class FriendsListActivity extends ActionBarActivity {
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetPendingFriendsList.php");
+            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/cgi-bin/GetFriendsList.py");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", user));
+            nameValuePair.add(new BasicNameValuePair("username", user));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
