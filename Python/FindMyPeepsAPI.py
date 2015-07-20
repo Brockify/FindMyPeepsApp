@@ -1,7 +1,6 @@
 #! /usr/bin/python
 import MySQLdb
 
-
 db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
 
@@ -123,3 +122,13 @@ def delete_friend(userLoggedIn, friend):
     sql = "delete from accepted_req where userLoggedIn=%s and friend=%s"
     CUR.execute(sql, (friend, userLoggedIn))
     return "Friend deleted"
+
+def pending_list(username):
+    sql = "select all fromUser from pending_req where toUser=%s"
+    CUR.execute(sql, username)
+    result = CUR.fetchall()
+    pendingList = []
+    for person in result:
+        pendingList.append(person[0])
+
+    return pendingList
