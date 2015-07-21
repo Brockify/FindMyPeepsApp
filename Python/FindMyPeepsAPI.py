@@ -132,3 +132,9 @@ def pending_list(username):
         pendingList.append(person[0])
 
     return pendingList
+def profanity_filter(word):
+    profanity = ["fuck", "bitch", "ass", "cunt", "twat", "dick", "vagina", "penis","nigga", "niggar", "nigger", "gay", "fag", "faggot", "bastard"]
+    for badword in profanity:
+        if word == badword:
+            return "profanity!"
+
