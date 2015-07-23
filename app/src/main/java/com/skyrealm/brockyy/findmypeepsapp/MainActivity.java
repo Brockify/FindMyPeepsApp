@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -91,7 +92,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     Intent MainIntent;
     LatLngBounds bounds;
     Button getLocationButton;
-    Spinner spinner;
     boolean locationUpdatingOrNot = false;
     double otherUserLat;
     double otherUserLong;
@@ -134,8 +134,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
-        /*
         //sets a listener for the map
+        //if a specific user is clicked, zoom into that user and your current location
         googleMap.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             //called once the map is done loading
@@ -146,42 +146,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             }
         });
-*/
 
         googleMap.getMapAsync(this);
 
         //build the google api client and connect too it (for the map)
         buildGoogleApiClient();
         mGoogleApiClient.connect();
-
-        //setup the spinner
-        spinner = (Spinner) findViewById(R.id.updateSpinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.autoUpdate, R.layout.custom_spinner);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
-        //get the spinners onItemClick
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-
-                //if (spinner.getSelectedItem().equals("Minutes")) {
-                //  if (locationUpdatingOrNot)
-                //    stopLocationUpdates();
-                //} else {
-                //  createLocationRequest();
-                //}
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-            }
-        });
 
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
@@ -194,7 +164,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
 
 
-       // new getFriendsList().execute();
+       //get friends list and put friends on the map
+        new MarkerScript().execute();
+
 
         //set username
         usernameTextView.setText(user);
@@ -307,22 +279,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    //FUNCTIONS FOR GOOGLE MAPS API ------------
-    public void createLocationRequest() {
-        final Spinner spinner = (Spinner) findViewById(R.id.updateSpinner);
-        int interval;
-
-        locationUpdatingOrNot = true;
-
-        interval = Integer.parseInt(spinner.getSelectedItem().toString());
-        interval = interval * 60000;
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(interval);
-        mLocationRequest.setFastestInterval(interval);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-    }
 
     //when the map is connected
     @Override
@@ -359,6 +315,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
+
         }
 
         @Override
@@ -369,6 +326,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             } else {
                 mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                         mGoogleApiClient);
+
 
                 final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
@@ -408,46 +366,50 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         //this happens whenever an async task is done
         public void onPostExecute(Void result) {
-            pDialog.dismiss();
-            if (alertSettingsFlag) {
+            if (mLastLocation == null) {
                 gps.showSettingsAlert();
             } else {
-                googleMap.getMap().setMyLocationEnabled(true);
-
-                userCurrentLocation = new LatLng(latitude, longitude);
-
-
-                MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-                TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-                EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-
-                //if the address comes back null send a toast
-                if (address == null) {
-                    Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
+                pDialog.dismiss();
+                if (alertSettingsFlag) {
+                    gps.showSettingsAlert();
                 } else {
-                    String urlTest = "http://skyrealmstudio.com/img/"+user+".jpg";
-                    //if it is the first time clicking get location
-                    if (markerCounter == 0) {
+                    googleMap.getMap().setMyLocationEnabled(true);
 
-                        Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
-                        addressTextView.setText(address);
-                        commentEditText.setText(null);
-                        new DownloadImageTask().execute(urlTest);
-                        userCurrentLocation = new LatLng(latitude, longitude);
-                        googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+                    userCurrentLocation = new LatLng(latitude, longitude);
 
-                        new DownloadImageTask().execute(urlTest, user);
-                        markerCounter++;
-                        //else it is not the first time
+
+                    MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+                    TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+                    EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
+                    //if the address comes back null send a toast
+                    if (address == null) {
+                        Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
-                        new DownloadImageTask().execute(urlTest, user);
-                        addressTextView.setText(address);
-                        commentEditText.setText(null);
+                        String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
+                        //if it is the first time clicking get location
+                        if (markerCounter == 0) {
 
+                            Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
+                            addressTextView.setText(address);
+                            commentEditText.setText(null);
+                            new DownloadImageTask().execute(urlTest);
+                            userCurrentLocation = new LatLng(latitude, longitude);
+                            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
+
+                            new DownloadImageTask().execute(urlTest, user);
+                            markerCounter++;
+                            //else it is not the first time
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
+                            new DownloadImageTask().execute(urlTest, user);
+                            addressTextView.setText(address);
+                            commentEditText.setText(null);
+
+                        }
                     }
-                }
 
+                }
             }
         }
         //--------------------------------------------Finish getLocation()-----------------------------------
@@ -521,120 +483,88 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //return _bmp;
         return output;
     }
-    class getFriendsList extends AsyncTask<Void, Void, Void> {
+
+    class MarkerScript extends AsyncTask<String, Void, Void> {
+        private ArrayList<MarkerOptions> mMyMarkersArray = new ArrayList<MarkerOptions>();
+        int userCounter = 0;
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        protected Void doInBackground(String... strings) {
+            HttpResponse response = null;
+            String responseStr = null;
+            String username = null;
+            String comment = null;
+            String latitude = null;
+            String longitude = null;
 
-        }
+            JSONObject obj = null;
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://www.skyrealmstudio.com/cgi-bin/MarkerScript.py");
+            JSONArray json = null;
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            //start the post to the database
-            MarkerOptions tempMarker;
-            String responseBody = null;
-            HttpResponse response;
-            HttpClient httpClient = new DefaultHttpClient();
-
-            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetPendingFriendsList.php");
-
-            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", user));
 
             try {
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            try {
-                response = httpClient.execute(httpPost);
-                responseBody = EntityUtils.toString(response.getEntity());
-                // writing response to log
-                Log.d("Http Response:", response.toString());
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username", user));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                response = httpclient.execute(httppost);
+                responseStr = EntityUtils.toString(response.getEntity());
+
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
             } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+            System.out.println(responseStr);
+            try {
+                json = new JSONArray(responseStr);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //end the post response
-            String jsonStr = responseBody;
-
-            Log.d("Response: ", "> " + jsonStr);
-            if (jsonStr != null) {
+            for (int counter = 0; counter < json.length(); counter++) {
                 try {
-                    JSONArray jsonArr = new JSONArray(jsonStr);
-                    for (int i = 0; i < jsonArr.length(); i++) {
-                        {
+                    //parse the data
+                    username = json.getJSONObject(counter).getString("Username");
+                    comment = json.getJSONObject(counter).getString("Comment");
+                    latitude = json.getJSONObject(counter).getString("Latitude");
+                    longitude = json.getJSONObject(counter).getString("Longitude");
+                    //log the data
+                    if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
 
-                            JSONObject c = jsonArr.getJSONObject(i);
-                            String Friend = c.getString(TAG_FRIEND);
-                            HashMap<String, String> user = new HashMap<String, String>();
-                            user.put(TAG_FRIEND, Friend);
-                            FriendsList.add(user);
-                        }
+                    } else {
+                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(comment);
+                        mMyMarkersArray.add(userCounter, markerOption);
+                        userCounter++;
                     }
-
-                    for(int i =0; i < FriendsList.size(); i++)
-                    {
-                                            //start the post to the database
-                        String responseBody1 = null;
-                        httpClient = new DefaultHttpClient();
-
-                        httpPost = new HttpPost("http://skyrealmstudio.com/GetSpecificUserLocation.php");
-
-                        List<NameValuePair> nameValuePair1 = new ArrayList<NameValuePair>();
-                        String friendToFind = FriendsList.get(i).values().toString();
-                        nameValuePair1.add(new BasicNameValuePair("Username", friendToFind));
-
-
-                        try {
-                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair1));
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            response = httpClient.execute(httpPost);
-                            responseBody1 = EntityUtils.toString(response.getEntity());
-                            // writing response to log
-                            Log.d("Http Response:", response.toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        //end the post response
-
-                        //JSON the string that is got from the post.
-                         jsonStr = responseBody1;
-
-                        Log.d("Response: ", "> " + jsonStr);
-                        if (jsonStr != null){
-                            jsonArr = new JSONArray(jsonStr);
-
-
-                            JSONObject c = jsonArr.getJSONObject(i);
-
-
-                           tempMarker = new MarkerOptions()
-                                    .position(new LatLng(Double.parseDouble(c.getString(TAG_LATITUDE)), Double.parseDouble(c.getString(TAG_LONGITUDE))))
-                                    .title(friendToFind)
-                                    .snippet(c.getString(TAG_COMMENTS));
-                            markers.add(i, tempMarker);
-                        }
-                    }
-
+                    //reset the variables for the next loop
+                    username = null;
+                    comment = null;
+                    latitude = null;
+                    longitude = null;
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
             return null;
         }
-
-        public void onPostExecute(Void Result)
-        {
-            for(int i = 0; i < markers.size(); i++)
-            {
-                googleMap.getMap().addMarker(new MarkerOptions().title(markers.get(i).getTitle())
-                      .position(new LatLng(markers.get(i).getPosition().latitude, markers.get(i).getPosition().longitude)));
+        //insert data onto map and set the boundaries
+        protected void onPostExecute(Void result) {
+            LatLngBounds friendsListBoundaries;
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for(int counter = 0; counter < mMyMarkersArray.size(); counter++) {
+                LatLng userLatLng= new LatLng(mMyMarkersArray.get(counter).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
+                builder.include(userLatLng);
             }
+            friendsListBoundaries = builder.build();
+            for(int counter = 0; counter < mMyMarkersArray.size(); counter++)
+            {
+                googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
+            }
+            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
         }
     }
 

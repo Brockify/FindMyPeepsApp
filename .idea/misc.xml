@@ -13,7 +13,11 @@
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
+<<<<<<< Updated upstream
   <component name="ProjectRootManager" version="2" project-jdk-name="1.7" project-jdk-type="JavaSDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.6 (/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7)" project-jdk-type="Python SDK" />
+>>>>>>> Stashed changes
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
