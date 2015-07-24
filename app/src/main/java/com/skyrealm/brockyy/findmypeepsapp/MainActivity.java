@@ -197,9 +197,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //called when the activity is created (for the map)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-            if(gps.canGetLocation()) {
-                latitude = gps.getLatitude();
-                longitude = gps.getLongitude();
+            if(gps.isGPSEnabledOrNot()) {
+                latitude = gps.getLocation().getLatitude();
+                longitude = gps.getLocation().getLongitude();
 
                 //get the current users location
                 userCurrentLocation = new LatLng(latitude, longitude);
@@ -207,7 +207,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                 //if the a user from friend list was not clicked, just set the zoom to the user
                 if (!isOtherUserClicked) {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 13));
                     //else show the users location that was clicked
                 } else {
 
@@ -226,9 +225,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     bounds = builder.build();
                     String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername + ".jpg";
                     new DownloadImageTask().execute(urlTest, otherUserUsername);
-
                     //
                 }
+            } else {
+                gps.showSettingsAlert();
             }
     }
 
@@ -238,7 +238,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         switch (v.getId()) {
             //if Get Location button is clicked
             case R.id.getLocationButton:
-                if (gps.haveNetworkConnection()) {
+                if (gps.haveNetworkConnection() ) {
                     String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
                     new getLocation().execute();
                 } else {

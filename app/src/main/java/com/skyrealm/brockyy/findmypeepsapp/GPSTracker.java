@@ -305,4 +305,26 @@ public class GPSTracker extends Service implements android.location.LocationList
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
+
+    public boolean isGPSEnabledOrNot() {
+        LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        if (!gps_enabled && !network_enabled) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
