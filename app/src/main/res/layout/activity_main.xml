@@ -65,7 +65,9 @@
         android:textAlignment="center"
         android:layout_below="@+id/usernameTextView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/pager"
+        android:layout_alignEnd="@+id/pager" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -78,17 +80,6 @@
         android:singleLine="true"
         android:textAlignment="center"
         android:layout_above="@+id/getLocationButton" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/updateSpinner"
-        android:spinnerMode="dropdown"
-        android:textAlignment="center"
-        android:layout_below="@+id/usernameTextView"
-        android:layout_toRightOf="@+id/addressTextView"
-        android:layout_toEndOf="@+id/addressTextView" />
-
 
 
 </RelativeLayout>

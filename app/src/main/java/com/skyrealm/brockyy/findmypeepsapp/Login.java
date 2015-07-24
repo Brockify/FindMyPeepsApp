@@ -213,7 +213,7 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
 
                     finish();
 
-                  startActivity(ii);
+                    startActivity(ii);
 
                     return json.getString(TAG_MESSAGE);
                 } else {
