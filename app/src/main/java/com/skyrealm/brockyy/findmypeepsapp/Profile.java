@@ -46,7 +46,7 @@ public class Profile extends Activity implements OnClickListener{
     String encodedString;
     RequestParams params = new RequestParams();
     String imgPath, fileName;
-    Bitmap bitmap;
+    Bitmap bitmap, origbitmap;
     private static int RESULT_LOAD_IMG = 1;
 
     // Progress Dialog
@@ -234,8 +234,13 @@ public class Profile extends Activity implements OnClickListener{
                 BitmapFactory.Options options = null;
                 options = new BitmapFactory.Options();
                 options.inSampleSize = 3;
-                bitmap = BitmapFactory.decodeFile(imgPath,
+                origbitmap = BitmapFactory.decodeFile(imgPath,
                         options);
+
+
+
+
+                bitmap = Bitmap.createScaledBitmap(origbitmap,100, 100, true);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 // Must compress the Image to reduce image size to make upload easy
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
