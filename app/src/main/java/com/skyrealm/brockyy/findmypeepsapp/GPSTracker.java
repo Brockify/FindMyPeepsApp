@@ -216,7 +216,7 @@ public class GPSTracker extends Service implements android.location.LocationList
 
         mAlertDialog.setTitle("Gps Disabled");
 
-        mAlertDialog.setMessage("gps is not enabled . do you want to enable ?");
+        mAlertDialog.setMessage("GPS not enabled or internet not available.");
 
         mAlertDialog.setPositiveButton("settings", new DialogInterface.OnClickListener() {
 
@@ -227,7 +227,7 @@ public class GPSTracker extends Service implements android.location.LocationList
             }
         });
 
-        mAlertDialog.setNegativeButton("cancle", new DialogInterface.OnClickListener() {
+        mAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 // TODO Auto-generated method stub

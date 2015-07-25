@@ -138,3 +138,8 @@ def profanity_filter(word):
     for badword in profanity:
         if word == badword:
             return "profanity!"
+
+def update_location(latitude, longitude, username, address, comments):
+    sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s  where username =  %s"
+    CUR.execute(sql, (latitude, longitude, address, comments, username))
+    return "location updated"

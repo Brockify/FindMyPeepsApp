@@ -132,6 +132,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //create new gps with MainActivity as context
         gps = new GPSTracker(MainActivity.this);
 
+        new MarkerScript().execute();
+
+
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
@@ -165,8 +168,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
 
 
-       //get friends list and put friends on the map
-        new MarkerScript().execute();
+        //get friends list and put friends on the map
 
 
         //set username
@@ -197,39 +199,39 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //called when the activity is created (for the map)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-            if(gps.isGPSEnabledOrNot()) {
-                latitude = gps.getLocation().getLatitude();
-                longitude = gps.getLocation().getLongitude();
+        if(gps.isGPSEnabledOrNot()) {
+            latitude = gps.getLocation().getLatitude();
+            longitude = gps.getLocation().getLongitude();
 
-                //get the current users location
-                userCurrentLocation = new LatLng(latitude, longitude);
-                googleMap.setMyLocationEnabled(false);
+            //get the current users location
+            userCurrentLocation = new LatLng(latitude, longitude);
+            googleMap.setMyLocationEnabled(false);
 
-                //if the a user from friend list was not clicked, just set the zoom to the user
-                if (!isOtherUserClicked) {
-                    //else show the users location that was clicked
-                } else {
-
-
-                    //get the extras
-                    otherUserLat = getIntent().getExtras().getDouble("otherLat");
-                    otherUserLong = getIntent().getExtras().getDouble("otherLong");
-                    otherUserUsername = getIntent().getExtras().getString("userUsername");
-                    otherUserComment = getIntent().getExtras().getString("otherComment");
-
-                    //zoom to show both the users location and the user clicked location
-                    otherUserLocation = new LatLng(otherUserLat, otherUserLong);
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    builder.include(userCurrentLocation);
-                    builder.include(otherUserLocation);
-                    bounds = builder.build();
-                    String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername + ".jpg";
-                    new DownloadImageTask().execute(urlTest, otherUserUsername);
-                    //
-                }
+            //if the a user from friend list was not clicked, just set the zoom to the user
+            if (!isOtherUserClicked) {
+                //else show the users location that was clicked
             } else {
-                gps.showSettingsAlert();
+
+
+                //get the extras
+                otherUserLat = getIntent().getExtras().getDouble("otherLat");
+                otherUserLong = getIntent().getExtras().getDouble("otherLong");
+                otherUserUsername = getIntent().getExtras().getString("userUsername");
+                otherUserComment = getIntent().getExtras().getString("otherComment");
+
+                //zoom to show both the users location and the user clicked location
+                otherUserLocation = new LatLng(otherUserLat, otherUserLong);
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(userCurrentLocation);
+                builder.include(otherUserLocation);
+                bounds = builder.build();
+                String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername + ".jpg";
+                new DownloadImageTask().execute(urlTest, otherUserUsername);
+                //
             }
+        } else {
+            gps.showSettingsAlert();
+        }
     }
 
     //get onClick codes
@@ -321,35 +323,35 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         @Override
         protected Void doInBackground(Void... params) {
 
-                final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-                //If the update location button is clicked------------------------------------------\
+            //If the update location button is clicked------------------------------------------\
 
-                    latitude = gps.getLocation().getLatitude();
-                    longitude = gps.getLocation().getLongitude();
-                    comments = commentEditText.getText().toString();
+            latitude = gps.getLocation().getLatitude();
+            longitude = gps.getLocation().getLongitude();
+            comments = commentEditText.getText().toString();
 
 
-                    //getting the street address---------------------------------------------------;
-                    Geocoder geocoder;
-                    List<Address> addresses;
-                    geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+            //getting the street address---------------------------------------------------;
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
 
-                    try {
-                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                        address = addresses.get(0).getAddressLine(0);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                address = addresses.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                    //website to post too
-                    String htmlUrl = "http://skyrealmstudio.com/updatelocation.php";
+            //website to post too
+            String htmlUrl = "http://skyrealmstudio.com/cgi-bin/updatelocation.py";
 
-                    //send the post and execute it
-                    HTTPSendPost postSender = new HTTPSendPost();
-                    postSender.Setup(user, longitude, latitude, address, htmlUrl, comments);
-                    postSender.execute();
-                    //done executing post
+            //send the post and execute it
+            HTTPSendPost postSender = new HTTPSendPost();
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments);
+            postSender.execute();
+            //done executing post
 
             //finished getting the street address-----------------------------------------
             return null;
@@ -359,46 +361,46 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //this happens whenever an async task is done
         public void onPostExecute(Void result) {
             LatLngBounds.Builder temp = new LatLngBounds.Builder();
-                pDialog.dismiss();
-                    googleMap.getMap().setMyLocationEnabled(true);
+            pDialog.dismiss();
+            googleMap.getMap().setMyLocationEnabled(true);
 
-                    userCurrentLocation = new LatLng(latitude, longitude);
+            userCurrentLocation = new LatLng(latitude, longitude);
 
 
-                    MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-                    TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
-                    EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+            MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
+            TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
+            EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
-                    //if the address comes back null send a toast
-                    if (address == null) {
-                        Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
-                    } else {
-                        String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
-                        //if it is the first time clicking get location
-                        Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
-                        addressTextView.setText(address);
-                        commentEditText.setText(null);
-                        new DownloadImageTask().execute(urlTest);
-                        userCurrentLocation = new LatLng(latitude, longitude);
-                        if (mMyMarkersArray.size() == 0) {
-                            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 60));
-                        } else {
-                            temp.include(userCurrentLocation);
-                            for (int counter = 0; counter < mMyMarkersArray.size(); counter++) {
-                                LatLng user = new LatLng(mMyMarkersArray.get(0).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
-                                temp.include(user);
-                            }
-                            LatLngBounds bound = temp.build();
-                            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bound, 100));
-                        }
-
-                        new DownloadImageTask().execute(urlTest, user);
+            //if the address comes back null send a toast
+            if (address == null) {
+                Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
+            } else {
+                String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
+                //if it is the first time clicking get location
+                Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
+                addressTextView.setText(address);
+                commentEditText.setText(null);
+                new DownloadImageTask().execute(urlTest);
+                userCurrentLocation = new LatLng(latitude, longitude);
+                if (mMyMarkersArray.size() == 0) {
+                    googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(userCurrentLocation, 60));
+                } else {
+                    temp.include(userCurrentLocation);
+                    for (int counter = 0; counter < mMyMarkersArray.size(); counter++) {
+                        LatLng user = new LatLng(mMyMarkersArray.get(0).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
+                        temp.include(user);
                     }
-                gps.stopUsingGps();
-
+                    LatLngBounds bound = temp.build();
+                    googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bound, 100));
                 }
+
+                new DownloadImageTask().execute(urlTest, user);
             }
-        //--------------------------------------------Finish getLocation()-----------------------------------
+            gps.stopUsingGps();
+
+        }
+    }
+    //--------------------------------------------Finish getLocation()-----------------------------------
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -552,4 +554,3 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     }
 
 }
-

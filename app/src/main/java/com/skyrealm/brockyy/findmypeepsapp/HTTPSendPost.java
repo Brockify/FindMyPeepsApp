@@ -71,7 +71,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     }
 
     protected String doInBackground(String... params) {
-        if (htmlUrl == "http://skyrealmstudio.com/updatelocation.php") {
+        if (htmlUrl == "http://skyrealmstudio.com/cgi-bin/updatelocation.py") {
             //send a post to the database if the user requests so------------------------------------------------
 // Creating HTTP client
             HttpClient httpClient = new DefaultHttpClient();
