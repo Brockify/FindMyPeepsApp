@@ -38,6 +38,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private String user;
     private double latitude;
     private double longitude;
+    private String lastUpdated;
     private String address;
     private String htmlUrl;
     private String pendingUser;
@@ -46,14 +47,14 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private double YesOrNo;
     static String response = null;
 
-    public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments) {
+    public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments, String lastUpdated) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.htmlUrl = htmlUrl;
         this.comments = comments;
         this.user = user;
-
+        this.lastUpdated = lastUpdated;
 
     }
     public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, double yesorno)
@@ -71,7 +72,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     }
 
     protected String doInBackground(String... params) {
-        if (htmlUrl == "http://skyrealmstudio.com/cgi-bin/updatelocation.py") {
+        if (htmlUrl.equals("http://skyrealmstudio.com/cgi-bin/updatelocation.py")) {
             //send a post to the database if the user requests so------------------------------------------------
 // Creating HTTP client
             HttpClient httpClient = new DefaultHttpClient();
@@ -86,6 +87,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             nameValuePair.add(new BasicNameValuePair("Longitude", Double.toString(this.longitude)));
             nameValuePair.add(new BasicNameValuePair("Address", this.address));
             nameValuePair.add(new BasicNameValuePair("Comments", this.comments));
+            nameValuePair.add(new BasicNameValuePair("LastUpdated", this.lastUpdated));
 
             // Url Encoding the POST parameters
             try {
@@ -108,7 +110,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 // writing exception to log
                 e.printStackTrace();
             }
-        } else if (htmlUrl == "http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php") {
+        } else if (htmlUrl.equals("http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php")) {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
@@ -134,7 +136,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 e.printStackTrace();
             }
 
-        }else if (htmlUrl == "http://www.skyrealmstudio.com/DeleteFriend.php") {
+        }else if (htmlUrl.equals("http://www.skyrealmstudio.com/DeleteFriend.php")) {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();

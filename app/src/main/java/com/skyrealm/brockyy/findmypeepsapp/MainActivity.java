@@ -70,6 +70,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -331,6 +332,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             longitude = gps.getLocation().getLongitude();
             comments = commentEditText.getText().toString();
 
+            //get time and date
+            String lastUpdated = null;
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int amorpmint = c.get(Calendar.AM_PM);
+            String amorpm;
+            if (amorpmint == 0)
+            {
+                amorpm = "AM";
+            } else {
+                amorpm = "PM";
+            }
+
+            lastUpdated = df.format(c.getTime()) + " " + amorpm;
 
             //getting the street address---------------------------------------------------;
             Geocoder geocoder;
@@ -349,7 +364,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments, lastUpdated);
             postSender.execute();
             //done executing post
 
