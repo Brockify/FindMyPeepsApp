@@ -21,6 +21,15 @@ def get_password(username):
         return "User does not exist"
     else:
         return result[0]
+    
+def get_last_updated(username):
+    sql = "select LastUpdated from Users where Username=%s"
+    CUR.execute(sql, [username])
+    result = CUR.fetchone()
+    if result == None:
+        return "User doesn't exist"
+    else:
+        return result[0]
         
 def get_comment(username):
     sql = "select Comments from Users where Username=%s"
@@ -88,7 +97,8 @@ def markers_on_map(username):
         UserDictionary123["Username"] = friend
         UserDictionary123["Comment"] = str(get_comment(friend))
         UserDictionary123["Latitude"] = get_latitude(friend)
-        UserDictionary123["Longitiude"] = get_longitude(friend)
+        UserDictionary123["Longitude"] = get_longitude(friend)
+        UserDictionary123["LastUpdated"] = get_last_updated(friend)
         fullFriendsList.append(UserDictionary123)
 
     return fullFriendsList

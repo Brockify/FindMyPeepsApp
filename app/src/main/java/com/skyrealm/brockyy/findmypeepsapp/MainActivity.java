@@ -496,6 +496,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             String comment = null;
             String latitude = null;
             String longitude = null;
+            String lastUpdated = null;
 
             JSONObject obj = null;
             // Create a new HttpClient and Post Header
@@ -532,11 +533,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     comment = json.getJSONObject(counter).getString("Comment");
                     latitude = json.getJSONObject(counter).getString("Latitude");
                     longitude = json.getJSONObject(counter).getString("Longitude");
+                    lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
+
                     //log the data
                     if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
 
                     } else {
-                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(comment);
+                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + "-" + comment);
                         mMyMarkersArray.add(userCounter, markerOption);
                         userCounter++;
                     }
@@ -545,6 +548,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     comment = null;
                     latitude = null;
                     longitude = null;
+                    lastUpdated = null;
 
                 } catch (JSONException e) {
                     e.printStackTrace();
