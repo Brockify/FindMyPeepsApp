@@ -238,7 +238,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         switch (v.getId()) {
             //if Get Location button is clicked
             case R.id.getLocationButton:
-                if (gps.haveNetworkConnection() ) {
+                if (gps.isGPSEnabledOrNot()) {
                     String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
                     new getLocation().execute();
                 } else {
