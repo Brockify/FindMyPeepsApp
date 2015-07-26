@@ -16,7 +16,7 @@ def check_user(username):
 def get_password(username):
     sql = "select Password from Users where Username=%s"
     CUR.execute(sql, [username])
-    result = CUR.fetchone()[0]
+    result = CUR.fetchone()
     if result == None:
         return "User does not exist"
     else:

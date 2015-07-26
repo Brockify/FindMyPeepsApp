@@ -76,16 +76,25 @@ import java.util.*;
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
     //Global variables declaration
+    //current user
     String user;
     Double latitude;
     Double longitude;
+    String lastUpdated = null;
+    Marker userMarker = null;
+    LatLng userCurrentLocation;
+    //other user
     LatLng otherUserLocation;
+    boolean isOtherUserClicked;
+    Marker otherUserMarker;
+    double otherUserLat;
+    double otherUserLong;
+    String otherUserUsername;
+    String otherUserComment;
+    //general
     String address;
     String comments;
-    Marker otherUserMarker;
-    LatLng userCurrentLocation;
     MapFragment googleMap;
-    boolean isOtherUserClicked;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private ProgressDialog pDialog;
@@ -95,10 +104,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     LatLngBounds bounds;
     Button getLocationButton;
     boolean locationUpdatingOrNot = false;
-    double otherUserLat;
-    double otherUserLong;
-    String otherUserUsername;
-    String otherUserComment;
     private ArrayList<MarkerOptions> mMyMarkersArray = new ArrayList<MarkerOptions>();
     LatLngBounds friendsListBoundaries;
     LocationManager lm;
@@ -313,6 +318,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            //remove the marker so that way when you add it, there isn't two of the same.
+            if (userMarker != null)
+            {
+                userMarker.remove();
+            }
+
+            gps = new GPSTracker(MainActivity.this);
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Sharing your location...");
             pDialog.setIndeterminate(false);
@@ -327,13 +339,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
             //If the update location button is clicked------------------------------------------\
-
             latitude = gps.getLocation().getLatitude();
             longitude = gps.getLocation().getLongitude();
             comments = commentEditText.getText().toString();
 
             //get time and date
-            String lastUpdated = null;
             Calendar c = Calendar.getInstance();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             int amorpmint = c.get(Calendar.AM_PM);
@@ -402,15 +412,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 } else {
                     temp.include(userCurrentLocation);
                     for (int counter = 0; counter < mMyMarkersArray.size(); counter++) {
-                        LatLng user = new LatLng(mMyMarkersArray.get(0).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
+                        LatLng user = new LatLng(mMyMarkersArray.get(counter).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
                         temp.include(user);
                     }
                     LatLngBounds bound = temp.build();
                     googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bound, 100));
                 }
 
+
                 new DownloadImageTask().execute(urlTest, user);
             }
+            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user).snippet(lastUpdated + "-" + commentEditText.getText().toString()));
             gps.stopUsingGps();
 
         }
@@ -460,7 +472,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     .title(otherUserUsername)
                     .snippet(otherUserComment)
                     .icon(BitmapDescriptorFactory.fromBitmap(bhalfsize)));
-
 
         }
     }

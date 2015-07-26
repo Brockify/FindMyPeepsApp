@@ -240,7 +240,7 @@ public class Profile extends Activity implements OnClickListener{
 
 
 
-                bitmap = Bitmap.createScaledBitmap(origbitmap,100, 100, true);
+                bitmap = Bitmap.createScaledBitmap(origbitmap,300, 300, true);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 // Must compress the Image to reduce image size to make upload easy
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
