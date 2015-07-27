@@ -153,3 +153,24 @@ def update_location(latitude, longitude, username, address, comments):
     sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s  where username =  %s"
     CUR.execute(sql, (latitude, longitude, address, comments, username))
     return "location updated"
+
+def accept_or_deny_friend_request(username, friend, yesorno):
+    if yesorno == 1:
+        sql = "insert into accepted_req (friend, userLoggedIn, YesOrNo) values (%s, %s, %s)"
+        CUR.execute(sql, (username, friend, yesorno))
+        sql = "insert into accepted_req (friend, userLoggedIn, YesOrNo) values (%s, %s, %s)"
+        CUR.execute(sql, (friend, username, yesorno))
+        sql = "delete from pending_req where fromUser=%s and toUser=%s"
+        CUR.execute(sql, (friend, username))
+        sql = "delete from pending_req where fromUser=%s AND toUser=%s"
+        CUR.execute(sql, (username, friend))
+        return "Friend request accepted or denyed!"
+    elif yesorno == 0:
+        sql = "delete from pending_req where fromUser=%s and toUser=%s"
+        CUR.execute(sql, (friend, username))
+        sql = "delete from pending_req where fromUser=%s AND toUser=%s"
+        CUR.execute(sql, (username, friend))
+    else:
+        return "Failed"
+
+
