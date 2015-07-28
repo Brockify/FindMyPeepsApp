@@ -574,12 +574,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 LatLng userLatLng= new LatLng(mMyMarkersArray.get(counter).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
                 builder.include(userLatLng);
             }
-            friendsListBoundaries = builder.build();
             for(int counter = 0; counter < mMyMarkersArray.size(); counter++)
             {
                 googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
             }
-            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
+            if (mMyMarkersArray.size() > 0) {
+                friendsListBoundaries = builder.build();
+                googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
+            }
         }
     }
 

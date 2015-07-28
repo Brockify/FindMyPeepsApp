@@ -44,7 +44,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private String pendingUser;
     private String comments;
     private String friend;
-    private double YesOrNo;
+    private int YesOrNo;
     static String response = null;
 
     public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments, String lastUpdated) {
@@ -57,7 +57,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         this.lastUpdated = lastUpdated;
 
     }
-    public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, double yesorno)
+    public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, int yesorno)
     {
         this.htmlUrl = htmlUrl;
         this.pendingUser = pendingUser;
@@ -110,7 +110,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 // writing exception to log
                 e.printStackTrace();
             }
-        } else if (htmlUrl.equals("http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php")) {
+        } else if (htmlUrl.equals("http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py")) {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
@@ -120,7 +120,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", user));
             nameValuePair.add(new BasicNameValuePair("Friend", this.pendingUser));
-            nameValuePair.add(new BasicNameValuePair("YesOrNo", Double.toString(YesOrNo)));
+            nameValuePair.add(new BasicNameValuePair("YesOrNo", Integer.toString(YesOrNo)));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));

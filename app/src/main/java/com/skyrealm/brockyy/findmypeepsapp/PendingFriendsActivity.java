@@ -258,7 +258,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
-        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php", pendingUserText, 1);
+        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 1);
         httpPost.execute();
         //end post
 
@@ -286,7 +286,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
-        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/AcceptOrDenyFriendRequest.php", pendingUserText, 0);
+        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 0);
         httpPost.execute();
         //end post
 
