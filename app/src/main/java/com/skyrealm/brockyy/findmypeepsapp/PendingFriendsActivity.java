@@ -308,12 +308,12 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             HttpClient httpClient = new DefaultHttpClient();
 
 
-            HttpPost httpPost = new HttpPost("http://www.skyrealmstudio.com/SendFriendRequest.php");
+            HttpPost httpPost = new HttpPost("http://www.skyrealmstudio.com/cgi-bin/SendFriendRequest.py");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", user));
+            nameValuePair.add(new BasicNameValuePair("fromUser", user));
             EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
-            nameValuePair.add(new BasicNameValuePair("FriendReq", friendEditText.getText().toString()));
+            nameValuePair.add(new BasicNameValuePair("toUser", friendEditText.getText().toString()));
 
 
             try {
@@ -335,18 +335,18 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         protected void onPostExecute(Boolean Result)
         {
-            if (responseBody.equals("Failed")) {
+            if (responseBody.equals("\nFailed\n")) {
                 //end the post response
                     Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
-            }else if(responseBody.equals("Already your friend"))
+            }else if(responseBody.equals("\nAlready your friend\n"))
             {
                     Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. User already your friend.", Toast.LENGTH_LONG).show();
             }
-          else if(responseBody.equals("Cannot add yourself"))
+          else if(responseBody.equals("\nCannot add yourself\n"))
             {
                     Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Cannot add yourself.", Toast.LENGTH_LONG).show();
 
-            }else if(responseBody.equals("Already pending"))
+            }else if(responseBody.equals("\nAlready pending\n"))
             {
                     Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. User already has request from you.", Toast.LENGTH_LONG).show();
             } else {

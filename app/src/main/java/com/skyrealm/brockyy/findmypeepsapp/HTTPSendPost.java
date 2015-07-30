@@ -136,7 +136,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 e.printStackTrace();
             }
 
-        }else if (htmlUrl.equals("http://www.skyrealmstudio.com/DeleteFriend.php")) {
+        }else if (htmlUrl.equals("http://www.skyrealmstudio.com/cgi-bin/DeleteFriend.py")) {
 
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
@@ -144,8 +144,8 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             HttpPost httpPost = new HttpPost(htmlUrl);
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-            nameValuePair.add(new BasicNameValuePair("Username", user));
-            nameValuePair.add(new BasicNameValuePair("Friend", this.friend));
+            nameValuePair.add(new BasicNameValuePair("userLoggedIn", user));
+            nameValuePair.add(new BasicNameValuePair("friend", this.friend));
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
             } catch (UnsupportedEncodingException e) {

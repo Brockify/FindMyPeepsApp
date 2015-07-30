@@ -422,7 +422,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                 new DownloadImageTask().execute(urlTest, user);
             }
-            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user).snippet(lastUpdated + "-" + commentEditText.getText().toString()));
+            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user).snippet(lastUpdated + "-" + commentEditText.getText()));
             gps.stopUsingGps();
 
         }

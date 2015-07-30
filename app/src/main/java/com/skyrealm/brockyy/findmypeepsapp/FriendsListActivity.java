@@ -185,7 +185,7 @@ public class FriendsListActivity extends ActionBarActivity {
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
                         // send post
-                        String htmlUrl = "http://www.skyrealmstudio.com/DeleteFriend.php";
+                        String htmlUrl = "http://www.skyrealmstudio.com/cgi-bin/DeleteFriend.py";
                         HTTPSendPost sendPost = new HTTPSendPost();
                         userDelete[0] = userDeleteText.getText().toString();
                         sendPost.setUpOnDeleteFriend(user, userDelete[0], htmlUrl);
@@ -305,7 +305,7 @@ public class FriendsListActivity extends ActionBarActivity {
             HttpResponse response;
             HttpClient httpClient = new DefaultHttpClient();
 
-            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/GetSpecificUserLocation.php");
+            HttpPost httpPost = new HttpPost("http://skyrealmstudio.com/cgi-bin/GetSpecificUsersLocation.py");
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", userBeingClicked));
@@ -337,9 +337,9 @@ public class FriendsListActivity extends ActionBarActivity {
 
                             JSONObject c = jsonArr.getJSONObject(i);
 
-                            String userClickedLatitude = c.getString(TAG_LATITUDE);
-                            String userClickedLongitude = c.getString(TAG_LONGITUDE);
-                            String comment = c.getString(TAG_COMMENTS);
+                            String userClickedLatitude = c.getString("latitude");
+                            String userClickedLongitude = c.getString("longitude");
+                            String comment = c.getString("comments");
                             longitude = userClickedLongitude;
                             latitude = userClickedLatitude;
                             userComment = comment;
