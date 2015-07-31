@@ -60,9 +60,6 @@ public class FriendsListActivity extends ActionBarActivity {
     private String userUsername;
     final String[] userDelete = {null};
     private static final String TAG_FRIEND = "friend";
-    private static final String TAG_LATITUDE = "latitude";
-    private static final String TAG_LONGITUDE = "longitude";
-    private static final String TAG_COMMENTS = "comments";
     private ProgressDialog pDialog;
 
     @Override

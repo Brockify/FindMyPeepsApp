@@ -115,8 +115,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MainIntent = new Intent(MainActivity.this, MainActivity.class);
-
-
         setTitle("Locations Screen");
         //DECLARATIONS-----------------------------------------------------------------------
         TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
@@ -138,9 +136,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //create new gps with MainActivity as context
         gps = new GPSTracker(MainActivity.this);
 
-        new MarkerScript().execute();
-
-
         //set the map when created
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
 
@@ -157,6 +152,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
+        //set friends on the map
+        new MarkerScript().execute();
+
         googleMap.getMapAsync(this);
 
         //build the google api client and connect too it (for the map)
@@ -172,10 +170,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-
-
-        //get friends list and put friends on the map
-
 
         //set username
         usernameTextView.setText(user);
@@ -206,12 +200,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if(gps.isGPSEnabledOrNot()) {
+            //get the current users location
             latitude = gps.getLocation().getLatitude();
             longitude = gps.getLocation().getLongitude();
-
-            //get the current users location
             userCurrentLocation = new LatLng(latitude, longitude);
-            googleMap.setMyLocationEnabled(false);
+            googleMap.setMyLocationEnabled(true);
 
             //if the a user from friend list was not clicked, just set the zoom to the user
             if (!isOtherUserClicked) {
@@ -224,7 +217,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 otherUserLong = getIntent().getExtras().getDouble("otherLong");
                 otherUserUsername = getIntent().getExtras().getString("userUsername");
                 otherUserComment = getIntent().getExtras().getString("otherComment");
-
                 //zoom to show both the users location and the user clicked location
                 otherUserLocation = new LatLng(otherUserLat, otherUserLong);
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -578,7 +570,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             {
                 googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
             }
+
+            userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
+
             if (mMyMarkersArray.size() > 0) {
+                builder.include(userCurrentLocation);
                 friendsListBoundaries = builder.build();
                 googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
             }
