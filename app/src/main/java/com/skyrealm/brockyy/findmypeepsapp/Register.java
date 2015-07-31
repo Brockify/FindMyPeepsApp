@@ -29,7 +29,7 @@ public class Register extends Activity implements OnClickListener{
 
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://skyrealmstudio.com/register.php";
+    private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/register.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private EmailResponder eresp = new EmailResponder();
@@ -58,6 +58,16 @@ public class Register extends Activity implements OnClickListener{
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent ii = new Intent(Register.this,Login.class);
+        finish();
+        // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+        startActivity(ii);
+
     }
 
     class AttemptRegister extends AsyncTask<String, String, String> {

@@ -46,7 +46,7 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
     MainActivity setupLogin = new MainActivity();
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://skyrealmstudio.com/login.php";
+    private static final String LOGIN_URL = "http://www.skyrealmstudio.com/cgi-bin/login.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 

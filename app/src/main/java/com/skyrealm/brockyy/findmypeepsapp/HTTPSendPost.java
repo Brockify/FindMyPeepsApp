@@ -36,6 +36,7 @@ import java.util.List;
 public class HTTPSendPost extends AsyncTask<String,Double, String> {
 
     private String user;
+    private String pass;
     private double latitude;
     private double longitude;
     private String lastUpdated;
