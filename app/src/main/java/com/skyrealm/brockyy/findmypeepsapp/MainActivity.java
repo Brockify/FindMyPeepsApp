@@ -166,7 +166,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void onSwipeLeft() {
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
-
                 startActivity(intent);
             }
         });
@@ -188,7 +187,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void onBackPressed() {
 
         if (backtoast != null && backtoast.getView().getWindowToken() != null) {
+            Intent intent = new Intent(this, Login.class);
             finish();
+            startActivity(intent);
         } else {
             backtoast = Toast.makeText(this, "Press back to logout", Toast.LENGTH_SHORT);
             backtoast.show();
@@ -267,9 +268,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         if (id == R.id.action_logout) {
             Intent ii = new Intent(MainActivity.this, Login.class);
-            finish();
-            // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
+            finish();
             return true;
         }
         if (id == R.id.action_profile) {
@@ -431,12 +431,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     }
 
-    protected void stopLocationUpdates() {
-        locationUpdatingOrNot = false;
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-    }
-
     //gets the profile pictures of a user when clicked
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -570,11 +564,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             {
                 googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
             }
-
-            userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
-
             if (mMyMarkersArray.size() > 0) {
-                builder.include(userCurrentLocation);
+                if (userMarker != null) {
+                    userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
+                    builder.include(userCurrentLocation);
+                }
                 friendsListBoundaries = builder.build();
                 googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
             }

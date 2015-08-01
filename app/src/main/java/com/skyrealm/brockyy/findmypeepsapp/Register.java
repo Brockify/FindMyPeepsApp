@@ -64,10 +64,9 @@ public class Register extends Activity implements OnClickListener{
     public void onBackPressed() {
 
         Intent ii = new Intent(Register.this,Login.class);
-        finish();
         // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+        finish();
         startActivity(ii);
-
     }
 
     class AttemptRegister extends AsyncTask<String, String, String> {

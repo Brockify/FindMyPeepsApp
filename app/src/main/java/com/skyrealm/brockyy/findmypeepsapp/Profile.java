@@ -123,8 +123,8 @@ public class Profile extends Activity implements OnClickListener{
     public void onBackPressed() {
         Intent ii = new Intent(Profile.this, MainActivity.class);
         ii.putExtra("username", user);
+        finish();
         startActivity(ii);
-
     }
 
 
