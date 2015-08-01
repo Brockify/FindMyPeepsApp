@@ -152,9 +152,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-        //set friends on the map
-        new MarkerScript().execute();
-
         googleMap.getMapAsync(this);
 
         //build the google api client and connect too it (for the map)
@@ -169,6 +166,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
+        //set friends on the map
+        new MarkerScript().execute();
 
         //set username
         usernameTextView.setText(user);
@@ -414,7 +413,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                 new DownloadImageTask().execute(urlTest, user);
             }
-            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user).snippet(lastUpdated + "-" + commentEditText.getText()));
+            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user));
             gps.stopUsingGps();
 
         }
@@ -450,7 +449,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected void onPostExecute(Bitmap result) {
             //add the other users location to the map
 
-            Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth() / 7, result.getHeight() / 7, false);
+            Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth() / 2, result.getHeight() / 2, false);
             bhalfsize = getCroppedBitmap(bhalfsize);
 
             otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
@@ -487,13 +486,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         int userCounter = 0;
         @Override
         protected Void doInBackground(String... strings) {
-            HttpResponse response = null;
+            HttpResponse response;
             String responseStr = null;
-            String username = null;
-            String comment = null;
-            String latitude = null;
-            String longitude = null;
-            String lastUpdated = null;
+            String username;
+            String comment;
+            String latitude;
+            String longitude;
+            String lastUpdated;
 
             JSONObject obj = null;
             // Create a new HttpClient and Post Header
@@ -523,7 +522,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (int counter = 0; counter < json.length(); counter++) {
+            for (int counter = 0; counter < json.length(); counter++)
                 try {
                     //parse the data
                     username = json.getJSONObject(counter).getString("Username");
@@ -531,12 +530,24 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     latitude = json.getJSONObject(counter).getString("Latitude");
                     longitude = json.getJSONObject(counter).getString("Longitude");
                     lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
+                    Bitmap userIcon = null;
+                        String urldisplay = "http://skyrealmstudio.com/img/" + username + ".jpg";
+                        try {
+                            InputStream in = new URL(urldisplay).openStream();
+                            userIcon = BitmapFactory.decodeStream(in);
+                            //make the icon a circle,'
+                            userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth() / 2, userIcon.getHeight() / 2, false);
+                            userIcon = getCroppedBitmap(userIcon);
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage());
+                            e.printStackTrace();
+                        }
 
                     //log the data
                     if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
 
                     } else {
-                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + "-" + comment);
+                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + "-" + comment).icon(BitmapDescriptorFactory.fromBitmap(userIcon));
                         mMyMarkersArray.add(userCounter, markerOption);
                         userCounter++;
                     }
@@ -550,7 +561,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
             return null;
         }
         //insert data onto map and set the boundaries
