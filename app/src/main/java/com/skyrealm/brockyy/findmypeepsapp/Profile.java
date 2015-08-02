@@ -55,7 +55,7 @@ public class Profile extends Activity implements OnClickListener{
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/ChangeUser.php";
-    private static final String LOGIN_URL2 = "http://skyrealmstudio.com/Delete.php";
+    private static final String LOGIN_URL2 = "http://skyrealmstudio.com/cgi-bin/delete.py";
     private static final String LOGIN_URL3 = "http://skyrealmstudio.com/cgi-bin/resetpass.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
@@ -241,7 +241,7 @@ public class Profile extends Activity implements OnClickListener{
 
 
 
-                bitmap = Bitmap.createScaledBitmap(origbitmap,100, 100, true);
+                bitmap = Bitmap.createScaledBitmap(origbitmap,300, 300, true);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 // Must compress the Image to reduce image size to make upload easy
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);

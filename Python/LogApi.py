@@ -7,6 +7,7 @@ import smtplib
 import string
 import random
 import re
+import os
 
 db = MySQLdb.connect("localhost", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
@@ -118,8 +119,19 @@ def CreateUser(username, password, salt, email ):
     return True
 
 def DeleteUser(username):
+    os.remove('/home1/skyrealm/public_html/img/%sorig.jpg' % username)
+    username = username.lower()
     sql = "delete from Users where Username=%s"
     CUR.execute(sql, username)
+    sql = "DELETE FROM accepted_req WHERE friend=%s"
+    CUR.execute(sql, username)
+    sql = "delete from pending_req  where fromUser =%s"
+    CUR.execute(sql, username)
+    sql = "delete from accepted_req where userLoggedIn =%s"
+    CUR.execute(sql, username)
+    sql = "delete from pending_req where toUser =%s"
+    CUR.execute(sql, username)
+    os.remove('/home1/skyrealm/public_html/img/%s.jpg' % username)
     return "Account Deleted"
     
 def hash_password(password, salt=None):
@@ -145,3 +157,5 @@ def validateEmail(email):
 		if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
 			return 1
 	return 0
+
+print compare_user_verify("Testuser","Testuser")
