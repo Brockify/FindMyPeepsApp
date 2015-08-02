@@ -56,7 +56,7 @@ public class Profile extends Activity implements OnClickListener{
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/ChangeUser.php";
     private static final String LOGIN_URL2 = "http://skyrealmstudio.com/Delete.php";
-    private static final String LOGIN_URL3 = "http://skyrealmstudio.com/rest.php";
+    private static final String LOGIN_URL3 = "http://skyrealmstudio.com/cgi-bin/resetpass.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -96,7 +96,7 @@ public class Profile extends Activity implements OnClickListener{
         usernameTextView.setText(user);
         // show The Image
         new DownloadImageTask((ImageView) findViewById(R.id.imgView))
-                .execute("http://skyrealmstudio.com/img/"+user+".jpg");
+                .execute("http://skyrealmstudio.com/img/"+user+"orig.jpg");
 
     }
 
@@ -189,9 +189,10 @@ public class Profile extends Activity implements OnClickListener{
                 imgView.setImageBitmap(BitmapFactory
                         .decodeFile(imgPath));
 
-                fileName = user;
+                fileName = user + "orig";
                 // Put file name in Async Http Post Param which will used in Php web app
                 params.put("filename", fileName);
+                params.put("username", user);
 
             } else {
                 Toast.makeText(this, "You haven't picked Image",
@@ -270,7 +271,7 @@ public class Profile extends Activity implements OnClickListener{
 
         AsyncHttpClient client = new AsyncHttpClient();
         // Don't forget to change the IP address to your LAN address. Port no as well.
-        client.post("http://skyrealmstudio.com/upload_image.php",
+        client.post("http://skyrealmstudio.com/cgi-bin/upload_image.py",
                 params, new AsyncHttpResponseHandler() {
                     // When the response returned by REST has Http
                     // response code '200'
@@ -503,8 +504,8 @@ public class Profile extends Activity implements OnClickListener{
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("olduser", oldpsw));
-                params.add(new BasicNameValuePair("newuser", newpsw));
+                params.add(new BasicNameValuePair("oldpass", oldpsw));
+                params.add(new BasicNameValuePair("newpass", newpsw));
                 params.add(new BasicNameValuePair("user", user));
 
                 Log.d("request!", "starting");
