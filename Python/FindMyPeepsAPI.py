@@ -1,7 +1,8 @@
 #! /usr/bin/python
 import MySQLdb
+import urllib2
 
-db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
+db = MySQLdb.connect("localhost", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
 
 def check_user(username):
@@ -144,10 +145,13 @@ def pending_list(username):
     return pendingList
 
 def profanity_filter(word):
-    profanity = ["fuck", "bitch", "ass", "cunt", "shit", "twat", "dick", "douche", "vagina", "piss", "cock", "penis","nigga", "niggar", "nigger", "gay", "fag", "faggot", "bastard"]
-    for badword in profanity:
-        if word == badword:
-            return "profanity!"
+    data = urllib2.urlopen("http://www.skyrealmstudio.com/profanity.txt").read()
+    trueFalse = False
+    for badword in data:
+        if badword in word:
+            trueFalse = True
+
+    return trueFalse
 
 def update_location(latitude, longitude, username, address, comments):
     sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s  where username =  %s"
@@ -172,5 +176,3 @@ def accept_or_deny_friend_request(username, friend, yesorno):
         CUR.execute(sql, (username, friend))
     else:
         return "Failed"
-
-
