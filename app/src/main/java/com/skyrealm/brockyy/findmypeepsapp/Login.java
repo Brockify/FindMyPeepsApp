@@ -67,8 +67,6 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setTitle("Login");
-
 
 
         users = (EditText) findViewById(R.id.username);

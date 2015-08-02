@@ -117,7 +117,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         MainIntent = new Intent(MainActivity.this, MainActivity.class);
         setTitle("Locations Screen");
         //DECLARATIONS-----------------------------------------------------------------------
-        TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
         View mainView = findViewById(R.id.mainActivity);
         getLocationButton = (Button) findViewById(R.id.getLocationButton);
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
@@ -169,8 +168,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //set friends on the map
         new MarkerScript().execute();
 
-        //set username
-        usernameTextView.setText(user);
     }
 
     //function to build the client
@@ -377,14 +374,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //this happens whenever an async task is done
         public void onPostExecute(Void result) {
             LatLngBounds.Builder temp = new LatLngBounds.Builder();
-            pDialog.dismiss();
             googleMap.getMap().setMyLocationEnabled(true);
 
             userCurrentLocation = new LatLng(latitude, longitude);
 
 
             MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-            TextView addressTextView = (TextView) findViewById(R.id.addressTextView);
             EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
             //if the address comes back null send a toast
@@ -394,7 +389,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
                 //if it is the first time clicking get location
                 Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
-                addressTextView.setText(address);
                 commentEditText.setText(null);
                 new DownloadImageTask().execute(urlTest);
                 userCurrentLocation = new LatLng(latitude, longitude);
@@ -415,6 +409,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
             userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user));
             gps.stopUsingGps();
+            pDialog.dismiss();
 
         }
     }
@@ -484,6 +479,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     class MarkerScript extends AsyncTask<String, Void, Void> {
         int userCounter = 0;
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading friends onto map...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
         @Override
         protected Void doInBackground(String... strings) {
             HttpResponse response;
@@ -582,6 +586,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 friendsListBoundaries = builder.build();
                 googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
             }
+            pDialog.cancel();
         }
     }
 

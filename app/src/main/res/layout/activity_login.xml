@@ -20,18 +20,6 @@
         android:layout_alignParentEnd="false"
         android:gravity="center" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Login"
-        android:id="@+id/Log"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="150dp"
-        android:textSize="50dp"
-        android:textStyle="bold" />
-
     <EditText
         android:id="@+id/username"
         android:layout_width="fill_parent"
@@ -43,7 +31,6 @@
         android:textColor="@android:color/primary_text_light"
         android:imeOptions="actionNext"
         android:singleLine="true"
-        android:layout_below="@+id/Log"
         android:layout_alignLeft="@+id/password"
         android:layout_alignStart="@+id/password"
         android:layout_centerInParent="true"
@@ -100,6 +87,14 @@
         android:gravity="center"
         android:layout_below="@+id/remember"
         android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/findmypeeps" />
 
 
 </RelativeLayout>
