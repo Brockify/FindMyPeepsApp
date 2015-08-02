@@ -145,8 +145,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //called once the map is done loading
             public void onMapLoaded() {
                 if (isOtherUserClicked) {
-                    int padding = 0;
+                    int padding = 50;
                     googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+                } else {
+                    //set friends on the map
+                    new MarkerScript().execute();
                 }
             }
         });
@@ -165,8 +168,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-        //set friends on the map
-        new MarkerScript().execute();
 
     }
 
@@ -220,7 +221,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 builder.include(userCurrentLocation);
                 builder.include(otherUserLocation);
                 bounds = builder.build();
-                String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername + ".jpg";
+                String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername.toLowerCase() + ".jpg";
                 new DownloadImageTask().execute(urlTest, otherUserUsername);
                 //
             }
@@ -236,7 +237,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //if Get Location button is clicked
             case R.id.getLocationButton:
                 if (gps.isGPSEnabledOrNot()) {
-                    String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
+                    String urlTest = "http://skyrealmstudio.com/img/" + user.toLowerCase() + ".jpg";
                     new getLocation().execute();
                 } else {
                     gps.showSettingsAlert();
@@ -386,7 +387,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (address == null) {
                 Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
             } else {
-                String urlTest = "http://skyrealmstudio.com/img/" + user + ".jpg";
+                String urlTest = "http://skyrealmstudio.com/img/" + user.toLowerCase() + ".jpg";
                 //if it is the first time clicking get location
                 Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
                 commentEditText.setText(null);
@@ -535,7 +536,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     longitude = json.getJSONObject(counter).getString("Longitude");
                     lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
                     Bitmap userIcon = null;
-                        String urldisplay = "http://skyrealmstudio.com/img/" + username + ".jpg";
+                        String urldisplay = "http://skyrealmstudio.com/img/" + username.toLowerCase() + ".jpg";
                         try {
                             InputStream in = new URL(urldisplay).openStream();
                             userIcon = BitmapFactory.decodeStream(in);
