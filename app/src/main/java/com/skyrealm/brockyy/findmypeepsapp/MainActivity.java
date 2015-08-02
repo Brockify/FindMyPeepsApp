@@ -74,7 +74,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
     //Global variables declaration
     //current user
     String user;
@@ -207,6 +207,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //if the a user from friend list was not clicked, just set the zoom to the user
             if (!isOtherUserClicked) {
                 //else show the users location that was clicked
+                userMarker = googleMap.addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
             } else {
 
 
@@ -228,6 +229,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         } else {
             gps.showSettingsAlert();
         }
+        googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+        googleMap.setOnInfoWindowClickListener(this);
     }
 
     //get onClick codes
@@ -296,6 +299,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         new getLocation().execute();
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, marker.getTitle(), Toast.LENGTH_LONG).show();
     }
 
 
@@ -445,7 +453,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected void onPostExecute(Bitmap result) {
             //add the other users location to the map
 
-            Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth() / 2, result.getHeight() / 2, false);
+            Bitmap bhalfsize = result.createScaledBitmap(result, result.getWidth(), result.getHeight(), false);
             bhalfsize = getCroppedBitmap(bhalfsize);
 
             otherUserMarker = googleMap.getMap().addMarker(new MarkerOptions()
