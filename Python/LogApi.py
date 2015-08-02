@@ -8,6 +8,8 @@ import string
 import random
 import re
 import os
+import os.path
+import shutil
 
 db = MySQLdb.connect("localhost", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
@@ -23,21 +25,8 @@ def send_email(to, subject, text):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
     msg['From'] = sky
-    msg['To'] = to
-
-    # Create the body of the message (HTML version).
-    #html = """\
-	#<html>
-  	#	<head></head>
-  	#	<body>
-    	#		<p>Hi!<br>
-       	#		How are you?<br>
-       	#		Here is the <a href="http://www.python.org">link</a> you wanted.
-    	#		</p>
-  	#	</body>
-	#</html>
-   # """
-
+    msg['To'] = to  
+    text += " \n \n - DO NOT REPLY -"
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, 'plain')
     #part2 = MIMEText(html, 'html')
@@ -118,12 +107,13 @@ def CreateUser(username, password, salt, email ):
     CUR.execute(sql, (username, tempuser, password, salt, email))
     return True
 
-def DeleteUser(username):
+def DeleteUser(username): 
     os.remove('/home1/skyrealm/public_html/img/%sorig.jpg' % username)
     username = username.lower()
+    os.remove('/home1/skyrealm/public_html/img/%s.jpg' % username)
     sql = "delete from Users where Username=%s"
     CUR.execute(sql, username)
-    sql = "DELETE FROM accepted_req WHERE friend=%s"
+    sql1 = "DELETE FROM accepted_req WHERE friend=%s"
     CUR.execute(sql, username)
     sql = "delete from pending_req  where fromUser =%s"
     CUR.execute(sql, username)
@@ -131,8 +121,24 @@ def DeleteUser(username):
     CUR.execute(sql, username)
     sql = "delete from pending_req where toUser =%s"
     CUR.execute(sql, username)
-    os.remove('/home1/skyrealm/public_html/img/%s.jpg' % username)
     return "Account Deleted"
+    
+def Change_User(username, newuser): 
+    username = username.lower()
+    sql = "update Users set Username=%s where tempuser=%s"
+    CUR.execute(sql, (newuser, username))
+    newuser = newuser.lower()
+    sql = "update Users set Username=%s where Username=%s"
+    CUR.execute(sql, (newuser, username))
+    sql1 = "update pending_req set fromUser=%s where fromUser=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update pending_req set toUser=%s where toUser=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update accepted_req set friend=%s where friend=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update accepted_req set userLoggedIn=%s where userLoggedIn=%s"
+    CUR.execute(sql, username)
+    return "Username Changed"
     
 def hash_password(password, salt=None):
     if salt is None:
@@ -157,5 +163,3 @@ def validateEmail(email):
 		if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
 			return 1
 	return 0
-
-print compare_user_verify("Testuser","Testuser")

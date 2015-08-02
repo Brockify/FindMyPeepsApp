@@ -54,7 +54,7 @@ public class Profile extends Activity implements OnClickListener{
     ProgressDialog prgDialog;
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://skyrealmstudio.com/ChangeUser.php";
+    private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/changeuser.py";
     private static final String LOGIN_URL2 = "http://skyrealmstudio.com/cgi-bin/delete.py";
     private static final String LOGIN_URL3 = "http://skyrealmstudio.com/cgi-bin/resetpass.py";
     private static final String TAG_SUCCESS = "success";
@@ -83,7 +83,7 @@ public class Profile extends Activity implements OnClickListener{
         user = getIntent().getExtras().getString("username");
         final View mainView = findViewById(R.id.Profileview);
         usernameTextView = (TextView)findViewById(R.id.usernameTextView);
-
+        String tempuser = user.toLowerCase();
         OnSwipeTouchListener swipeListener;
         mainView.setOnTouchListener(new OnSwipeTouchListener(Profile.this) {
             public void onSwipeRight() {
@@ -96,7 +96,7 @@ public class Profile extends Activity implements OnClickListener{
         usernameTextView.setText(user);
         // show The Image
         new DownloadImageTask((ImageView) findViewById(R.id.imgView))
-                .execute("http://skyrealmstudio.com/img/"+user+"orig.jpg");
+                .execute("http://skyrealmstudio.com/img/" + tempuser + "orig.jpg");
 
     }
 
