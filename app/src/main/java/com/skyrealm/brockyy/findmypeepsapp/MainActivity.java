@@ -83,6 +83,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     String lastUpdated = null;
     Marker userMarker = null;
     LatLng userCurrentLocation;
+    int testCounter = 0;
     //other user
     LatLng otherUserLocation;
     boolean isOtherUserClicked;
@@ -171,6 +172,21 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     }
 
+    //on pause
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.d("message", "on paused");
+        testCounter++;
+    }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Log.d("message", "On resume");
+        System.out.println(testCounter);
+    }
     //function to build the client
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
