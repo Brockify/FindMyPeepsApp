@@ -145,7 +145,7 @@ def pending_list(username):
     return pendingList
 
 def profanity_filter(word):
-    data = urllib2.urlopen("http://www.skyrealmstudio.com/profanity.txt").read()
+    data = urllib2.urlopen("http://www.skyrealmstudio.com/profanity.txt").read().split("\n")
     trueFalse = False
     for badword in data:
         if badword in word:
@@ -153,9 +153,9 @@ def profanity_filter(word):
 
     return trueFalse
 
-def update_location(latitude, longitude, username, address, comments):
-    sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s  where username =  %s"
-    CUR.execute(sql, (latitude, longitude, address, comments, username))
+def update_location(latitude, longitude, username, address, comments, lastUpdated):
+    sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s, lastupdated = %s  where username =  %s"
+    CUR.execute(sql, (latitude, longitude, address, comments, lastUpdated, username))
     return "location updated"
 
 def accept_or_deny_friend_request(username, friend, yesorno):

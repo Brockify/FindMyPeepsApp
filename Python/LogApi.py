@@ -122,22 +122,22 @@ def DeleteUser(username):
     sql = "delete from pending_req where toUser =%s"
     CUR.execute(sql, username)
     return "Account Deleted"
-    
+
+
 def Change_User(username, newuser): 
     username = username.lower()
-    sql = "update Users set Username=%s where tempuser=%s"
-    CUR.execute(sql, (newuser, username))
-    newuser = newuser.lower()
     sql = "update Users set Username=%s where Username=%s"
+    CUR.execute(sql, (newuser.lower(), username))
+    sql = "update Users set tempusername=%s where tempusername=%s"
     CUR.execute(sql, (newuser, username))
-    sql1 = "update pending_req set fromUser=%s where fromUser=%s"
+    sql = "update pending_req set fromUser=%s where fromUser=%s"
     CUR.execute(sql, (newuser, username))
     sql = "update pending_req set toUser=%s where toUser=%s"
     CUR.execute(sql, (newuser, username))
     sql = "update accepted_req set friend=%s where friend=%s"
     CUR.execute(sql, (newuser, username))
     sql = "update accepted_req set userLoggedIn=%s where userLoggedIn=%s"
-    CUR.execute(sql, username)
+    CUR.execute(sql, (newuser, username))
     return "Username Changed"
     
 def hash_password(password, salt=None):
