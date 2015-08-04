@@ -34,7 +34,7 @@ public class FProfile extends Activity implements OnClickListener{
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/GetFriend.py";
-    private static final String TAG_MESSAGE = "Bio";
+    private static final String TAG_MESSAGE = "bio";
     private static final String TAG_COMMENT = "comment";
 
 
@@ -47,10 +47,10 @@ public class FProfile extends Activity implements OnClickListener{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fprofile);
-        friend = getIntent().getExtras().getString("friend");
+        friend = getIntent().getExtras().getString("otherUser");
         user = getIntent().getExtras().getString("username");
         final View mainView = findViewById(R.id.Profileview);
-        usernameTextView = (TextView)findViewById(R.id.usernameTextView);
+        usernameTextView = (TextView)findViewById(R.id.friendTextView);
         BioView = (TextView)findViewById(R.id.friendBio);
         commentView = (TextView)findViewById(R.id.friendlastcomment);
 
@@ -146,6 +146,9 @@ public class FProfile extends Activity implements OnClickListener{
                 // success tag for json
                     Bio = json.getString(TAG_MESSAGE);
                     comment = json.getString(TAG_COMMENT);
+
+
+                return json.getString(TAG_MESSAGE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -158,10 +161,9 @@ public class FProfile extends Activity implements OnClickListener{
          * Once the background process is done we need to  Dismiss the progress dialog asap
          * **/
         protected void onPostExecute(String message) {
-
-            pDialog.dismiss();
             BioView.setText(Bio);
             commentView.setText(comment);
+            pDialog.dismiss();
         }
     }
 

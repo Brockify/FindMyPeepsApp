@@ -216,7 +216,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
         final TextView otherUserText = (TextView) vwParentRow.findViewById(R.id.username);
 
-        Intent intent = new Intent(FriendsListActivity.this, FriendProfile.class);
+        Intent intent = new Intent(FriendsListActivity.this, FProfile.class);
         intent.putExtra("username", user);
         intent.putExtra("otherUser", otherUserText.getText().toString());
         startActivity(intent);

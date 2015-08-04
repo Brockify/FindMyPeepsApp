@@ -32,7 +32,6 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:onClick="loadImagefromGallery"
             android:layout_centerHorizontal="true"
             android:background="@color/grey"
             android:layout_below="@+id/friendTextView">
