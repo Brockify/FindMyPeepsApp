@@ -173,6 +173,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
         final Button deleteButton = (Button) vwParentRow.findViewById(R.id.deleteButton);
         final TextView userDeleteText = (TextView) vwParentRow.findViewById(R.id.username);
+        final Button profileButton = (Button) vwParentRow.findViewById(R.id.profileButton);
 
         //sends a alert dialog making sure they want to delete the user
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -190,6 +191,8 @@ public class FriendsListActivity extends ActionBarActivity {
                         Toast.makeText(getApplicationContext(), userDelete[0] + " deleted.", Toast.LENGTH_LONG).show();
                         //set everything to be not visible
                         deleteButton.setVisibility(View.GONE);
+                        profileButton.setVisibility(View.GONE);
+
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -205,6 +208,18 @@ public class FriendsListActivity extends ActionBarActivity {
         builder.setMessage("Are you sure you would like to delete " + userDeleteText.getText().toString() + " as a friend.").setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
         //
+    }
+
+    public void profileButtonClicked(View view)
+    {
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+
+        final TextView otherUserText = (TextView) vwParentRow.findViewById(R.id.username);
+
+        Intent intent = new Intent(FriendsListActivity.this, FriendProfile.class);
+        intent.putExtra("username", user);
+        intent.putExtra("otherUser", otherUserText.getText().toString());
+        startActivity(intent);
     }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>

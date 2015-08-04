@@ -17,4 +17,8 @@
         <item>30</item>
         <item>60</item>
     </string-array>
+    <string name="title_activity_fprofile">FProfile</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_friend_profile">FriendProfile</string>
 </resources>

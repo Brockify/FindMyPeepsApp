@@ -31,8 +31,25 @@
         android:text="X"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/username"
-        android:onClick="deleteFriend" />
+        android:onClick="deleteFriend"
+        android:layout_alignBottom="@+id/profileButton" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/profileButton"
+        android:focusable="false"
+        android:textSize="20dp"
+        android:focusableInTouchMode="false"
+        android:background="#05f900a0"
+        android:text="Profile"
+        android:onClick="profileButtonClicked"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:layout_alignTop="@+id/username"
+        android:layout_toRightOf="@+id/deleteButton"
+        android:layout_toEndOf="@+id/deleteButton" />
 
 
 </RelativeLayout>

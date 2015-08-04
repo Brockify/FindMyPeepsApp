@@ -271,6 +271,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
     }
 
+
     public void declineButtonClicked(View view)
     {
         //get the position of the button
