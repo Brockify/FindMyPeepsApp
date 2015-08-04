@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/myLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Profileview"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Settings"
+            android:id="@+id/Title"
+            android:textSize="100px"
+            android:layout_centerHorizontal="true" />
+        <Button
+
+            android:id="@+id/Change"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="Reset"
+            android:background="#3366CC"
+            android:textColor="#B0E0E6"
+            android:bottomLeftRadius="8dp"
+            android:bottomRightRadius="8dp"
+            android:topLeftRadius="8dp"
+            android:topRightRadius="8dp"
+            android:layout_alignTop="@+id/Newuser"
+            android:layout_toRightOf="@+id/Newuser"
+            android:layout_toEndOf="@+id/Newuser" />
+
+        <EditText
+            android:id="@+id/Newuser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="Change Username"
+            android:imeOptions="actionNext"
+            android:layout_below="@+id/Verify"
+            android:layout_alignLeft="@+id/Verify"
+            android:layout_alignStart="@+id/Verify"
+            android:layout_marginTop="36dp" />
+
+        <Button
+
+            android:id="@+id/Delete"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="Delete Account"
+            android:background="#3366CC"
+            android:textColor="#B0E0E6"
+            android:bottomLeftRadius="8dp"
+            android:bottomRightRadius="8dp"
+            android:topLeftRadius="8dp"
+            android:topRightRadius="8dp"
+            android:layout_toRightOf="@+id/Verify"
+            android:layout_toEndOf="@+id/Verify"
+            android:layout_marginTop="70dp"
+            android:layout_below="@+id/usernameTextView" />
+
+        <EditText
+            android:id="@+id/Verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="Confirm Username"
+            android:imeOptions="actionNext"
+            android:layout_alignTop="@+id/Delete"
+            android:layout_centerHorizontal="true" />
+
+
+        <Button
+            android:id="@+id/restpass"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="Reset Password"
+            android:background="#3366CC"
+            android:textColor="#B0E0E6"
+            android:bottomLeftRadius="8dp"
+            android:bottomRightRadius="8dp"
+            android:topLeftRadius="8dp"
+            android:topRightRadius="8dp"
+            android:layout_alignTop="@+id/oldpass"
+            android:layout_toRightOf="@+id/Newuser"
+            android:layout_toEndOf="@+id/Newuser" />
+
+        <EditText
+            android:id="@+id/oldpass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="Old Password"
+            android:imeOptions="actionNext"
+            android:layout_below="@+id/Newuser"
+            android:layout_alignLeft="@+id/newpass"
+            android:layout_alignStart="@+id/newpass"
+            android:layout_marginTop="36dp" />
+
+        <EditText
+            android:id="@+id/newpass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="New Password"
+            android:imeOptions="actionDone"
+            android:layout_below="@+id/oldpass"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+</ScrollView>

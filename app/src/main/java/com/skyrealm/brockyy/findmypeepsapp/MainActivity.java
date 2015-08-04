@@ -264,6 +264,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent ii = new Intent(MainActivity.this, UserSettings.class);
+            ii.putExtra("username", user);
+            finish();
+            // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+            startActivity(ii);
             return true;
         }
         if (id == R.id.action_logout) {
