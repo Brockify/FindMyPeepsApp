@@ -106,7 +106,10 @@ public class Profile extends Activity implements OnClickListener{
         // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.Change:
-                new AttemptChange().execute();
+                Intent intent = new Intent(Profile.this, FProfile.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+                //new AttemptChange().execute();
             break;
             case R.id.Delete:
                 new AttemptDelete().execute();

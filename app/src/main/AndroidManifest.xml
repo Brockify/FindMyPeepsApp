@@ -18,7 +18,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <permission android:name="com.skyrealm.brockyy.findmypeepsapp.permission.C2D_MESSAGE" />
 
@@ -60,6 +60,10 @@
             android:label="Find My Peeps" >
         </activity>
         <activity
+            android:name=".FProfile"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name=".Forgot"
             android:label="@string/app_name" >
         </activity>
@@ -67,7 +71,6 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCltbJc7evYyZW60nDzx0T72ZKXuzbJKY0" />
-
     </application>
 
 </manifest>
