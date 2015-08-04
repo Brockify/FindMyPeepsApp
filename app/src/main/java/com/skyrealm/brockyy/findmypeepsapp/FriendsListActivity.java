@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
@@ -169,7 +170,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
     public void deleteFriend(View view)
     {
-        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+        AbsoluteLayout vwParentRow = (AbsoluteLayout)view.getParent();
 
         final Button deleteButton = (Button) vwParentRow.findViewById(R.id.deleteButton);
         final TextView userDeleteText = (TextView) vwParentRow.findViewById(R.id.username);
@@ -212,7 +213,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
     public void profileButtonClicked(View view)
     {
-        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+        AbsoluteLayout vwParentRow = (AbsoluteLayout)view.getParent();
 
         final TextView otherUserText = (TextView) vwParentRow.findViewById(R.id.username);
 
