@@ -5,8 +5,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -18,9 +24,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -54,9 +64,17 @@ public class Profile extends Activity implements OnClickListener {
     ProgressDialog prgDialog;
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/changeuser.py";
+    private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/Bio.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private Double latitude;
+    private Double longitude;
+    private String lastUpdated;
+    android.os.Handler mainHandler;
+    int seconds;
+    int newSeconds;
+    GPSTracker gps;
+    private static Timer timer;
 
 
     @Override
@@ -76,6 +94,8 @@ public class Profile extends Activity implements OnClickListener {
         usernameTextView = (TextView) findViewById(R.id.usernameTextView);
         String tempuser = user.toLowerCase();
         OnSwipeTouchListener swipeListener;
+        seconds = getIntent().getExtras().getInt("seconds");
+        gps = new GPSTracker(Profile.this);
         mainView.setOnTouchListener(new OnSwipeTouchListener(Profile.this) {
             public void onSwipeRight() {
                 Intent intent = new Intent(Profile.this, MainActivity.class);
@@ -83,11 +103,41 @@ public class Profile extends Activity implements OnClickListener {
                 startActivity(intent);
             }
         });
+        mainHandler = new Handler(Looper.getMainLooper());
+
 
         usernameTextView.setText(user);
         // show The Image
         new DownloadImageTask((ImageView) findViewById(R.id.imgView))
                 .execute("http://skyrealmstudio.com/img/" + tempuser + "orig.jpg");
+
+        if (seconds != 0) {
+            timer = new Timer();
+            TimerTask task = new TimerTask() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    i++;
+                    //do something
+                    if (i % seconds == 0) {
+                        //run the script on the main thread
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                seconds = 60;
+                                new getLocation().execute();
+                            } // This is your code
+                        };
+                        mainHandler.post(myRunnable);
+                    } else {
+                        newSeconds = (seconds - (i % seconds));
+                        System.out.println("Seconds = " + newSeconds);
+                    }
+                }
+            };
+            timer.schedule(task, 0, 1000);
+        }
 
     }
 
@@ -107,6 +157,9 @@ public class Profile extends Activity implements OnClickListener {
     public void onBackPressed() {
         Intent ii = new Intent(Profile.this, MainActivity.class);
         ii.putExtra("username", user);
+        if (timer != null)
+            timer.cancel();
+        ii.putExtra("seconds", newSeconds);
         finish();
         startActivity(ii);
     }
@@ -265,6 +318,11 @@ public class Profile extends Activity implements OnClickListener {
                         prgDialog.hide();
                         Intent ii = new Intent(Profile.this, Profile.class);
                         ii.putExtra("username", user);
+                        ii.putExtra("seconds", newSeconds);
+                        if(timer != null)
+                        {
+                            timer.cancel();
+                        }
                         finish();
                         startActivity(ii);
                         Toast.makeText(getApplicationContext(), response,
@@ -342,8 +400,8 @@ public class Profile extends Activity implements OnClickListener {
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("bio", text));
-                params.add(new BasicNameValuePair("username", user));
+                params.add(new BasicNameValuePair("biog", text));
+                params.add(new BasicNameValuePair("user", user));
 
                 Log.d("request!", "starting");
 
@@ -381,6 +439,71 @@ public class Profile extends Activity implements OnClickListener {
                 usernameTextView.setText(user);
                 Toast.makeText(Profile.this, message, Toast.LENGTH_LONG).show();
             }
+        }
+    }
+    //gets the location class (ASYNC)
+    class getLocation extends AsyncTask<Void, Void, Void> {
+        String address;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
+            //If the update location button is clicked------------------------------------------\
+            latitude = gps.getLocation().getLatitude();
+            longitude = gps.getLocation().getLongitude();
+
+            //get time and date
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int amorpmint = c.get(Calendar.AM_PM);
+            String amorpm;
+            if (amorpmint == 0) {
+                amorpm = "AM";
+            } else {
+                amorpm = "PM";
+            }
+
+            lastUpdated = df.format(c.getTime()) + " " + amorpm;
+
+            //getting the street address---------------------------------------------------;
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(Profile.this, Locale.getDefault());
+
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                address = addresses.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //website to post too
+            String htmlUrl = "http://skyrealmstudio.com/cgi-bin/updatelocation.py";
+
+            //send the post and execute it
+            HTTPSendPost postSender = new HTTPSendPost();
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated);
+            postSender.execute();
+            //done executing post
+
+            //finished getting the street address-----------------------------------------
+            return null;
+        }
+        // end showing it on the map ------------------------------------------------------------------------
+
+        //this happens whenever an async task is done
+        public void onPostExecute(Void result) {
+            //if the address comes back null send a toast
+            if (address == null) {
+                Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
+            } else {
+                //if it is the first time clicking get location
+                Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
+            }
+            gps.stopUsingGps();
+
         }
     }
 }

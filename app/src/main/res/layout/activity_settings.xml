@@ -120,5 +120,26 @@
             android:imeOptions="actionDone"
             android:layout_below="@+id/oldpass"
             android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/minuteEditText"
+            android:layout_below="@+id/newpass"
+            android:layout_alignRight="@+id/newpass"
+            android:layout_alignEnd="@+id/newpass"
+            android:layout_marginTop="70dp"
+            android:hint="Update every x minutes" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/autoLocationSwitch"
+            android:layout_below="@+id/minuteEditText"
+            android:layout_alignLeft="@+id/minuteEditText"
+            android:layout_alignStart="@+id/minuteEditText"
+            android:onClick="autoUpdateSwitchClicked" />
     </RelativeLayout>
 </ScrollView>

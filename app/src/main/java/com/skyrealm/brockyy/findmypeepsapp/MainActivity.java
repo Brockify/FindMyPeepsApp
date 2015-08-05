@@ -19,6 +19,8 @@ import com.google.android.gms.location.LocationListener;
 
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 
 import android.os.Bundle;
@@ -72,6 +74,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.LogRecord;
 
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
@@ -83,6 +86,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     String lastUpdated = null;
     Marker userMarker = null;
     LatLng userCurrentLocation;
+    int seconds;
+    int newSeconds;
+    private static Timer timer;
     //other user
     LatLng otherUserLocation;
     boolean isOtherUserClicked;
@@ -103,11 +109,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     Intent MainIntent;
     LatLngBounds bounds;
     Button getLocationButton;
-    boolean locationUpdatingOrNot = false;
     private ArrayList<MarkerOptions> mMyMarkersArray = new ArrayList<MarkerOptions>();
     LatLngBounds friendsListBoundaries;
     LocationManager lm;
     Location location;
+    Handler mainHandler;
 
 
     @Override
@@ -122,7 +128,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
-
+        seconds = getIntent().getExtras().getInt("seconds");
+        Log.d("Message:", "Seconds = " + seconds);
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
 
@@ -154,6 +161,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
+        mainHandler = new Handler(Looper.getMainLooper());
         googleMap.getMapAsync(this);
 
         //build the google api client and connect too it (for the map)
@@ -163,11 +171,46 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //declare an OnSwipeListener and then call on the onSwipeLeft function--------
         mainView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeLeft() {
+                if (timer != null)
+                    timer.cancel();
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("seconds", newSeconds);
                 startActivity(intent);
             }
         });
+
+        if (seconds != 0) {
+            timer = new Timer();
+            TimerTask task = new TimerTask() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    i++;
+                    if (seconds == 0)
+                    {
+                        seconds = 60;
+                    }
+                    //do something
+                    if (i % seconds == 0) {
+                        //run the script on the main thread
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                seconds = 60;
+                                new getLocation().execute();
+                            } // This is your code
+                        };
+                        mainHandler.post(myRunnable);
+                    } else {
+                        newSeconds = (seconds - (i % seconds));
+                        System.out.println("Seconds = " + newSeconds);
+                    }
+                }
+            };
+            timer.schedule(task, 0, 1000);
+        }
 
     }
 
@@ -184,6 +227,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void onBackPressed() {
 
         if (backtoast != null && backtoast.getView().getWindowToken() != null) {
+            if (timer != null)
+                timer.cancel();
             Intent intent = new Intent(this, Login.class);
             finish();
             startActivity(intent);
@@ -240,7 +285,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //if Get Location button is clicked
             case R.id.getLocationButton:
                 if (gps.isGPSEnabledOrNot()) {
-                    String urlTest = "http://skyrealmstudio.com/img/" + user.toLowerCase() + ".jpg";
                     new getLocation().execute();
                 } else {
                     gps.showSettingsAlert();
@@ -265,7 +309,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent ii = new Intent(MainActivity.this, UserSettings.class);
+            if (timer != null)
+                timer.cancel();
             ii.putExtra("username", user);
+            ii.putExtra("seconds", newSeconds);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -273,6 +320,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
         if (id == R.id.action_logout) {
             Intent ii = new Intent(MainActivity.this, Login.class);
+            if (timer != null)
+                timer.cancel();
             startActivity(ii);
             finish();
             return true;
@@ -280,6 +329,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         if (id == R.id.action_profile) {
             Intent ii = new Intent(MainActivity.this, Profile.class);
             ii.putExtra("username", user);
+            ii.putExtra("seconds", newSeconds);
+            if (timer != null)
+                timer.cancel();
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -603,5 +655,4 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             pDialog.cancel();
         }
     }
-
 }

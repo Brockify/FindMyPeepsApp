@@ -4,7 +4,10 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -37,9 +40,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -52,6 +60,15 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
      private String responseBody;
      private SwipeRefreshLayout swipeLayout;
      private String user;
+    private Double latitude;
+    private Double longitude;
+    private String lastUpdated;
+    android.os.Handler mainHandler;
+    int seconds;
+    int newSeconds;
+    GPSTracker gps;
+    private static Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,14 +76,16 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         setTitle("Pending Friend Requests");
 
         //declare variables
-        Button addFriendButton = (Button)findViewById(R.id.addFriendButton);
-        final EditText friendEditText = (EditText)findViewById(R.id.friendEditText);
+        Button addFriendButton = (Button) findViewById(R.id.addFriendButton);
+        final EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
         ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         View friendView = findViewById(R.id.friendsActivity);
-        ListView friendsList = (ListView)findViewById(R.id.friendslistView);
+        ListView friendsList = (ListView) findViewById(R.id.friendslistView);
         //DECLARATION
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
+        seconds = getIntent().getExtras().getInt("seconds");
+        gps = new GPSTracker(PendingFriendsActivity.this);
 
 
         new GetPendingRequests().execute();
@@ -88,22 +107,25 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             public void onSwipeRight() {
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
                 startActivity(intent);
 
             }
         });
 
-            addFriendButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast toast;
-                    if(friendEditText.length() > 0) {
-                        new addFriendClass().execute();
-                    } else {
-                        Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
-                    }
+        addFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast;
+                if (friendEditText.length() > 0) {
+                    new addFriendClass().execute();
+                } else {
+                    Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
                 }
-            });
+            }
+        });
         //end the swipe command
 
         //set on swipe left and right for the listview too
@@ -111,10 +133,43 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             public void onSwipeRight() {
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
                 startActivity(intent);
             }
 
         });
+        mainHandler = new android.os.Handler(Looper.getMainLooper());
+
+
+        if (seconds != 0) {
+            timer = new Timer();
+            TimerTask task = new TimerTask() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    i++;
+                    //do something
+                    if (i % seconds == 0) {
+                        //run the script on the main thread
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                seconds = 60;
+                                new getLocation().execute();
+                            } // This is your code
+                        };
+                        mainHandler.post(myRunnable);
+                    } else {
+                        newSeconds = (seconds - (i % seconds));
+                        System.out.println("Seconds = " + newSeconds);
+                    }
+                }
+            };
+            timer.schedule(task, 0, 1000);
+        }
     }
 
 
@@ -134,18 +189,30 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
-        }
-        if(id == R.id.action_logout) {
-            Intent ii = new Intent(PendingFriendsActivity.this, Login.class);
+            Intent ii = new Intent(PendingFriendsActivity.this, UserSettings.class);
+            if (timer != null)
+                timer.cancel();
+            ii.putExtra("username", user);
+            ii.putExtra("seconds", newSeconds);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
-        return true;
+            return true;
         }
-        if(id == R.id.action_profile) {
+        if (id == R.id.action_logout) {
+            Intent ii = new Intent(PendingFriendsActivity.this, Login.class);
+            if (timer != null)
+                timer.cancel();
+            startActivity(ii);
+            finish();
+            return true;
+        }
+        if (id == R.id.action_profile) {
             Intent ii = new Intent(PendingFriendsActivity.this, Profile.class);
             ii.putExtra("username", user);
+            ii.putExtra("seconds", newSeconds);
+            if (timer != null)
+                timer.cancel();
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -356,7 +423,72 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 }
             }
         }
+    //gets the location class (ASYNC)
+    class getLocation extends AsyncTask<Void, Void, Void> {
+        String address;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+
+            //If the update location button is clicked------------------------------------------\
+            latitude = gps.getLocation().getLatitude();
+            longitude = gps.getLocation().getLongitude();
+
+            //get time and date
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int amorpmint = c.get(Calendar.AM_PM);
+            String amorpm;
+            if (amorpmint == 0) {
+                amorpm = "AM";
+            } else {
+                amorpm = "PM";
+            }
+
+            lastUpdated = df.format(c.getTime()) + " " + amorpm;
+
+            //getting the street address---------------------------------------------------;
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(PendingFriendsActivity.this, Locale.getDefault());
+
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                address = addresses.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //website to post too
+            String htmlUrl = "http://skyrealmstudio.com/cgi-bin/updatelocation.py";
+
+            //send the post and execute it
+            HTTPSendPost postSender = new HTTPSendPost();
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated);
+            postSender.execute();
+            //done executing post
+
+            //finished getting the street address-----------------------------------------
+            return null;
+        }
+        // end showing it on the map ------------------------------------------------------------------------
+
+        //this happens whenever an async task is done
+        public void onPostExecute(Void result) {
+            //if the address comes back null send a toast
+            if (address == null) {
+                Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
+            } else {
+                //if it is the first time clicking get location
+                Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
+            }
+            gps.stopUsingGps();
+
+        }
     }
+}
 
 
 
