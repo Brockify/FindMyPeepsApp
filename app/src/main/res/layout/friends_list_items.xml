@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -19,7 +19,8 @@
         android:textStyle="bold"
         android:height="60dp"
         android:layout_x="2dp"
-        android:layout_y="13dp" />
+        android:layout_y="13dp"
+        android:layout_centerVertical="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -27,17 +28,14 @@
         android:layout_height="70dp"
         android:id="@+id/deleteButton"
         android:focusable="false"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:focusableInTouchMode="false"
         android:onClick="deleteFriend"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/username"
-        android:layout_toEndOf="@+id/username"
-        android:layout_marginLeft="83dp"
-        android:layout_marginStart="83dp"
         android:layout_x="164dp"
         android:layout_y="0dp"
-        android:background="@drawable/delete" />
+        android:background="@drawable/delete"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -49,13 +47,11 @@
         android:focusableInTouchMode="false"
         android:background="@drawable/profile"
         android:onClick="profileButtonClicked"
-        android:layout_marginLeft="45dp"
-        android:layout_marginStart="45dp"
-        android:layout_alignTop="@+id/username"
-        android:layout_toRightOf="@+id/deleteButton"
-        android:layout_toEndOf="@+id/deleteButton"
         android:layout_x="279dp"
-        android:layout_y="0dp" />
+        android:layout_y="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/deleteButton"
+        android:layout_toEndOf="@+id/deleteButton" />
 
 
-</AbsoluteLayout>
+</RelativeLayout>

@@ -31,11 +31,11 @@
         android:textColor="@android:color/primary_text_light"
         android:imeOptions="actionNext"
         android:singleLine="true"
-        android:layout_alignLeft="@+id/password"
-        android:layout_alignStart="@+id/password"
-        android:layout_centerInParent="true"
         android:layout_alignParentEnd="false"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/password"

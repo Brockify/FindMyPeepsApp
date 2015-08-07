@@ -25,6 +25,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -33,6 +35,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -93,6 +96,7 @@ public class UserSettings extends Activity implements OnClickListener{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
         userchange = (EditText)findViewById(R.id.Newuser);
         userverify = (EditText)findViewById(R.id.Verify);
         oldpasswrd = (EditText) findViewById(R.id.oldpass);
@@ -107,7 +111,7 @@ public class UserSettings extends Activity implements OnClickListener{
         seconds = getIntent().getExtras().getInt("seconds");
         autoUpdateSwitch = (Switch)findViewById(R.id.autoLocationSwitch);
         minutesToUpdate = (EditText) findViewById(R.id.minuteEditText);
-        final View mainView = findViewById(R.id.Profileview);
+        final View mainView = findViewById(R.id.myLayout);
 
          prefs = this.getSharedPreferences(
                 "com.skyrealm.brockyy", Context.MODE_PRIVATE);

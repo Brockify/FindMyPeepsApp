@@ -11,6 +11,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -19,6 +21,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -67,7 +71,6 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         users = (EditText) findViewById(R.id.username);
         pass = (EditText) findViewById(R.id.password);

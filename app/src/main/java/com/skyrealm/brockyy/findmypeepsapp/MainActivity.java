@@ -1,6 +1,7 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +9,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -25,6 +28,7 @@ import android.preference.PreferenceManager;
 
 import android.os.Bundle;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -114,14 +118,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     LocationManager lm;
     Location location;
     Handler mainHandler;
+    View mViewPager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
         MainIntent = new Intent(MainActivity.this, MainActivity.class);
-        setTitle("Locations Screen");
+        setTitle("Locations");
         //DECLARATIONS-----------------------------------------------------------------------
         View mainView = findViewById(R.id.mainActivity);
         getLocationButton = (Button) findViewById(R.id.getLocationButton);
@@ -129,6 +136,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         user = getIntent().getExtras().getString("username");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
         seconds = getIntent().getExtras().getInt("seconds");
+        mViewPager = (View) findViewById(R.id.pager);
         Log.d("Message:", "Seconds = " + seconds);
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
@@ -222,7 +230,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .addApi(LocationServices.API)
                 .build();
     }
-
     @Override
     public void onBackPressed() {
 

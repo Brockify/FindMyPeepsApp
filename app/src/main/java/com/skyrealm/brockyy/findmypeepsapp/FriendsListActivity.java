@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,6 +84,8 @@ public class FriendsListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
         //set title of the activity
         setTitle("Friends");
         seconds = getIntent().getExtras().getInt("seconds");
@@ -277,7 +282,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
     public void profileButtonClicked(View view)
     {
-        AbsoluteLayout vwParentRow = (AbsoluteLayout)view.getParent();
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
 
         final TextView otherUserText = (TextView) vwParentRow.findViewById(R.id.username);
         if (timer != null)
