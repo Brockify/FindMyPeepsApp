@@ -65,7 +65,7 @@ public class Profile extends Activity implements OnClickListener {
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/Bio.py";
     private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
+    private static final String TAG_MESSAGE = "Message";
     String Number;
     private Double latitude;
     private Double longitude;
@@ -381,7 +381,9 @@ public class Profile extends Activity implements OnClickListener {
     class AttemptSend extends AsyncTask<String, String, String> {
         /**
          * Before starting background thread Show Progress Dialog
+         *
          */
+        String response = null;
         boolean failure = false;
 
         @Override
@@ -414,7 +416,7 @@ public class Profile extends Activity implements OnClickListener {
 
                 // checking  log for json response
                 Log.d("Registry attempt", json.toString());
-
+                response = json.getString(TAG_MESSAGE);
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
