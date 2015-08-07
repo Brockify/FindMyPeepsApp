@@ -60,6 +60,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
      private String responseBody;
      private SwipeRefreshLayout swipeLayout;
      private String user;
+    String Number;
     private Double latitude;
     private Double longitude;
     private String lastUpdated;
@@ -86,6 +87,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         //DECLARATION
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
+        Number = getIntent().getExtras().getString("Number");
         seconds = getIntent().getExtras().getInt("seconds");
         gps = new GPSTracker(PendingFriendsActivity.this);
 
@@ -109,6 +111,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             public void onSwipeRight() {
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
                 if (timer != null)
                     timer.cancel();
                 intent.putExtra("seconds", newSeconds);
@@ -135,6 +138,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             public void onSwipeRight() {
                 Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
                 if (timer != null)
                     timer.cancel();
                 intent.putExtra("seconds", newSeconds);
@@ -196,6 +200,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 timer.cancel();
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -213,6 +218,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             Intent ii = new Intent(PendingFriendsActivity.this, Profile.class);
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             if (timer != null)
                 timer.cancel();
             finish();

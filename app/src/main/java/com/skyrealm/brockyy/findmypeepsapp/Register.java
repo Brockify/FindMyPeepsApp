@@ -35,7 +35,6 @@ public class Register extends Activity implements OnClickListener{
     private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/register.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
-    private EmailResponder eresp = new EmailResponder();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,13 +118,6 @@ public class Register extends Activity implements OnClickListener{
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    //send the post and execute it
-                    EmailResponder postSender = new EmailResponder();
-                    postSender.registermail(user);
-                    postSender.execute();
-                    //done executing post
-
-
                     Log.d("You are Registered!", json.toString());
                     Intent ii = new Intent(Register.this,Login.class);
                     finish();

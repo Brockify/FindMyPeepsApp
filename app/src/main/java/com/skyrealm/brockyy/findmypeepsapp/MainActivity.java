@@ -85,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //Global variables declaration
     //current user
     String user;
+    String Number;
     Double latitude;
     Double longitude;
     String lastUpdated = null;
@@ -134,6 +135,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         getLocationButton = (Button) findViewById(R.id.getLocationButton);
         googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
         user = getIntent().getExtras().getString("username");
+        Number = getIntent().getExtras().getString("Number");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
         seconds = getIntent().getExtras().getInt("seconds");
         mViewPager = (View) findViewById(R.id.pager);
@@ -184,6 +186,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
                 startActivity(intent);
             }
         });
@@ -320,6 +323,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 timer.cancel();
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -337,6 +341,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Intent ii = new Intent(MainActivity.this, Profile.class);
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             if (timer != null)
                 timer.cancel();
             finish();

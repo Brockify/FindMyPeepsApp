@@ -68,6 +68,7 @@ public class FriendsListActivity extends ActionBarActivity {
     private Double latitude;
     private Double longitude;
     private String lastUpdated;
+    String Number;
     Handler mainHandler;
     int seconds;
     int newSeconds;
@@ -95,6 +96,7 @@ public class FriendsListActivity extends ActionBarActivity {
         View friendsListView = findViewById(R.id.friendsListActivity);
         //gets the username of user logged in
         user = getIntent().getExtras().getString("username");
+        Number = getIntent().getExtras().getString("Number");
         gps = new GPSTracker(FriendsListActivity.this);
         friendsListView.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
             //calls on the swipeLeft method
@@ -104,6 +106,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
                 finish();
                 startActivity(intent);
             }
@@ -115,6 +118,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
                 finish();
                 startActivity(intent);
             }
@@ -126,6 +130,7 @@ public class FriendsListActivity extends ActionBarActivity {
                     timer.cancel();                Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
                 startActivity(intent);
             }
 
@@ -134,6 +139,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 if (timer != null)
                     timer.cancel();
                 intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
                 startActivity(intent);
             }
 
@@ -210,6 +216,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 timer.cancel();
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             finish();
             // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
             startActivity(ii);
@@ -227,6 +234,7 @@ public class FriendsListActivity extends ActionBarActivity {
             Intent ii = new Intent(FriendsListActivity.this, Profile.class);
             ii.putExtra("username", user);
             ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
             if (timer != null)
                 timer.cancel();
             finish();
@@ -291,6 +299,7 @@ public class FriendsListActivity extends ActionBarActivity {
         intent.putExtra("username", user);
         intent.putExtra("otherUser", otherUserText.getText().toString());
         intent.putExtra("seconds", newSeconds);
+        intent.putExtra("Number", Number);
         startActivity(intent);
     }
 
@@ -464,6 +473,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("username", user);
                 intent.putExtra("otherComment", userComment);
                 intent.putExtra("userUsername", userUsername);
+                intent.putExtra("Number", Number);
                 finish();
                 startActivity(intent);
             }

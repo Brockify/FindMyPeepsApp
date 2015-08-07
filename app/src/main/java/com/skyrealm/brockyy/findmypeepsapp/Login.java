@@ -53,7 +53,8 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
     private static final String LOGIN_URL = "http://www.skyrealmstudio.com/cgi-bin/login.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
-
+    private static final String TAG_ID = "number";
+    private String Number;
     private String username;
     private String password;
     private Toast backtoast;
@@ -206,11 +207,11 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
 
                 if (success == 1) {
 
-
+                    Number = json.getString(TAG_ID);
                     Log.d("Successfully Login!", json.toString());
                     Intent ii = new Intent(Login.this, MainActivity.class);
                     ii.putExtra("username", users.getText().toString());
-
+                    ii.putExtra("Number", Number);
 
                     finish();
 

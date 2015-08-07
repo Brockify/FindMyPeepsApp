@@ -40,6 +40,7 @@ public class FProfile extends Activity implements OnClickListener{
     TextView usernameTextView, BioView, commentView;
     String comment;
     String Bio;
+    String Number;
     RequestParams params = new RequestParams();
     private Double latitude;
     private Double longitude;
@@ -71,6 +72,7 @@ public class FProfile extends Activity implements OnClickListener{
         setContentView(R.layout.activity_fprofile);
         friend = getIntent().getExtras().getString("otherUser");
         user = getIntent().getExtras().getString("username");
+        Number = getIntent().getExtras().getString("Number");
         final View mainView = findViewById(R.id.Profileview);
         usernameTextView = (TextView)findViewById(R.id.friendTextView);
         BioView = (TextView)findViewById(R.id.friendBio);
@@ -83,6 +85,7 @@ public class FProfile extends Activity implements OnClickListener{
             public void onSwipeRight() {
                 Intent intent = new Intent(FProfile.this, MainActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("Number",Number);
                 startActivity(intent);
             }
         });
@@ -132,6 +135,7 @@ public class FProfile extends Activity implements OnClickListener{
     public void onBackPressed() {
         Intent ii = new Intent(FProfile.this, MainActivity.class);
         ii.putExtra("username", user);
+        ii.putExtra("Number", Number);
         if (timer != null)
             timer.cancel();
         ii.putExtra("seconds", newSeconds);

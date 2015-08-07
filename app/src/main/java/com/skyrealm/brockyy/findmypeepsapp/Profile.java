@@ -52,7 +52,6 @@ public class Profile extends Activity implements OnClickListener {
     private EditText biotxt;
     TextView usernameTextView;
     private Button bSend;
-
     String encodedString;
     RequestParams params = new RequestParams();
     String imgPath, fileName;
@@ -67,6 +66,7 @@ public class Profile extends Activity implements OnClickListener {
     private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/Bio.py";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    String Number;
     private Double latitude;
     private Double longitude;
     private String lastUpdated;
@@ -95,11 +95,13 @@ public class Profile extends Activity implements OnClickListener {
         String tempuser = user.toLowerCase();
         OnSwipeTouchListener swipeListener;
         seconds = getIntent().getExtras().getInt("seconds");
+        Number = getIntent().getExtras().getString("Number");
         gps = new GPSTracker(Profile.this);
         mainView.setOnTouchListener(new OnSwipeTouchListener(Profile.this) {
             public void onSwipeRight() {
                 Intent intent = new Intent(Profile.this, MainActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
                 startActivity(intent);
             }
         });
@@ -157,6 +159,7 @@ public class Profile extends Activity implements OnClickListener {
     public void onBackPressed() {
         Intent ii = new Intent(Profile.this, MainActivity.class);
         ii.putExtra("username", user);
+        ii.putExtra("Number", Number);
         if (timer != null)
             timer.cancel();
         ii.putExtra("seconds", newSeconds);
@@ -318,6 +321,7 @@ public class Profile extends Activity implements OnClickListener {
                         prgDialog.hide();
                         Intent ii = new Intent(Profile.this, Profile.class);
                         ii.putExtra("username", user);
+                        ii.putExtra("Number", Number);
                         ii.putExtra("seconds", newSeconds);
                         if(timer != null)
                         {
@@ -384,7 +388,7 @@ public class Profile extends Activity implements OnClickListener {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(Profile.this);
-            pDialog.setMessage("Attempting to change Username...");
+            pDialog.setMessage("Updating Bio");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -394,7 +398,6 @@ public class Profile extends Activity implements OnClickListener {
         protected String doInBackground(String... args) {
             // TODO Auto-generated method stub
             // here Check for success tag
-
             int success;
             String text = biotxt.getText().toString();
             try {
@@ -402,6 +405,7 @@ public class Profile extends Activity implements OnClickListener {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("biog", text));
                 params.add(new BasicNameValuePair("user", user));
+                params.add(new BasicNameValuePair("numbers", Number));
 
                 Log.d("request!", "starting");
 
@@ -415,6 +419,7 @@ public class Profile extends Activity implements OnClickListener {
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     Log.d("Bio Sent!", json.toString());
+
                     return json.getString(TAG_MESSAGE);
                 } else {
 

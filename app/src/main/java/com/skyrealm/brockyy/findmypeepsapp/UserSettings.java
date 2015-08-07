@@ -73,6 +73,7 @@ public class UserSettings extends Activity implements OnClickListener{
     LatLng userCurrentLocation;
     GPSTracker gps;
     int seconds;
+    String Number;
     int newSeconds;
     Switch autoUpdateSwitch;
     EditText minutesToUpdate;
@@ -108,6 +109,7 @@ public class UserSettings extends Activity implements OnClickListener{
         bReset = (Button)findViewById(R.id.restpass);
         bReset.setOnClickListener(this);
         user = getIntent().getExtras().getString("username");
+        Number = getIntent().getExtras().getString("Number");
         seconds = getIntent().getExtras().getInt("seconds");
         autoUpdateSwitch = (Switch)findViewById(R.id.autoLocationSwitch);
         minutesToUpdate = (EditText) findViewById(R.id.minuteEditText);
@@ -120,6 +122,7 @@ public class UserSettings extends Activity implements OnClickListener{
             public void onSwipeRight() {
                 Intent intent = new Intent(UserSettings.this, MainActivity.class);
                 intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
                 startActivity(intent);
             }
         });
@@ -177,6 +180,7 @@ public class UserSettings extends Activity implements OnClickListener{
     public void onBackPressed() {
         Intent ii = new Intent(UserSettings.this, MainActivity.class);
         ii.putExtra("username", user);
+        ii.putExtra("Number", Number);
         if (autoUpdateSwitch.isChecked())
             ii.putExtra("seconds", newSeconds);
         else
