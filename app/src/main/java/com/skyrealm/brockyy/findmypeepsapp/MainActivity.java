@@ -264,8 +264,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 //else show the users location that was clicked
                 userMarker = googleMap.addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
             } else {
-
-
                 //get the extras
                 otherUserLat = getIntent().getExtras().getDouble("otherLat");
                 otherUserLong = getIntent().getExtras().getDouble("otherLong");
@@ -422,7 +420,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
 
             lastUpdated = df.format(c.getTime()) + " " + amorpm;
-
+            SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
+            String time = timef.format(c.getTime()) + " " + amorpm;
             //getting the street address---------------------------------------------------;
             Geocoder geocoder;
             List<Address> addresses;
@@ -440,7 +439,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments, lastUpdated);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments, lastUpdated, time);
             postSender.execute();
             //done executing post
 

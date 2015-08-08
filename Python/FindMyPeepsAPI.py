@@ -2,7 +2,7 @@
 import MySQLdb
 import urllib2
 
-db = MySQLdb.connect("localhost", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
+db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
 
 def check_user(username):
@@ -153,9 +153,11 @@ def profanity_filter(word):
 
     return trueFalse
 
-def update_location(latitude, longitude, username, address, comments, lastUpdated):
+def update_location(latitude, longitude, notification, username, address, comments, lastUpdated):
     sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s, lastupdated = %s  where username =  %s"
     CUR.execute(sql, (latitude, longitude, address, comments, lastUpdated, username))
+    sql = "insert into notifications(username, notification) values (%s, %s)"
+    CUR.execute(sql, (username, notification))
     return "location updated"
 
 def accept_or_deny_friend_request(username, friend, yesorno):

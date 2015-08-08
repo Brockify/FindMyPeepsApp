@@ -485,13 +485,14 @@ public class Profile extends Activity implements OnClickListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
+            String time = timef.format(c.getTime()) + " " + amorpm;
             //website to post too
             String htmlUrl = "http://skyrealmstudio.com/cgi-bin/updatelocation.py";
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
             postSender.execute();
             //done executing post
 

@@ -47,7 +47,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/imgView" />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Bio"
@@ -66,8 +66,8 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/friendBio"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Bio"
             android:id="@+id/friendlastcomment"
