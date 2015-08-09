@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -302,9 +303,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -347,6 +349,19 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             startActivity(ii);
             return true;
         }
+        if (id == R.id.action_pending)
+        {
+            Intent ii = new Intent(MainActivity.this, PendingFriendsActivity.class);
+            ii.putExtra("username", user);
+            ii.putExtra("seconds", newSeconds);
+            ii.putExtra("Number", Number);
+            if (timer != null)
+                timer.cancel();
+            // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+            startActivity(ii);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
