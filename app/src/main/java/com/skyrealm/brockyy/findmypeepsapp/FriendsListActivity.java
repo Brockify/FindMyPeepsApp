@@ -247,7 +247,7 @@ public class FriendsListActivity extends ActionBarActivity {
 
     public void deleteFriend(View view)
     {
-        AbsoluteLayout vwParentRow = (AbsoluteLayout)view.getParent();
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
 
         final Button deleteButton = (Button) vwParentRow.findViewById(R.id.deleteButton);
         final TextView userDeleteText = (TextView) vwParentRow.findViewById(R.id.username);

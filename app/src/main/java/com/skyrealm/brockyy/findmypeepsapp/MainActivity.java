@@ -117,8 +117,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     Button getLocationButton;
     private ArrayList<MarkerOptions> mMyMarkersArray = new ArrayList<MarkerOptions>();
     LatLngBounds friendsListBoundaries;
-    LocationManager lm;
-    Location location;
     Handler mainHandler;
     View mViewPager;
 
@@ -146,9 +144,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         //set Main Intent
         MainIntent = getIntent();
-
-        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         //create new gps with MainActivity as context
         gps = new GPSTracker(MainActivity.this);
@@ -200,16 +195,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 @Override
                 public void run() {
                     i++;
-                    if (seconds == 0)
-                    {
-                        seconds = 60;
-                    }
                     //do something
                     if (i % seconds == 0) {
                         //run the script on the main thread
                         Runnable myRunnable = new Runnable() {
                             @Override
                             public void run() {
+                                newSeconds = 0;
                                 seconds = 60;
                                 new getLocation().execute();
                             } // This is your code
@@ -217,7 +209,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         mainHandler.post(myRunnable);
                     } else {
                         newSeconds = (seconds - (i % seconds));
-                        System.out.println("Seconds = " + newSeconds);
+                        System.out.println(newSeconds);
                     }
                 }
             };
@@ -259,7 +251,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             longitude = gps.getLocation().getLongitude();
             userCurrentLocation = new LatLng(latitude, longitude);
             googleMap.setMyLocationEnabled(true);
-
             //if the a user from friend list was not clicked, just set the zoom to the user
             if (!isOtherUserClicked) {
                 //else show the users location that was clicked
@@ -647,13 +638,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         mMyMarkersArray.add(userCounter, markerOption);
                         userCounter++;
                     }
-                    //reset the variables for the next loop
-                    username = null;
-                    comment = null;
-                    latitude = null;
-                    longitude = null;
-                    lastUpdated = null;
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
