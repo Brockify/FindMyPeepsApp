@@ -141,6 +141,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
                 if (timer != null)
                     timer.cancel();
+                intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
                 intent.putExtra("Number", Number);
                 startActivity(intent);

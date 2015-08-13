@@ -1,6 +1,16 @@
 #! /usr/bin/python
 import MySQLdb
 import urllib2
+import base64
+import uuid
+import hashlib
+import smtplib
+import string
+import random
+import re
+import os
+import os.path
+import shutil
 
 db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
@@ -14,6 +24,48 @@ def check_user(username):
     else:
         return True
 
+def get_vnumber(number, username):
+    username = username.lower()
+    number = base64.b64decode(number)
+    number = int(number)
+    sql = "select ID from Users where Username=%s"
+    CUR.execute(sql, [username])
+    ID = CUR.fetchone()[0]
+    if number == ID:
+        return True
+    else:
+        return False
+
+def get_user_notification(username):
+    sql = "select notification from notifications where username=%s"
+    CUR.execute(sql, [username])
+    result = CUR.fetchall()
+    return result
+
+def get_verify(username, hashed):
+    sql = "select Password from Users where Username=%s"
+    CUR.execute(sql, [username])
+    result = CUR.fetchone()[0]
+    if result == hashed:
+        sql = "select ID from Users where Username=%s"
+        CUR.execute(sql, [username])
+        ID = CUR.fetchone()
+        if ID == None:
+            return "User does not exist"
+        else:
+            numb = ID[0]
+            numb = str(numb)
+            numb = base64.b64encode(numb)
+            return numb
+    else:
+        return "Error Occured"
+
+def vryfy(username, hash):
+    orig = get_password(username)
+    if orig == hash:
+        return True
+    else:
+        return False
 def get_password(username):
     sql = "select Password from Users where Username=%s"
     CUR.execute(sql, [username])
@@ -22,7 +74,7 @@ def get_password(username):
         return "User does not exist"
     else:
         return result[0]
-    
+
 def get_last_updated(username):
     sql = "select LastUpdated from Users where Username=%s"
     CUR.execute(sql, [username])
@@ -31,7 +83,7 @@ def get_last_updated(username):
         return "User doesn't exist"
     else:
         return result[0]
-        
+
 def get_comment(username):
     sql = "select Comments from Users where Username=%s"
     CUR.execute(sql, [username])
@@ -41,15 +93,30 @@ def get_comment(username):
     else:
         return result[0]
 
-def get_email(username):
-    sql = "select Email from Users where Username=%s"
+def get_bio(username):
+    sql = "select Bio from Users where Username=%s"
     CUR.execute(sql, [username])
+    result = CUR.fetchone()
+    if result == None or result == "":
+        return "No Bio Exists"
+    else:
+        return result[0]
+
+def update_bio(username, message):
+    username = username.lower()
+    sql = "update Users set Bio = %s where username =  %s"
+    CUR.execute(sql, (message, username))
+    return "bio updated"
+
+def get_email(username):
+    sql = "select Email from Users where Username=%s OR email=%s"
+    CUR.execute(sql, (username, username))
     result = CUR.fetchone()
     if result == None or result == "":
         return "User does not exist"
     else:
         return result[0]
-        
+
 def get_longitude(username):
     sql = "select Longitude from Users where Username=%s"
     CUR.execute(sql, [username])
@@ -178,3 +245,135 @@ def accept_or_deny_friend_request(username, friend, yesorno):
         CUR.execute(sql, (username, friend))
     else:
         return "Failed"
+
+def send_email(to, subject, text):
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    sky = "findmypeeps@skyrealmstudio.com"
+
+
+    # Create header
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = sky
+    msg['To'] = to
+    text += " \n \n - DO NOT REPLY -"
+    # Record the MIME types of both parts - text/plain and text/html.
+    part1 = MIMEText(text, 'plain')
+    #part2 = MIMEText(html, 'html')
+
+    # Attach parts into message.
+    msg.attach(part1)
+    #msg.attach(part2)
+
+    # Send the message via local SMTP server.
+    s = smtplib.SMTP('localhost')
+    s.sendmail(sky, to, msg.as_string())
+    s.quit()
+
+def check_email(emailer):
+    sql = "select email from Users where email=%s"
+    CUR.execute(sql, emailer)
+    result = CUR.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+
+def check_ue(username):
+    sql = "select Username from Users where Username=%s or email=%s"
+    CUR.execute(sql, (username, username))
+    result = CUR.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+
+def compare_user_verify(username, verify):
+    if username.lower() == verify.lower():
+        return True
+    else:
+        return False
+
+def CreateUser(username, password, salt, email ):
+    tempuser = username
+    username = username.lower()
+    sql = "insert into Users(Username, tempusername, Password, salt, email) values (%s, %s, %s, %s, %s)"
+    CUR.execute(sql, (username, tempuser, password, salt, email))
+    return True
+
+def DeleteUser(username):
+    os.remove('/home1/skyrealm/public_html/img/%sorig.jpg' % username)
+    username = username.lower()
+    os.remove('/home1/skyrealm/public_html/img/%s.jpg' % username)
+    sql = "delete from Users where Username=%s"
+    CUR.execute(sql, username)
+    sql1 = "DELETE FROM accepted_req WHERE friend=%s"
+    CUR.execute(sql, username)
+    sql = "delete from pending_req  where fromUser =%s"
+    CUR.execute(sql, username)
+    sql = "delete from accepted_req where userLoggedIn =%s"
+    CUR.execute(sql, username)
+    sql = "delete from pending_req where toUser =%s"
+    CUR.execute(sql, username)
+    return "Account Deleted"
+
+def Change_User(username, newuser):
+    username = username.lower()
+    sql = "update Users set Username=%s where Username=%s"
+    CUR.execute(sql, (newuser.lower(), username))
+    sql = "update Users set tempusername=%s where tempusername=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update pending_req set fromUser=%s where fromUser=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update pending_req set toUser=%s where toUser=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update accepted_req set friend=%s where friend=%s"
+    CUR.execute(sql, (newuser, username))
+    sql = "update accepted_req set userLoggedIn=%s where userLoggedIn=%s"
+    CUR.execute(sql, (newuser, username))
+    return "Username Changed"
+
+def hash_password(password, salt=None):
+    if salt is None:
+        salt = uuid.uuid4().hex
+        hashed_password = hashlib.sha512(password + salt).hexdigest()
+        return (hashed_password, salt)
+    else:
+        hashed_password = hashlib.sha512(password + salt).hexdigest()
+        return (hashed_password)
+
+def login_hash_password(password, username):
+    sql = "select Salt from Users where Username=%s"
+    CUR.execute(sql, username)
+    salt = CUR.fetchone()[0]
+    hashed_password = hashlib.sha512(password + salt).hexdigest()
+    return (hashed_password)
+
+
+def pass_generator(size=10, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def New_Pass(username, password, salt):
+    sql = "update Users set Password= %s, salt= %s where Username= %s or email= %s"
+    CUR.execute(sql, (password, salt, username, username))
+    return True
+
+def validateEmail(email):
+
+	if len(email) > 7:
+		if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+			return 1
+	return 0
+
+def get_notifications(friendslist):
+    result = []
+    for friend in friendslist:
+        notifications = get_user_notification(friend)
+        for notification in notifications:
+            if notification != None:
+                result.append(notification)
+    return result
+
+

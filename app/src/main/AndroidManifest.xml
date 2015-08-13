@@ -75,6 +75,11 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCltbJc7evYyZW60nDzx0T72ZKXuzbJKY0" />
+
+        <activity
+            android:name=".StatusActivity"
+            android:label="@string/title_activity_status" >
+        </activity>
     </application>
 
 </manifest>
