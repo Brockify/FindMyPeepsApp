@@ -74,9 +74,11 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pendingfriends);
+        //setup the actionbar first
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.pendingactivity_actionbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
-        setTitle("Pending Friend Requests");
 
         //declare variables
         Button addFriendButton = (Button) findViewById(R.id.addFriendButton);

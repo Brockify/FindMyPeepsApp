@@ -85,10 +85,12 @@ public class FriendsListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
-        ActionBar actionBar = getSupportActionBar();
+        //setup the actionbar first
+        getSupportActionBar().setDisplayOptions(android.app.ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.friendsactivity_actionbar);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
         //set title of the activity
-        setTitle("Friends");
         seconds = getIntent().getExtras().getInt("seconds");
 
         //declare variables
@@ -127,7 +129,8 @@ public class FriendsListActivity extends ActionBarActivity {
         friendsList.setOnTouchListener(new OnSwipeTouchListener(FriendsListActivity.this) {
             public void onSwipeLeft() {
                 if (timer != null)
-                    timer.cancel();                Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
+                    timer.cancel();
+                Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
                 intent.putExtra("Number", Number);

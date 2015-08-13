@@ -3,9 +3,7 @@ package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,39 +12,31 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import com.google.android.gms.location.LocationListener;
 
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 
 import android.os.Bundle;
 
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.*;
 
@@ -70,16 +60,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.LogRecord;
 
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
@@ -118,17 +103,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private ArrayList<MarkerOptions> mMyMarkersArray = new ArrayList<MarkerOptions>();
     LatLngBounds friendsListBoundaries;
     Handler mainHandler;
-    View mViewPager;
-
+    Bitmap icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MainIntent = new Intent(MainActivity.this, MainActivity.class);
+        icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.action_logo);
+        //setup the actionbar first
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.mainactivity_actionbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
-        MainIntent = new Intent(MainActivity.this, MainActivity.class);
-        setTitle("Locations");
         //DECLARATIONS-----------------------------------------------------------------------
         View mainView = findViewById(R.id.mainActivity);
         getLocationButton = (Button) findViewById(R.id.getLocationButton);
@@ -137,7 +125,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         Number = getIntent().getExtras().getString("Number");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
         seconds = getIntent().getExtras().getInt("seconds");
-        mViewPager = (View) findViewById(R.id.pager);
         Log.d("Message:", "Seconds = " + seconds);
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
@@ -157,12 +144,35 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             @Override
             //called once the map is done loading
             public void onMapLoaded() {
-                if (isOtherUserClicked) {
-                    int padding = 50;
-                    googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
-                } else {
-                    //set friends on the map
-                    new MarkerScript().execute();
+                if (gps.isGPSEnabledOrNot()) {
+                    latitude = gps.getLocation().getLatitude();
+                    longitude = gps.getLocation().getLongitude();
+                    userCurrentLocation = new LatLng(latitude, longitude);
+                    if (isOtherUserClicked) {
+                        //get the extras
+                        otherUserLat = getIntent().getExtras().getDouble("otherLat");
+                        otherUserLong = getIntent().getExtras().getDouble("otherLong");
+                        otherUserUsername = getIntent().getExtras().getString("userUsername");
+                        otherUserComment = getIntent().getExtras().getString("otherComment");
+                        //zoom to show both the users location and the user clicked location
+                        otherUserLocation = new LatLng(otherUserLat, otherUserLong);
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        builder.include(userCurrentLocation);
+                        builder.include(otherUserLocation);
+                        bounds = builder.build();
+                        String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername.toLowerCase() + ".jpg";
+                        new DownloadImageTask().execute(urlTest, otherUserUsername);
+                        int padding = 50;
+                        googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+                        userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+                    } else {
+                        //set friends on the map
+                        new MarkerScript().execute();
+                        userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+
+                    }
+                }else {
+                    gps.showSettingsAlert();
                 }
             }
         });
@@ -245,35 +255,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //called when the activity is created (for the map)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if(gps.isGPSEnabledOrNot()) {
-            //get the current users location
-            latitude = gps.getLocation().getLatitude();
-            longitude = gps.getLocation().getLongitude();
-            userCurrentLocation = new LatLng(latitude, longitude);
-            googleMap.setMyLocationEnabled(true);
-            //if the a user from friend list was not clicked, just set the zoom to the user
-            if (!isOtherUserClicked) {
-                //else show the users location that was clicked
-                userMarker = googleMap.addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
-            } else {
-                //get the extras
-                otherUserLat = getIntent().getExtras().getDouble("otherLat");
-                otherUserLong = getIntent().getExtras().getDouble("otherLong");
-                otherUserUsername = getIntent().getExtras().getString("userUsername");
-                otherUserComment = getIntent().getExtras().getString("otherComment");
-                //zoom to show both the users location and the user clicked location
-                otherUserLocation = new LatLng(otherUserLat, otherUserLong);
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                builder.include(userCurrentLocation);
-                builder.include(otherUserLocation);
-                bounds = builder.build();
-                String urlTest = "http://skyrealmstudio.com/img/" + otherUserUsername.toLowerCase() + ".jpg";
-                new DownloadImageTask().execute(urlTest, otherUserUsername);
-                //
-            }
-        } else {
-            gps.showSettingsAlert();
-        }
         googleMap.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
         googleMap.setOnInfoWindowClickListener(this);
     }
@@ -340,19 +321,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             startActivity(ii);
             return true;
         }
-        if (id == R.id.action_pending)
-        {
-            Intent ii = new Intent(MainActivity.this, PendingFriendsActivity.class);
-            ii.putExtra("username", user);
-            ii.putExtra("seconds", newSeconds);
-            ii.putExtra("Number", Number);
-            if (timer != null)
-                timer.cancel();
-            // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
-            startActivity(ii);
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -388,12 +356,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //remove the marker so that way when you add it, there isn't two of the same.
-            if (userMarker != null)
-            {
-                userMarker.remove();
-            }
-
             gps = new GPSTracker(MainActivity.this);
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Sharing your location...");
@@ -457,7 +419,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //this happens whenever an async task is done
         public void onPostExecute(Void result) {
             LatLngBounds.Builder temp = new LatLngBounds.Builder();
-            googleMap.getMap().setMyLocationEnabled(true);
 
             userCurrentLocation = new LatLng(latitude, longitude);
 
@@ -490,7 +451,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                 new DownloadImageTask().execute(urlTest, user);
             }
-            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user));
+            userMarker.remove();
+            userMarker = googleMap.getMap().addMarker(new MarkerOptions().position(userCurrentLocation).title(user).icon(BitmapDescriptorFactory.fromBitmap(icon)));
             gps.stopUsingGps();
             pDialog.dismiss();
 
@@ -623,7 +585,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             InputStream in = new URL(urldisplay).openStream();
                             userIcon = BitmapFactory.decodeStream(in);
                             //make the icon a circle,'
-                            userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth() / 2, userIcon.getHeight() / 2, false);
+                            userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
                             userIcon = getCroppedBitmap(userIcon);
                         } catch (Exception e) {
                             Log.e("Error", e.getMessage());
@@ -654,15 +616,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             {
                 googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
             }
-            if (mMyMarkersArray.size() > 0) {
                 if (userMarker != null) {
-                    userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation));
+                    userMarker.remove();
+                    userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
                     builder.include(userCurrentLocation);
                 }
-                friendsListBoundaries = builder.build();
+            friendsListBoundaries = builder.build();
                 googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
-            }
-            pDialog.cancel();
+                pDialog.cancel();
+
         }
     }
 }
