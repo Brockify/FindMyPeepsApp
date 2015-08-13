@@ -6,6 +6,7 @@
     android:fillViewport="true"
     android:background="@drawable/background">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:focusableInTouchMode="true"
     android:id="@+id/myLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
@@ -33,7 +34,7 @@
         android:onClick="uploadImage"
         android:text="Upload"
         android:id="@+id/button"
-        android:layout_below="@+id/imgView"
+        android:layout_below="@+id/Top"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -54,12 +55,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/image"
         android:checked="false"
-        android:layout_above="@+id/button"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
         android:clickable = "false"
 
-        />
+        android:layout_alignBottom="@+id/imgView"
+        android:layout_toLeftOf="@+id/Bottom"
+        android:layout_toStartOf="@+id/Bottom" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -89,7 +89,52 @@
         android:layout_height="wrap_content"
         android:text="Send New Bio"
         android:layout_below="@+id/biotext"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Top"
+        android:id="@+id/Top"
+        android:onClick="SetTop"
+        android:layout_marginTop="107dp"
+        android:layout_below="@+id/imgView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Middle"
+        android:onClick="SetMiddle"
+        android:id="@+id/Middle"
+        android:layout_above="@+id/button"
+        android:layout_alignLeft="@+id/imgView"
+        android:layout_alignStart="@+id/imgView" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Bottom"
+        android:onClick="SetBottom"
+        android:id="@+id/Bottom"
+        android:layout_alignTop="@+id/Middle"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Click one of three buttons \nbelow to crop photo"
+        android:id="@+id/textView3"
+        android:layout_above="@+id/Middle"
+        android:layout_alignRight="@+id/textView"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_marginBottom="26dp" />
 
 </RelativeLayout>
 </ScrollView>

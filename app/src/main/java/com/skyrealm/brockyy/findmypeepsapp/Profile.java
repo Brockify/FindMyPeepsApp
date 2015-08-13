@@ -12,17 +12,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -51,13 +52,14 @@ public class Profile extends Activity implements OnClickListener {
     String user;
     private EditText biotxt;
     TextView usernameTextView;
-    private Button bSend;
+    private Button bSend, top, middle, bottom;
     String encodedString;
     RequestParams params = new RequestParams();
     String imgPath, fileName;
-    Bitmap bitmap, origbitmap;
+    Bitmap bitmap, origmap;
     private static int RESULT_LOAD_IMG = 1;
-
+    private int checkbit = 0;
+    private int checkbutts = 0;
     // Progress Dialog
     private ProgressDialog pDialog;
     ProgressDialog prgDialog;
@@ -200,7 +202,77 @@ public class Profile extends Activity implements OnClickListener {
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
+    public static Bitmap scaleImage(Context context, Uri photoUri) throws IOException {
+        InputStream is = context.getContentResolver().openInputStream(photoUri);
+        BitmapFactory.Options dbo = new BitmapFactory.Options();
+        dbo.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, dbo);
+        is.close();
 
+        int rotatedWidth, rotatedHeight;
+        int orientation = getOrientation(context, photoUri);
+
+        if (orientation == 90 || orientation == 270) {
+            rotatedWidth = dbo.outHeight;
+            rotatedHeight = dbo.outWidth;
+        } else {
+            rotatedWidth = dbo.outWidth;
+            rotatedHeight = dbo.outHeight;
+        }
+
+        Bitmap srcBitmap;
+        is = context.getContentResolver().openInputStream(photoUri);
+        int MAX_IMAGE_DIMENSION = 512;
+        if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
+            float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
+            float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
+            float maxRatio = Math.max(widthRatio, heightRatio);
+
+            // Create the bitmap from file
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = (int) maxRatio;
+            srcBitmap = BitmapFactory.decodeStream(is, null, options);
+        } else {
+            srcBitmap = BitmapFactory.decodeStream(is);
+        }
+        is.close();
+
+        /*
+         * if the orientation is not 0 (or -1, which means we don't know), we
+         * have to do a rotation.
+         */
+        if (orientation > 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientation);
+
+            srcBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                    srcBitmap.getHeight(), matrix, true);
+        }
+
+        String type = context.getContentResolver().getType(photoUri);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (type.equals("image/png")) {
+            srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        } else if (type.equals("image/jpg") || type.equals("image/jpeg")) {
+            srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        }
+        byte[] bMapArray = baos.toByteArray();
+        baos.close();
+        return BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
+    }
+
+    public static int getOrientation(Context context, Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
     // When Image is selected from Gallery
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -210,8 +282,11 @@ public class Profile extends Activity implements OnClickListener {
             if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
                     && null != data) {
                 // Get the Image from data
-
+                checkbit = 1;
                 Uri selectedImage = data.getData();
+                bitmap = scaleImage(this,selectedImage);
+                origmap = bitmap;
+
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 // Get the cursor
@@ -226,8 +301,7 @@ public class Profile extends Activity implements OnClickListener {
                 final CheckBox checkBox = (CheckBox) findViewById(R.id.image);
                 checkBox.setChecked(true);
                 ImageView imgView = (ImageView) findViewById(R.id.imgView);
-                imgView.setImageBitmap(BitmapFactory
-                        .decodeFile(imgPath));
+                imgView.setImageBitmap(bitmap);
 
                 fileName = user + "orig";
                 // Put file name in Async Http Post Param which will used in Php web app
@@ -244,21 +318,120 @@ public class Profile extends Activity implements OnClickListener {
         }
 
     }
+    public void SetTop(View v) {
+        if (checkbit != 0) {
+            if (origmap.getWidth() >= origmap.getHeight()) {
+
+                bitmap = Bitmap.createBitmap(
+                        origmap,
+                        0,
+                        0,
+                        origmap.getHeight(),
+                        origmap.getHeight()
+                );
+
+            } else {
+
+                bitmap = Bitmap.createBitmap(
+                        origmap,
+                        0,
+                        0,
+                        origmap.getWidth(),
+                        origmap.getWidth()
+                );
+            }
+            checkbutts = 1;
+            ImageView imgView = (ImageView) findViewById(R.id.imgView);
+            imgView.setImageBitmap(bitmap);
+        }else{
+            Toast.makeText(this, "Image must be selected from gallery before cropping", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public void SetMiddle(View v) {
+        if (checkbit != 0) {
+        if (origmap.getWidth() >= origmap.getHeight()){
+
+            bitmap = Bitmap.createBitmap(
+                    origmap,
+                    origmap.getWidth()/2 - origmap.getHeight()/2,
+                    0,
+                    origmap.getHeight(),
+                    origmap.getHeight()
+            );
+
+        }else{
+
+            bitmap = Bitmap.createBitmap(
+                    origmap,
+                    0,
+                    origmap.getHeight()/2 - bitmap.getWidth()/2,
+                    origmap.getWidth(),
+                    origmap.getWidth()
+            );
+        }
+            checkbutts = 1;
+        ImageView imgView = (ImageView) findViewById(R.id.imgView);
+        imgView.setImageBitmap(bitmap);
+    }else{
+            Toast.makeText(this, "Image must be selected from gallery before cropping", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public void SetBottom(View v) {
+        if (checkbit != 0) {
+        if (origmap.getWidth() >= origmap.getHeight()){
+
+            bitmap = Bitmap.createBitmap(
+                    origmap,
+                    origmap.getWidth() - bitmap.getHeight(),
+                    0,
+                    origmap.getHeight(),
+                    origmap.getHeight()
+            );
+
+        }else{
+
+            bitmap = Bitmap.createBitmap(
+                    origmap,
+                    0,
+                    origmap.getHeight() - bitmap.getWidth(),
+                    origmap.getWidth(),
+                    origmap
+                            .getWidth()
+            );
+        }
+            checkbutts = 1;
+        ImageView imgView = (ImageView) findViewById(R.id.imgView);
+        imgView.setImageBitmap(bitmap);
+    }else{
+            Toast.makeText(this, "Image must be selected from gallery before cropping", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
 
     // When Upload button is clicked
     public void uploadImage(View v) {
         // When Image is selected from Gallery
-        if (imgPath != null && !imgPath.isEmpty()) {
-            prgDialog.setMessage("Uploading Image");
-            prgDialog.show();
-            // Convert image to String using Base64
-            encodeImagetoString();
-            // When Image is not selected from Gallery
-        } else {
-            Toast.makeText(
-                    getApplicationContext(),
-                    "You must select image from gallery before you try to upload",
-                    Toast.LENGTH_LONG).show();
+
+        if(checkbutts != 0) {
+            if (imgPath != null && !imgPath.isEmpty()) {
+                prgDialog.setMessage("Uploading Image");
+                prgDialog.show();
+                // Convert image to String using Base64
+                encodeImagetoString();
+                // When Image is not selected from Gallery
+            } else {
+                Toast.makeText(
+                        getApplicationContext(),
+                        "You must select image from gallery before you try to upload",
+                        Toast.LENGTH_LONG).show();
+            }
+        }else{
+                Toast.makeText(this, "Photo must be cropped before uploading", Toast.LENGTH_LONG)
+                        .show();
         }
     }
 
@@ -274,14 +447,8 @@ public class Profile extends Activity implements OnClickListener {
 
             @Override
             protected String doInBackground(Void... params) {
-                BitmapFactory.Options options = null;
-                options = new BitmapFactory.Options();
-                options.inSampleSize = 3;
-                origbitmap = BitmapFactory.decodeFile(imgPath,
-                        options);
 
-
-                bitmap = Bitmap.createScaledBitmap(origbitmap, 300, 300, true);
+                //bitmap = Bitmap.createScaledBitmap(bitmap, original_width, original_height, true);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 // Must compress the Image to reduce image size to make upload easy
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
