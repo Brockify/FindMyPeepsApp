@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class FriendsListActivity extends ActionBarActivity {
+public class FriendsListActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     ArrayList<HashMap<String, String>> FriendsList;
     private String user;
@@ -81,6 +82,8 @@ public class FriendsListActivity extends ActionBarActivity {
     private ProgressDialog pDialog;
     GPSTracker gps;
     private static Timer timer;
+    private SwipeRefreshLayout swipeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +193,13 @@ public class FriendsListActivity extends ActionBarActivity {
             timer.schedule(task, 0, 1000);
 
     }
+        //set a swipe refresh layout
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(FriendsListActivity.this);
+        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         //declare new FriendsList as ArrayList
         FriendsList = new ArrayList<HashMap<String, String>>();
@@ -305,6 +315,16 @@ public class FriendsListActivity extends ActionBarActivity {
         intent.putExtra("seconds", newSeconds);
         intent.putExtra("Number", Number);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRefresh() {
+        FriendsList.clear();
+        ListView pendingListView = (ListView) findViewById(R.id.friendListView);
+        pendingListView.setAdapter(null);
+        swipeLayout.setRefreshing(true);
+        new getFriendsList().execute();
+        swipeLayout.setRefreshing(false);
     }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>

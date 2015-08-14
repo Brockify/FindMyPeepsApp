@@ -12,7 +12,7 @@
     <TextView
         android:id="@+id/username"
         android:layout_width="300px"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
         android:textSize="15dp"
@@ -27,8 +27,8 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="80dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
         android:id="@+id/deleteButton"
         android:focusable="false"
         android:textSize="20sp"
@@ -42,8 +42,8 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="93dp"
-        android:layout_height="75dp"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
         android:id="@+id/profileButton"
         android:focusable="false"
         android:textSize="20dp"
