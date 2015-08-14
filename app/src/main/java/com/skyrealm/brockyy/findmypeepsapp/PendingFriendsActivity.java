@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -84,8 +85,8 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         Button addFriendButton = (Button) findViewById(R.id.addFriendButton);
         final EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
         ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
-        View friendView = findViewById(R.id.friendsActivity);
-        ListView friendsList = (ListView) findViewById(R.id.friendslistView);
+        final View friendView = findViewById(R.id.friendsActivity);
+        final ListView friendsList = (ListView) findViewById(R.id.friendslistView);
         //DECLARATION
         pendingUsers = new ArrayList<HashMap<String, String>>();
         user = getIntent().getExtras().getString("username");
@@ -178,6 +179,27 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             };
             timer.schedule(task, 0, 1000);
         }
+        //only allows the swipe if it is at the top of the list
+        friendsList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if (friendsList != null && friendsList.getChildCount() > 0) {
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = friendsList.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = friendsList.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeLayout.setEnabled(enable);
+            }
+        });
     }
 
 
