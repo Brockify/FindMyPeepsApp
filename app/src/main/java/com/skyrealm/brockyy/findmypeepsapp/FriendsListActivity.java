@@ -274,7 +274,7 @@ public class FriendsListActivity extends ActionBarActivity {
                         //set everything to be not visible
                         deleteButton.setVisibility(View.GONE);
                         profileButton.setVisibility(View.GONE);
-
+                        userDeleteText.setVisibility(View.GONE);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -373,12 +373,12 @@ public class FriendsListActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            pDialog.dismiss();
             ListView list = (ListView) findViewById(R.id.friendListView);
             ListAdapter adapter = new SimpleAdapter(
                     FriendsListActivity.this, FriendsList,
                     R.layout.friends_list_items, new String[] {TAG_FRIEND}, new int[] { R.id.username});
             list.setAdapter(adapter);
+            pDialog.dismiss();
         }
     }
 
@@ -453,7 +453,6 @@ public class FriendsListActivity extends ActionBarActivity {
 
         protected void onPostExecute(Void result) {
             String address = null;
-            pDialog.dismiss();
             if (latitude == null || longitude == null) {
                 Toast.makeText(getApplicationContext(), "User has not updated their location.", Toast.LENGTH_LONG).show();
 
@@ -480,6 +479,7 @@ public class FriendsListActivity extends ActionBarActivity {
                 intent.putExtra("Number", Number);
                 finish();
                 startActivity(intent);
+                pDialog.dismiss();
             }
         }
     }

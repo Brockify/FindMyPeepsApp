@@ -134,7 +134,8 @@
         android:layout_above="@+id/Middle"
         android:layout_alignRight="@+id/textView"
         android:layout_alignEnd="@+id/textView"
-        android:layout_marginBottom="26dp" />
+        android:layout_marginBottom="26dp"
+        android:focusable="true" />
 
 </RelativeLayout>
 </ScrollView>
