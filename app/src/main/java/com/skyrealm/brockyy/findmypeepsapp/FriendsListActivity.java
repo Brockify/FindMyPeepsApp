@@ -83,7 +83,6 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
     GPSTracker gps;
     private static Timer timer;
     private SwipeRefreshLayout swipeLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,13 +155,12 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
+                    TextView tv = (TextView) v.findViewById(R.id.username);
 
-                TextView tv = (TextView) v.findViewById(R.id.username);
+                    userBeingClicked = tv.getText().toString();
 
-                userBeingClicked = tv.getText().toString();
-
-                userUsername = userBeingClicked;
-                new getSpecificUserLocation().execute();
+                    userUsername = userBeingClicked;
+                    new getSpecificUserLocation().execute();
             }
         });
         if (seconds != 0) {
