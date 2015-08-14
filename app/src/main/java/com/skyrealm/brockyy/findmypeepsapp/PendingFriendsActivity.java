@@ -84,7 +84,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         //declare variables
         Button addFriendButton = (Button) findViewById(R.id.addFriendButton);
         final EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
-        ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         final View friendView = findViewById(R.id.friendsActivity);
         final ListView friendsList = (ListView) findViewById(R.id.friendslistView);
         //DECLARATION
@@ -121,6 +120,16 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 startActivity(intent);
 
             }
+            public void onSwipeLeft()
+            {
+                Intent intent = new Intent(PendingFriendsActivity.this, StatusActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
+                startActivity(intent);
+            }
         });
 
         addFriendButton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +156,16 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 intent.putExtra("seconds", newSeconds);
                 startActivity(intent);
             }
-
+            public void onSwipeLeft()
+            {
+                Intent intent = new Intent(PendingFriendsActivity.this, StatusActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
+                startActivity(intent);
+            }
         });
         mainHandler = new android.os.Handler(Looper.getMainLooper());
 
@@ -179,6 +197,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             };
             timer.schedule(task, 0, 1000);
         }
+
         //only allows the swipe if it is at the top of the list
         friendsList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override

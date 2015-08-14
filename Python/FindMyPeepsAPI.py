@@ -223,8 +223,8 @@ def profanity_filter(word):
 def update_location(latitude, longitude, notification, username, address, comments, lastUpdated):
     sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s, lastupdated = %s  where username =  %s"
     CUR.execute(sql, (latitude, longitude, address, comments, lastUpdated, username))
-    sql = "insert into notifications(username, notification) values (%s, %s)"
-    CUR.execute(sql, (username, notification))
+    sql = "insert into notifications(username,date, notification) values (%s, %s, %s)"
+    CUR.execute(sql, (username,lastUpdated , notification))
     return "location updated"
 
 def accept_or_deny_friend_request(username, friend, yesorno):
@@ -373,7 +373,6 @@ def get_notifications(friendslist):
         notifications = get_user_notification(friend)
         for notification in notifications:
             if notification != None:
-                result.append(notification)
+                for i in notification:
+                    result.append(i)
     return result
-
-
