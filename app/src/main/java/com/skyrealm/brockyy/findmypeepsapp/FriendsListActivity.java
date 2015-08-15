@@ -346,9 +346,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         FriendsList.clear();
         ListView pendingListView = (ListView) findViewById(R.id.friendListView);
         pendingListView.setAdapter(null);
-        swipeLayout.setRefreshing(true);
         new getFriendsList().execute();
-        swipeLayout.setRefreshing(false);
     }
 
     class getFriendsList extends AsyncTask<Void, Void, Void>

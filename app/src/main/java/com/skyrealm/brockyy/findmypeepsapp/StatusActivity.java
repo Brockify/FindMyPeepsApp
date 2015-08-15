@@ -228,9 +228,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         notifications.clear();
         ListView notificationListview = (ListView) findViewById(R.id.notificationsListView);
         notificationListview.setAdapter(null);
-        swipeLayout.setRefreshing(true);
         new getNotifications().execute();
-        swipeLayout.setRefreshing(false);
     }
 
     class getNotifications extends AsyncTask<String, Void, Void> {
