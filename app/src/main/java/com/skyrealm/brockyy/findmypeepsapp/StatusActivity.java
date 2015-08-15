@@ -56,8 +56,6 @@ import java.util.TimerTask;
 
 public class StatusActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    ProgressDialog pDialog;
-    private static final String TAG_NOTIFICATION = "notification";
     private String user;
     String Number;
     private static Timer timer;
@@ -238,11 +236,12 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
     class getNotifications extends AsyncTask<String, Void, Void> {
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(StatusActivity.this);
-            pDialog.setMessage("Loading status...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            swipeLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeLayout.setRefreshing(true);
+                }
+            });
         }
 
         @Override
@@ -296,7 +295,12 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     new ArrayAdapter<String>(StatusActivity.this, R.layout.status_list_items, R.id.notificationTextView,notifications);
             ListView list = (ListView) findViewById(R.id.notificationsListView);
             list.setAdapter(itemsAdapter);
-            pDialog.dismiss();
+            swipeLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeLayout.setRefreshing(false);
+                }
+            });
         }
     }
     //gets the location class (ASYNC)

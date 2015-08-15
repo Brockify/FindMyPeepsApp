@@ -376,3 +376,4 @@ def get_notifications(friendslist):
                 for i in notification:
                     result.append(i)
     return result
+

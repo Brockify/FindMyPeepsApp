@@ -93,9 +93,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         seconds = getIntent().getExtras().getInt("seconds");
         gps = new GPSTracker(PendingFriendsActivity.this);
 
-
-        new GetPendingRequests().execute();
-
         //set a swipe refresh layout
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
@@ -103,8 +100,8 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        // Configure the swipe refresh layout
 
+        new GetPendingRequests().execute();
         // EXAMPLE:
         // final String latitude = getIntent().getExtras().getString("latitude");
         //On touch swipe listener for swipe right method
@@ -285,8 +282,16 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     }
 
     //Asynchronus class to do background data away from the main thread.
-    class GetPendingRequests extends AsyncTask<Void, String, Void> {
-
+    class GetPendingRequests extends AsyncTask<Void, Void, Void> {
+        protected void onPreExecute()
+        {
+            swipeLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeLayout.setRefreshing(true);
+                }
+            });
+        }
 
     //call what to do in the asynchronus task
         @Override
@@ -355,6 +360,12 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                         R.layout.pending_requests_list_item, new String[] {TAG_FROMUSER}, new int[] { R.id.name});
                 pendingListView.setAdapter(adapter);
                 //done setting on the list adapter
+                swipeLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                    }
+                });
             }
         }
     }

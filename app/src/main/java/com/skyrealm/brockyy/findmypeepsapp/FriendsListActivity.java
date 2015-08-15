@@ -84,6 +84,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
     GPSTracker gps;
     private static Timer timer;
     private SwipeRefreshLayout swipeLayout;
+    getFriendsList getFriends;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,13 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         getSupportActionBar().setCustomView(R.layout.friendsactivity_actionbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
+        //set a swipe refresh layout
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(FriendsListActivity.this);
+        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         //set title of the activity
         seconds = getIntent().getExtras().getInt("seconds");
 
@@ -112,7 +120,9 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
                 intent.putExtra("Number", Number);
+                getFriends.cancel(true);
                 finish();
+
                 startActivity(intent);
             }
 
@@ -137,6 +147,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                 intent.putExtra("username", user);
                 intent.putExtra("seconds", newSeconds);
                 intent.putExtra("Number", Number);
+                getFriends.cancel(true);
                 startActivity(intent);
             }
 
@@ -157,12 +168,12 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                    TextView tv = (TextView) v.findViewById(R.id.username);
+                TextView tv = (TextView) v.findViewById(R.id.username);
 
-                    userBeingClicked = tv.getText().toString();
+                userBeingClicked = tv.getText().toString();
 
-                    userUsername = userBeingClicked;
-                    new getSpecificUserLocation().execute();
+                userUsername = userBeingClicked;
+                new getSpecificUserLocation().execute();
             }
         });
         if (seconds != 0) {
@@ -191,21 +202,13 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                 }
             };
             timer.schedule(task, 0, 1000);
-
     }
-        //set a swipe refresh layout
-        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        swipeLayout.setOnRefreshListener(FriendsListActivity.this);
-        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
         //declare new FriendsList as ArrayList
         FriendsList = new ArrayList<HashMap<String, String>>();
 
         //Execute the AsynchronusTask for the post request
-        new getFriendsList().execute();
+        getFriends = new getFriendsList();
+        getFriends.execute();
         //only allows the swipe if it is at the top of the list
         friendsList.setOnScrollListener(new AbsListView.OnScrollListener() {
 
@@ -280,7 +283,6 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         }
         return super.onOptionsItemSelected(item);
     }
-
     public void deleteFriend(View view)
     {
         RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
@@ -355,11 +357,12 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
         protected void onPreExecute()
         {
             super.onPreExecute();
-            pDialog = new ProgressDialog(FriendsListActivity.this);
-            pDialog.setMessage("Getting friends...");
-            pDialog.setCancelable(false);
-            pDialog.setIndeterminate(false);
-            pDialog.show();
+            swipeLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeLayout.setRefreshing(true);
+                }
+            });
         }
         @Override
         protected Void doInBackground(Void... params) {
@@ -415,12 +418,18 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
         @Override
         protected void onPostExecute(Void result) {
-            ListView list = (ListView) findViewById(R.id.friendListView);
-            ListAdapter adapter = new SimpleAdapter(
-                    FriendsListActivity.this, FriendsList,
-                    R.layout.friends_list_items, new String[] {TAG_FRIEND}, new int[] { R.id.username});
-            list.setAdapter(adapter);
-            pDialog.dismiss();
+
+                ListView list = (ListView) findViewById(R.id.friendListView);
+                ListAdapter adapter = new SimpleAdapter(
+                        FriendsListActivity.this, FriendsList,
+                        R.layout.friends_list_items, new String[]{TAG_FRIEND}, new int[]{R.id.username});
+                list.setAdapter(adapter);
+            swipeLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeLayout.setRefreshing(false);
+                }
+            });
         }
     }
 
@@ -531,8 +540,6 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
         @Override
         protected Void doInBackground(Void... params) {
-
-            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
 
             //If the update location button is clicked------------------------------------------\
             latitude = gps.getLocation().getLatitude();
