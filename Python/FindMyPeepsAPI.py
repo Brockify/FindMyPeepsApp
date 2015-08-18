@@ -374,6 +374,11 @@ def get_notifications(friendslist):
         for notification in notifications:
             if notification != None:
                 for i in notification:
-                    result.append(i)
+                    userDict = {}
+                    userDict["username"] = friend
+                    userDict["notification"] = i
+                    result.append(userDict)
+    result[::-1]
     return result
 
+print get_notifications(friends_list("brockify"))

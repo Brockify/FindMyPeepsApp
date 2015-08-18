@@ -275,10 +275,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         pendingUsers.clear();
         ListView pendingListView = (ListView) findViewById(R.id.friendslistView);
         pendingListView.setAdapter(null);
-        swipeLayout.setRefreshing(true);
         new GetPendingRequests().execute();
-        swipeLayout.setRefreshing(false);
-
     }
 
     //Asynchronus class to do background data away from the main thread.

@@ -1,10 +1,14 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,21 +17,13 @@ import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -48,7 +44,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -69,6 +64,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
     SwipeRefreshLayout swipeLayout;
     ListView notificationList;
     ArrayList<String> notifications = new ArrayList <String>();
+    ArrayList<Bitmap> userIcons = new ArrayList<Bitmap>();
 
 
     @Override
@@ -181,6 +177,28 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         return true;
     }
 
+    public Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -247,6 +265,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             HttpResponse response;
             String responseStr = null;
             String notification;
+            String usernames;
 
             JSONObject obj = null;
             // Create a new HttpClient and Post Header
@@ -279,7 +298,21 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             for (int counter = 0; counter < json.length(); counter++)
                 try {
                     notification = json.getJSONObject(counter).getString("notification");
+                    usernames = json.getJSONObject(counter).getString("username");
+                    Bitmap userIcon = null;
+                    String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
+                    InputStream in = null;
+                    try {
+                        in = new URL(urldisplay).openStream();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    userIcon = BitmapFactory.decodeStream(in);
+                        //make the icon a circle,'
+                        userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
+                    userIcon = getCroppedBitmap(userIcon);
                     notifications.add(notification);
+                    userIcons.add(userIcon);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -288,11 +321,9 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         @Override
         protected void onPostExecute(Void result)
         {
-
-            ArrayAdapter<String> itemsAdapter =
-                    new ArrayAdapter<String>(StatusActivity.this, R.layout.status_list_items, R.id.notificationTextView,notifications);
+            CustomAdapter adapter = new CustomAdapter(StatusActivity.this, notifications, userIcons);
             ListView list = (ListView) findViewById(R.id.notificationsListView);
-            list.setAdapter(itemsAdapter);
+            list.setAdapter(adapter);
             swipeLayout.post(new Runnable() {
                 @Override
                 public void run() {
