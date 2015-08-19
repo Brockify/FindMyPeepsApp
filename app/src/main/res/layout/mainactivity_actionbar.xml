@@ -13,6 +13,13 @@
         android:scaleType="centerInside"
         android:id="@+id/friendsActionBarButton"
         android:layout_gravity="right"/>
+    <ImageView android:src="@drawable/action_logo"
+        android:background="?attr/actionBarItemBackground"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="centerInside"
+        android:id="@+id/imageView"
+        android:layout_gravity="left"/>
 
     <TextView
         android:layout_width="wrap_content"
