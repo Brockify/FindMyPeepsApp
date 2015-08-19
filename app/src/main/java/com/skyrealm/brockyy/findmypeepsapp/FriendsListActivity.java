@@ -27,6 +27,7 @@ import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -229,6 +230,36 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeLayout.setEnabled(enable);
+            }
+        });
+
+        ImageButton mapActionBarButton = (ImageButton) findViewById(R.id.mapActionBarButton);
+        ImageButton pendingUserActionBarButton = (ImageButton) findViewById(R.id.pendingUserActionButton);
+
+        mapActionBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("username", user);
+                intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
+                startActivity(intent);
+            }
+        });
+
+        pendingUserActionBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (timer != null)
+                    timer.cancel();
+                Intent intent = new Intent(FriendsListActivity.this, PendingFriendsActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
+                getFriends.cancel(true);
+                startActivity(intent);
             }
         });
     }
