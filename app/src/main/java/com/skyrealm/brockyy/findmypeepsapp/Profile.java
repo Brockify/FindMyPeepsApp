@@ -303,10 +303,27 @@ public class Profile extends Activity implements OnClickListener {
                 ImageView imgView = (ImageView) findViewById(R.id.imgView);
                 imgView.setImageBitmap(bitmap);
 
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                int amorpmint = c.get(Calendar.AM_PM);
+                String amorpm;
+                if (amorpmint == 0)
+                {
+                    amorpm = "AM";
+                } else {
+                    amorpm = "PM";
+                }
+
+                lastUpdated = df.format(c.getTime()) + " " + amorpm;
+                SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
+                String time = timef.format(c.getTime()) + " " + amorpm;
+
                 fileName = user + "orig";
                 // Put file name in Async Http Post Param which will used in Php web app
                 params.put("filename", fileName);
                 params.put("username", user);
+                params.put("Time", time);
+                params.put("LastUpdated", lastUpdated);
 
             } else {
                 Toast.makeText(this, "You haven't picked Image",
@@ -570,7 +587,6 @@ public class Profile extends Activity implements OnClickListener {
             int success;
             String text = biotxt.getText().toString();
             try {
-
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("biog", text));
                 params.add(new BasicNameValuePair("user", user));

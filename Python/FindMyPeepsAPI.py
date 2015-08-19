@@ -381,4 +381,6 @@ def get_notifications(friendslist):
     result[::-1]
     return result
 
-print get_notifications(friends_list("brockify"))
+def profile_notification(username, notification):
+    sql = "insert into notifications(username, notification) values (%s, %s)"
+    CUR.execute(sql, (username, notification))

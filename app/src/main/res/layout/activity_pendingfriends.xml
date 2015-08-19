@@ -18,11 +18,12 @@
         android:layout_centerHorizontal="true"
         />
 
-    <Button
+    <ImageButton
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:id="@+id/addFriendButton"
-        android:background="@drawable/loopplus" />
+        android:background="@drawable/loopplus"
+        />
 
     <EditText
         android:layout_width="match_parent"
@@ -40,6 +41,5 @@
         android:layout_below="@+id/addFriendButton"
         android:longClickable="true"
         />
-
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>

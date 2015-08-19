@@ -84,7 +84,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
 
         //declare variables
-        Button addFriendButton = (Button) findViewById(R.id.addFriendButton);
+        ImageButton addFriendButton = (ImageButton) findViewById(R.id.addFriendButton);
         final EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
         final View friendView = findViewById(R.id.friendsActivity);
         final ListView friendsList = (ListView) findViewById(R.id.friendslistView);
