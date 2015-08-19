@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -164,6 +165,20 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeLayout.setEnabled(enable);
+            }
+        });
+
+        ImageButton pendingUserActionBarButton = (ImageButton) findViewById(R.id.pendingUserActionButton);
+        pendingUserActionBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StatusActivity.this, PendingFriendsActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
+                startActivity(intent);
             }
         });
 

@@ -17,8 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -214,6 +216,34 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeLayout.setEnabled(enable);
+            }
+        });
+
+        ImageButton friendUserActionBarButton = (ImageButton) findViewById(R.id.friendsActionBarButton);
+        ImageButton notificationActionBarButton = (ImageButton) findViewById(R.id.notificationActionBarButton);
+
+        friendUserActionBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PendingFriendsActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
+                startActivity(intent);
+            }
+        });
+        notificationActionBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PendingFriendsActivity.this, StatusActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("Number", Number);
+                if (timer != null)
+                    timer.cancel();
+                intent.putExtra("seconds", newSeconds);
+                startActivity(intent);
             }
         });
     }
