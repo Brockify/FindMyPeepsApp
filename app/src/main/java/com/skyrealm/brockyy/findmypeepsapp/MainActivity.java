@@ -25,6 +25,7 @@ import android.os.Looper;
 
 import android.os.Bundle;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -104,7 +106,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     LatLngBounds friendsListBoundaries;
     Handler mainHandler;
     Bitmap icon;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,7 +226,19 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             };
             timer.schedule(task, 0, 1000);
         }
-
+        ImageButton friendActionButton = (ImageButton) findViewById(R.id.friendsActionBarButton);
+        friendActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (timer != null)
+                    timer.cancel();
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
+                startActivity(intent);
+            }
+        });
     }
 
     //function to build the client
@@ -275,7 +288,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -283,8 +295,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 

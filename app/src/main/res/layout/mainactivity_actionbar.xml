@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center">
+    android:gravity="center"
+    android:weightSum="3"
+    >
+
+    <ImageButton android:src="@drawable/users"
+        android:background="?attr/actionBarItemBackground"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="centerInside"
+        android:id="@+id/friendsActionBarButton"
+        android:layout_gravity="right"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,6 +23,6 @@
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
         android:textColor="#ffffff"
-        android:paddingStart="100px" />
+        android:layout_centerHorizontal="true" />
 
-</LinearLayout>
+</Toolbar>
