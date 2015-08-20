@@ -587,10 +587,26 @@ public class Profile extends Activity implements OnClickListener {
             int success;
             String text = biotxt.getText().toString();
             try {
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                int amorpmint = c.get(Calendar.AM_PM);
+                String amorpm;
+                if (amorpmint == 0)
+                {
+                    amorpm = "AM";
+                } else {
+                    amorpm = "PM";
+                }
+
+                lastUpdated = df.format(c.getTime()) + " " + amorpm;
+                SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
+                String time = timef.format(c.getTime()) + " " + amorpm;
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("biog", text));
                 params.add(new BasicNameValuePair("user", user));
                 params.add(new BasicNameValuePair("numbers", Number));
+                params.add(new BasicNameValuePair("Time", time));
+                params.add(new BasicNameValuePair("LastUpdated", lastUpdated));
 
                 Log.d("request!", "starting");
 

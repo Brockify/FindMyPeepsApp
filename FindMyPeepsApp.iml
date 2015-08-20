@@ -8,7 +8,11 @@
       </configuration>
     </facet>
   </component>
+<<<<<<< Updated upstream
   <component name="NewModuleRootManager" inherit-compiler-output="false">
+=======
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="true">
+>>>>>>> Stashed changes
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.gradle" />
     </content>
