@@ -46,7 +46,7 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_above="@+id/email"
+            android:layout_above="@+id/verpass"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentRight="true"
@@ -69,5 +69,23 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:id="@+id/verpass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/edit_text"
+        android:textColor="@android:color/primary_text_light"
+        android:ems="10"
+        android:hint="Re-Enter Password"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:inputType="textPassword"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_above="@+id/email"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

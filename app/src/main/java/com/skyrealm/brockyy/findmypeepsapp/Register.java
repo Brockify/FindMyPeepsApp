@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Register extends Activity implements OnClickListener{
-    private EditText userreg, passreg, emailreg;
+    private EditText userreg, passreg, emailreg, verpasser;
     GPSTracker gps = new GPSTracker(this);
     private Button bRegister;
     MainActivity setupLogin = new MainActivity();
@@ -42,6 +42,7 @@ public class Register extends Activity implements OnClickListener{
         userreg = (EditText)findViewById(R.id.user);
         passreg = (EditText)findViewById(R.id.pass);
         emailreg = (EditText)findViewById(R.id.email);
+        verpasser = (EditText) findViewById(R.id.verpass);
         bRegister = (Button)findViewById(R.id.registerbutton   );
         bRegister.setOnClickListener(this);
     }
@@ -76,6 +77,7 @@ public class Register extends Activity implements OnClickListener{
          * */
         boolean failure = false;
 
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -91,48 +93,53 @@ public class Register extends Activity implements OnClickListener{
             // TODO Auto-generated method stub
             // here Check for success tag
 
-
-            int success;
-
-            String user = userreg.getText().toString();
             String pass = passreg.getText().toString();
-            String email = emailreg.getText().toString();
+            String Verify = verpasser.getText().toString();
 
-            try {
+            if(pass == Verify) {
 
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("user", user));
-                params.add(new BasicNameValuePair("pass", pass));
-                params.add(new BasicNameValuePair("email", email));
+                int success;
+
+                String user = userreg.getText().toString();
+                String email = emailreg.getText().toString();
+
+                try {
+
+                    List<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("user", user));
+                    params.add(new BasicNameValuePair("pass", pass));
+                    params.add(new BasicNameValuePair("email", email));
 
 
+                    Log.d("request!", "starting");
 
-                Log.d("request!", "starting");
+                    JSONObject json = jsonParser.makeHttpRequest(
+                            LOGIN_URL, "POST", params);
 
-                JSONObject json = jsonParser.makeHttpRequest(
-                        LOGIN_URL, "POST", params);
+                    // checking  log for json response
+                    Log.d("Registry attempt", json.toString());
 
-                // checking  log for json response
-                Log.d("Registry attempt", json.toString());
+                    // success tag for json
+                    success = json.getInt(TAG_SUCCESS);
+                    if (success == 1) {
+                        Log.d("You are Registered!", json.toString());
+                        Intent ii = new Intent(Register.this, Login.class);
+                        finish();
+                        // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
+                        startActivity(ii);
+                        return json.getString(TAG_MESSAGE);
+                    } else {
 
-                // success tag for json
-                success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    Log.d("You are Registered!", json.toString());
-                    Intent ii = new Intent(Register.this,Login.class);
-                    finish();
-                    // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
-                    startActivity(ii);
-                    return json.getString(TAG_MESSAGE);
-                }else{
+                        return json.getString(TAG_MESSAGE);
 
-                    return json.getString(TAG_MESSAGE);
-
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            }else{
+                return "Passwords must match!";
 
+            }
             return null;
         }
         /**
