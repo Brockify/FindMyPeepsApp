@@ -9,10 +9,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +32,7 @@ public class Register extends Activity implements OnClickListener{
     MainActivity setupLogin = new MainActivity();
     // Progress Dialog
     private ProgressDialog pDialog;
-
+    int verif = 0;
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://skyrealmstudio.com/cgi-bin/register.py";
@@ -45,7 +48,27 @@ public class Register extends Activity implements OnClickListener{
         verpasser = (EditText) findViewById(R.id.verpass);
         bRegister = (Button)findViewById(R.id.registerbutton   );
         bRegister.setOnClickListener(this);
+
+        String pass = passreg.getText().toString();
+        String Verify = verpasser.getText().toString();
+        verpasser.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                if(passreg.getText().toString().equals( verpasser.getText().toString())) {
+                    verpasser.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    verpasser.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                }
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
     }
+
 
     @Override
     public void onClick(View v) {
@@ -93,16 +116,18 @@ public class Register extends Activity implements OnClickListener{
             // TODO Auto-generated method stub
             // here Check for success tag
 
-            String pass = passreg.getText().toString();
-            String Verify = verpasser.getText().toString();
 
-            if(pass == Verify) {
+
 
                 int success;
-
+                String pass = passreg.getText().toString();
                 String user = userreg.getText().toString();
                 String email = emailreg.getText().toString();
-
+                String very = verpasser.getText().toString();
+            if (pass.matches("") || user.matches("") || email.matches("") || very.matches("")) {
+                return "One or more fields are empty!";
+            }else{
+                if(passreg.getText().toString().equals( verpasser.getText().toString())){
                 try {
 
                     List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -137,8 +162,8 @@ public class Register extends Activity implements OnClickListener{
                     e.printStackTrace();
                 }
             }else{
-                return "Passwords must match!";
-
+                    return "Passwords must match!";
+            }
             }
             return null;
         }
