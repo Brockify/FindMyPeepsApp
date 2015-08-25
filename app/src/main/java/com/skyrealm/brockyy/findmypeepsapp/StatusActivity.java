@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -314,6 +315,26 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                 try {
                     notification = json.getJSONObject(counter).getString("notification");
                     usernames = json.getJSONObject(counter).getString("username");
+                    char secondNum = notification.charAt(11);
+                    char firstNum = notification.charAt(12);
+                    String numberDone = String.valueOf(secondNum) + String.valueOf(firstNum);
+                    String finalText;
+                    if(Integer.parseInt(numberDone) > 12)
+                    {
+                        int numberTesting = Integer.parseInt(numberDone);
+                        int finalNum;
+                        finalNum = numberTesting - 12;
+                        if (finalNum >= 10)
+                        {
+                            finalText = String.valueOf(finalNum);
+                        } else {
+                            finalText = "0" + String.valueOf(finalNum);
+                        }
+
+                        String finalNotification;
+                        finalNotification = notification.substring(0,11) + finalText + notification.substring(13);
+                        notification = finalNotification;
+                    }
                     Bitmap userIcon = null;
                     String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
                     InputStream in = null;
@@ -324,7 +345,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     }
                     userIcon = BitmapFactory.decodeStream(in);
                         //make the icon a circle,'
-                        userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
+                    userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
                     userIcon = getCroppedBitmap(userIcon);
                     notifications.add(notification);
                     userIcons.add(userIcon);
