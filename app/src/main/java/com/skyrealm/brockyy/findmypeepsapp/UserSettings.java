@@ -231,8 +231,6 @@ public class UserSettings extends Activity implements OnClickListener{
         /**
          * Before starting background thread Show Progress Dialog
          * */
-        boolean failure = false;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

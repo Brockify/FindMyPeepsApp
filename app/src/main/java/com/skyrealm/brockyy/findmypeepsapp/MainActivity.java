@@ -2,7 +2,9 @@ package com.skyrealm.brockyy.findmypeepsapp;
 
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +29,10 @@ import android.os.Bundle;
 
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,6 +53,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.plus.model.people.Person;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -278,13 +284,41 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         switch (v.getId()) {
             //if Get Location button is clicked
             case R.id.getLocationButton:
+
+                //build a dialog for sending the location
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(R.layout.activity_popup_comment);
                 if (gps.isGPSEnabledOrNot()) {
-                    new getLocation().execute();
+                    //sends a alert dialog making sure they want to delete the user
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Dialog dialoger = (Dialog) dialog;
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    EditText commentEditText = (EditText) dialoger.findViewById(R.id.commentEditText) ;
+                                    comments = commentEditText.getText().toString();
+                                    new getLocation().execute();
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+                    };
+                    //build the dialog box
+                    builder.setTitle("Send Location");
+                    builder.setPositiveButton("Update Location", dialogClickListener);
+                    builder.setNegativeButton("Cancel", dialogClickListener);
+                    builder.create();
+                    builder.show();
                 } else {
                     gps.showSettingsAlert();
                 }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -378,12 +412,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         @Override
         protected Void doInBackground(Void... params) {
 
-            final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-
             //If the update location button is clicked------------------------------------------\
             latitude = gps.getLocation().getLatitude();
             longitude = gps.getLocation().getLongitude();
-            comments = commentEditText.getText().toString();
 
             //get time and date
             Calendar c = Calendar.getInstance();
@@ -432,10 +463,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             userCurrentLocation = new LatLng(latitude, longitude);
 
-
             MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-            EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
-
             //if the address comes back null send a toast
             if (address == null) {
                 Toast.makeText(getApplicationContext(), "Could not update location! Try again.", Toast.LENGTH_LONG).show();
@@ -443,7 +471,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 String urlTest = "http://skyrealmstudio.com/img/" + user.toLowerCase() + ".jpg";
                 //if it is the first time clicking get location
                 Toast.makeText(getApplicationContext(), "Updated location!", Toast.LENGTH_LONG).show();
-                commentEditText.setText(null);
                 new DownloadImageTask().execute(urlTest);
                 userCurrentLocation = new LatLng(latitude, longitude);
                 if (mMyMarkersArray.size() == 0) {
