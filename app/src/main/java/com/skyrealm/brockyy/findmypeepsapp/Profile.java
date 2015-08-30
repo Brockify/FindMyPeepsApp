@@ -2,9 +2,6 @@ package com.skyrealm.brockyy.findmypeepsapp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,7 +21,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -46,7 +42,6 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.skyrealm.brockyy.findmypeepsapp.JSONParser;
 
 public class Profile extends Activity implements OnClickListener {
     String user;
@@ -93,7 +88,7 @@ public class Profile extends Activity implements OnClickListener {
         bSend.setOnClickListener(this);
         user = getIntent().getExtras().getString("username");
         final View mainView = findViewById(R.id.Profileview);
-        usernameTextView = (TextView) findViewById(R.id.usernameTextView);
+        usernameTextView = (TextView) findViewById(R.id.status_usernameTextView);
         String tempuser = user.toLowerCase();
         OnSwipeTouchListener swipeListener;
         seconds = getIntent().getExtras().getInt("seconds");

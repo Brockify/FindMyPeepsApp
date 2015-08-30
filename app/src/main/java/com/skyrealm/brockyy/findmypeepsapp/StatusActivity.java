@@ -51,6 +51,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.app.ActionBar.DISPLAY_SHOW_CUSTOM;
+
 public class StatusActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private String user;
@@ -67,6 +69,9 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
     ListView notificationList;
     ArrayList<String> notifications = new ArrayList <String>();
     ArrayList<Bitmap> userIcons = new ArrayList<Bitmap>();
+    ArrayList<String> usernameArrayList = new ArrayList<String>();
+    ArrayList<String> dateArrayList = new ArrayList<String>();
+    ArrayList<String> timeArrayList = new ArrayList<String>();
 
 
     @Override
@@ -74,7 +79,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
         //setup the actionbar first
-        getSupportActionBar().setDisplayOptions(android.app.ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayOptions(DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.statusactivity_actionbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
@@ -282,7 +287,6 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             String responseStr = null;
             String notification;
             String usernames;
-
             JSONObject obj = null;
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
@@ -319,6 +323,8 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     char firstNum = notification.charAt(12);
                     String numberDone = String.valueOf(secondNum) + String.valueOf(firstNum);
                     String finalText;
+                    String date;
+                    String time;
                     if(Integer.parseInt(numberDone) > 12)
                     {
                         int numberTesting = Integer.parseInt(numberDone);
@@ -335,6 +341,8 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                         finalNotification = notification.substring(0,11) + finalText + notification.substring(13);
                         notification = finalNotification;
                     }
+                    date = notification.substring(0, 10);
+                    time = notification.substring(11, 22);
                     Bitmap userIcon = null;
                     String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
                     InputStream in = null;
@@ -346,9 +354,20 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     userIcon = BitmapFactory.decodeStream(in);
                         //make the icon a circle,'
                     userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
-                    userIcon = getCroppedBitmap(userIcon);
+                    usernameArrayList.add(usernames);
+                    int length = usernames.length();
+                   notification = notification.substring(24 + length + 1);
                     notifications.add(notification);
                     userIcons.add(userIcon);
+                    dateArrayList.add(date);
+                    String tempTime;
+                    tempTime = time.substring(0, 1) + time.substring(1, 2);
+                    if (Integer.parseInt(tempTime) < 10) {
+                        time = time.substring(1, 5) + time.substring(8);
+                    } else {
+                        time = time.substring(0, 5) + time.substring(8);
+                    }
+                    timeArrayList.add(time);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -357,7 +376,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         @Override
         protected void onPostExecute(Void result)
         {
-            CustomAdapter adapter = new CustomAdapter(StatusActivity.this, notifications, userIcons);
+            CustomAdapter adapter = new CustomAdapter(StatusActivity.this, notifications, userIcons, usernameArrayList, dateArrayList, timeArrayList);
             ListView list = (ListView) findViewById(R.id.notificationsListView);
             list.setAdapter(adapter);
             swipeLayout.post(new Runnable() {

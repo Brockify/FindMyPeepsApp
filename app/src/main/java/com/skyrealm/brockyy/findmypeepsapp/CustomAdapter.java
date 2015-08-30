@@ -18,12 +18,18 @@ public class CustomAdapter extends BaseAdapter{
     ArrayList<String> result;
     Context context;
     ArrayList<Bitmap> imageId;
+    ArrayList<String> usernames;
+    ArrayList<String> dates;
+    ArrayList<String> times;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(StatusActivity mainActivity, ArrayList<String> prgmNameList, ArrayList<Bitmap> prgmImages) {
+    public CustomAdapter(StatusActivity mainActivity, ArrayList<String> prgmNameList, ArrayList<Bitmap> prgmImages, ArrayList<String> prgrmUsernames, ArrayList<String> dates, ArrayList<String> times) {
         // TODO Auto-generated constructor stub
         result =prgmNameList;
         context=mainActivity;
         imageId = prgmImages;
+        usernames = prgrmUsernames;
+        this.dates = dates;
+        this.times = times;
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -49,6 +55,9 @@ public class CustomAdapter extends BaseAdapter{
     {
         TextView tv;
         ImageView img;
+        TextView username;
+        TextView date;
+        TextView time;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -58,8 +67,15 @@ public class CustomAdapter extends BaseAdapter{
         rowView = inflater.inflate(R.layout.status_list_items, null);
         holder.tv=(TextView) rowView.findViewById(R.id.notificationTextView);
         holder.img=(ImageView) rowView.findViewById(R.id.profilePic);
+        holder.username = (TextView) rowView.findViewById(R.id.status_usernameTextView);
+        holder.date = (TextView) rowView.findViewById(R.id.dateTextView);
+        holder.time = (TextView) rowView.findViewById(R.id.timeTextView);
+
+        holder.username.setText(usernames.get(position));
         holder.tv.setText(result.get(position));
         holder.img.setImageBitmap(imageId.get(position));
+        holder.date.setText(dates.get(position));
+        holder.time.setText(times.get(position));
         return rowView;
     }
 

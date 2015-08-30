@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Username"
-        android:id="@+id/usernameTextView"
+        android:id="@+id/status_usernameTextView"
         android:textSize="100px"
         android:layout_centerHorizontal="true" />
 
@@ -68,7 +68,7 @@
         android:text="Click Profile Picture to edit"
         android:id="@+id/textView"
         android:paddingBottom="10dp"
-        android:layout_below="@+id/usernameTextView"
+        android:layout_below="@+id/status_usernameTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="43dp" />
 
