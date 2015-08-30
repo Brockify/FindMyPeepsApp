@@ -46,6 +46,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -341,8 +342,10 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                         finalNotification = notification.substring(0,11) + finalText + notification.substring(13);
                         notification = finalNotification;
                     }
-                    date = notification.substring(0, 10);
+                    SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
+                    date = notification.substring(5, 10);
                     time = notification.substring(11, 22);
+                    String todaysDate = todaysDateC.format(new Date());
                     Bitmap userIcon = null;
                     String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
                     InputStream in = null;
@@ -356,9 +359,13 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                     userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
                     usernameArrayList.add(usernames);
                     int length = usernames.length();
-                   notification = notification.substring(24 + length + 1);
+                    notification = notification.substring(24 + length + 1);
                     notifications.add(notification);
                     userIcons.add(userIcon);
+                    if(todaysDate.equals(date.toString()))
+                    {
+                        date = "Today";
+                    }
                     dateArrayList.add(date);
                     String tempTime;
                     tempTime = time.substring(0, 1) + time.substring(1, 2);
