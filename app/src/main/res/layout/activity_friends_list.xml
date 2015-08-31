@@ -18,19 +18,18 @@
         android:layout_centerHorizontal="true" />
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/friendsActivity"
-        android:layout_alignStart="@+id/friendsActivity">
+        android:layout_margin="14dp"
+        android:showDividers="middle">
 
         <ListView
-            android:layout_width="match_parent"
-            android:layout_height="514dp"
-            android:id="@+id/friendListView" />
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/friendListView"
+            android:dividerHeight="2dp"
+            android:background="@drawable/layout_bg" />
     </LinearLayout>
-
 </RelativeLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

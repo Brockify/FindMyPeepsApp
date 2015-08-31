@@ -18,5 +18,6 @@
         android:id="@+id/pendingUserActionButton"
         android:src="@drawable/userplus"
         android:layout_gravity="left"
-        android:background="?attr/actionBarItemBackground"/>
+        android:background="?attr/actionBarItemBackground"
+        android:scaleType="fitCenter" />
 </android.support.v7.widget.Toolbar>

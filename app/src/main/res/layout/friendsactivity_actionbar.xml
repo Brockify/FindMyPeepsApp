@@ -10,14 +10,16 @@
         android:id="@+id/mapActionBarButton"
         android:src="@drawable/map"
         android:layout_gravity="left"
-        android:background="?attr/actionBarItemBackground" />
+        android:background="?attr/actionBarItemBackground"
+        android:scaleType="fitCenter" />
     <ImageButton
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:id="@+id/pendingUserActionButton"
         android:src="@drawable/userplus"
         android:layout_gravity="right"
-        android:background="?attr/actionBarItemBackground"/>
+        android:background="?attr/actionBarItemBackground"
+        android:scaleType="fitCenter" />
 
     <TextView
         android:layout_width="wrap_content"

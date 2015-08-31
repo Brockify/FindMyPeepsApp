@@ -1,6 +1,9 @@
 package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.ActionBar;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,6 +76,9 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     int newSeconds;
     GPSTracker gps;
     private static Timer timer;
+    ProgressDialog pDialog;
+    EditText friendEditText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +90,9 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
 
+        pDialog = new ProgressDialog(PendingFriendsActivity.this);
         //declare variables
-        ImageButton addFriendButton = (ImageButton) findViewById(R.id.addFriendButton);
-        final EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
+        Button addFriendButton = (Button) findViewById(R.id.addFriendButton);
         final View friendView = findViewById(R.id.friendsActivity);
         final ListView friendsList = (ListView) findViewById(R.id.friendslistView);
         //DECLARATION
@@ -134,12 +141,35 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         addFriendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast;
-                if (friendEditText.length() > 0) {
-                    new addFriendClass().execute();
-                } else {
-                    Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
-                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PendingFriendsActivity.this);
+                builder.setView(R.layout.activity_popup_comment);
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Dialog dialoger = (Dialog) dialog;
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                friendEditText = (EditText) dialoger.findViewById(R.id.commentEditText) ;
+                                if (friendEditText.length() > 0) {
+                                    new addFriendClass().execute();
+                                } else {
+                                    Toast.makeText(PendingFriendsActivity.this, "Friend request not sent. Friend not found.", Toast.LENGTH_LONG).show();
+                                }
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+                //build the dialog box
+                builder.setTitle("Add Friend");
+                builder.setPositiveButton("Send Request", dialogClickListener);
+                builder.setNegativeButton("Cancel", dialogClickListener);
+                builder.create();
+                builder.show();
             }
         });
         //end the swipe command
@@ -457,6 +487,15 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
     class addFriendClass extends AsyncTask<Void, Void, Boolean>
     {
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(PendingFriendsActivity.this);
+            pDialog.setMessage("Adding friend...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
         @Override
         protected Boolean doInBackground(Void... params) {
             //start the post to the database
@@ -469,7 +508,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("fromUser", user));
-            EditText friendEditText = (EditText) findViewById(R.id.friendEditText);
             nameValuePair.add(new BasicNameValuePair("toUser", friendEditText.getText().toString()));
 
 
@@ -510,6 +548,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
                     Toast.makeText(PendingFriendsActivity.this, "Friend request send.", Toast.LENGTH_LONG).show();
                 }
+            pDialog.dismiss();
             }
         }
     //gets the location class (ASYNC)

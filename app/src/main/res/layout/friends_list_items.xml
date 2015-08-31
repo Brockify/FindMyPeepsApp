@@ -15,7 +15,7 @@
         android:layout_height="40dp"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:textSize="15dp"
+        android:textSize="17dp"
         android:textStyle="bold"
         android:height="60dp"
         android:layout_x="2dp"
@@ -27,34 +27,36 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:id="@+id/deleteButton"
         android:focusable="false"
-        android:textSize="20sp"
         android:focusableInTouchMode="false"
         android:onClick="deleteFriend"
         android:layout_x="164dp"
         android:layout_y="0dp"
-        android:background="@drawable/delete"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:background="@drawable/circleex"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="5dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:id="@+id/profileButton"
         android:focusable="false"
         android:textSize="20dp"
         android:focusableInTouchMode="false"
-        android:background="@drawable/profile"
+        android:background="@drawable/userblack"
         android:onClick="profileButtonClicked"
         android:layout_x="279dp"
         android:layout_y="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/deleteButton"
-        android:layout_toEndOf="@+id/deleteButton" />
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true" />
 
 
 </RelativeLayout>

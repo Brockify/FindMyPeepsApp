@@ -10,9 +10,10 @@
         android:background="?attr/actionBarItemBackground"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:id="@+id/friendsActionBarButton"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:clickable="true" />
     <ImageView android:src="@drawable/action_logo"
         android:background="?attr/actionBarItemBackground"
         android:layout_width="32dp"

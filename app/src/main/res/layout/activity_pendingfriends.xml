@@ -18,21 +18,12 @@
         android:layout_centerHorizontal="true"
         />
 
-    <ImageButton
-        android:layout_width="40dp"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/addFriendButton"
-        android:background="@drawable/loopplus"
-        />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/friendEditText"
-        android:layout_gravity="center_horizontal"
-        android:layout_toRightOf="@+id/addFriendButton"
-        android:layout_toEndOf="@+id/addFriendButton"
-        android:singleLine="true" />
+        android:text="Add Friend"
+        android:background="#3366CC" />
 
     <ListView
         android:layout_width="match_parent"
@@ -40,6 +31,7 @@
         android:id="@+id/friendslistView"
         android:layout_below="@+id/addFriendButton"
         android:longClickable="true"
-        />
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
