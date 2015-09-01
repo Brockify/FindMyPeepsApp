@@ -12,5 +12,7 @@
         android:imeOptions="actionNext"
         android:singleLine="true"
         android:layout_centerHorizontal="true"
-        android:hint="Comment" />
+        android:hint="Comment"
+        android:focusable="true"
+        android:selectAllOnFocus="false" />
 </RelativeLayout>

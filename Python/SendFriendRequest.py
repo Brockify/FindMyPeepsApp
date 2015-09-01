@@ -2,23 +2,17 @@
 
 import FindMyPeepsAPI
 import cgi
-import json
 
-print "Content-Type: html/text\n\n"
+print "Content-Type: text/html\r\n\r\n"
 
 arguments = cgi.FieldStorage()
-username = arguments.getvalue("Username")
-Number = arguments.getvalue('Number')
-if FindMyPeepsAPI.get_vnumber(Number, username):
-    if username == None:
+userLoggedIn = arguments.getvalue("userLoggedIn")
+friend = arguments.getvalue("friend")
+Number = arguments.getvalue("Number")
+if FindMyPeepsAPI.get_vnumber(Number, userLoggedIn):
+    if userLoggedIn == None or friend == None:
         print "Missing parameters"
     else:
-        user = {}
-        user["latitude"] = FindMyPeepsAPI.get_latitude(username)
-        user["longitude"] = FindMyPeepsAPI.get_longitude(username)
-        user["comments"] = FindMyPeepsAPI.get_comment(username)
-        list = []
-        list.append(user)
-        print json.dumps(list)
+        print FindMyPeepsAPI.delete_friend(userLoggedIn, friend)
 else:
-    print "ERROR: ID"
+    print "Error: Try again."

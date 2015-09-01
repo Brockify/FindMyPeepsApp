@@ -96,6 +96,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             nameValuePair.add(new BasicNameValuePair("Comments", this.comments));
             nameValuePair.add(new BasicNameValuePair("LastUpdated", this.lastUpdated));
             nameValuePair.add(new BasicNameValuePair("Time", this.time));
+            nameValuePair.add(new BasicNameValuePair("Number", this.Number));
 
             // Url Encoding the POST parameters
             try {
@@ -129,6 +130,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             nameValuePair.add(new BasicNameValuePair("Username", user));
             nameValuePair.add(new BasicNameValuePair("Friend", this.pendingUser));
             nameValuePair.add(new BasicNameValuePair("YesOrNo", Integer.toString(YesOrNo)));
+            nameValuePair.add(new BasicNameValuePair("Number", this.Number));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
@@ -154,6 +156,7 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("userLoggedIn", user));
             nameValuePair.add(new BasicNameValuePair("friend", this.friend));
+            nameValuePair.add(new BasicNameValuePair("Number", this.Number));
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
             } catch (UnsupportedEncodingException e) {

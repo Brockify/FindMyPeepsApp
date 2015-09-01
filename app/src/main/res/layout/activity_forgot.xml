@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
 
     android:orientation="vertical"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:theme="@style/Theme.AppCompat">
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

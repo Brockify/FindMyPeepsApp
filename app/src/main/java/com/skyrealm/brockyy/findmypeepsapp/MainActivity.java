@@ -138,6 +138,24 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
 
+        View swipeView = (View) findViewById(R.id.swipeView);
+        swipeView.bringToFront();
+
+        swipeView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeRight() {
+
+            }
+
+            public void onSwipeLeft() {
+                if (timer != null)
+                    timer.cancel();
+                Intent intent = new Intent(MainActivity.this, FriendsListActivity.class);
+                intent.putExtra("username", user);
+                intent.putExtra("seconds", newSeconds);
+                intent.putExtra("Number", Number);
+                startActivity(intent);
+            }
+        });
         //set Main Intent
         MainIntent = getIntent();
 
@@ -286,7 +304,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         switch (v.getId()) {
             //if Get Location button is clicked
             case R.id.getLocationButton:
-
                 //build a dialog for sending the location
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setView(R.layout.activity_popup_comment);
@@ -298,7 +315,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             Dialog dialoger = (Dialog) dialog;
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    EditText commentEditText = (EditText) dialoger.findViewById(R.id.commentEditText) ;
+                                    EditText commentEditText = (EditText) dialoger.findViewById(R.id.commentEditText);
                                     comments = commentEditText.getText().toString();
                                     new getLocation().execute();
                                     break;
@@ -608,18 +625,36 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             System.out.println(responseStr);
             try {
                 json = new JSONArray(responseStr);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            for (int counter = 0; counter < json.length(); counter++)
-                try {
-                    //parse the data
-                    username = json.getJSONObject(counter).getString("Username");
-                    comment = json.getJSONObject(counter).getString("Comment");
-                    latitude = json.getJSONObject(counter).getString("Latitude");
-                    longitude = json.getJSONObject(counter).getString("Longitude");
-                    lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
-                    Bitmap userIcon = null;
+                for (int counter = 0; counter < json.length(); counter++)
+                    try {
+                        //parse the data
+                        username = json.getJSONObject(counter).getString("Username");
+                        comment = json.getJSONObject(counter).getString("Comment");
+                        latitude = json.getJSONObject(counter).getString("Latitude");
+                        longitude = json.getJSONObject(counter).getString("Longitude");
+                        lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
+                        String tempDate = lastUpdated.substring(5,10);
+                        SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
+                        String todaysDate = todaysDateC.format(new Date());
+                        if (tempDate.equals(todaysDate))
+                        {
+                            tempDate = "Today";
+                        }
+
+                        String tempTime = lastUpdated.substring(11,13);
+                        if (Integer.parseInt(tempTime) > 12)
+                        {
+                            tempTime = String.valueOf((Integer.parseInt(tempTime) - 12));
+                        }
+
+                        if (Integer.parseInt(tempTime) < 10)
+                        {
+                            tempTime = tempTime.substring(1);
+                        }
+                        String amOrPm = lastUpdated.substring(20, 22);
+                        lastUpdated = tempDate + " " + tempTime + lastUpdated.substring(13,16) + amOrPm ;
+
+                        Bitmap userIcon = null;
                         String urldisplay = "http://skyrealmstudio.com/img/" + username.toLowerCase() + ".jpg";
                         try {
                             InputStream in = new URL(urldisplay).openStream();
@@ -632,17 +667,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             e.printStackTrace();
                         }
 
-                    //log the data
-                    if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
+                        //log the data
+                        if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
 
-                    } else {
-                        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + "-" + comment).icon(BitmapDescriptorFactory.fromBitmap(userIcon));
-                        mMyMarkersArray.add(userCounter, markerOption);
-                        userCounter++;
+                        } else {
+                            MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + " - " + comment).icon(BitmapDescriptorFactory.fromBitmap(userIcon));
+                            mMyMarkersArray.add(userCounter, markerOption);
+                            userCounter++;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         //insert data onto map and set the boundaries
