@@ -73,7 +73,7 @@ public class FProfile extends Activity implements OnClickListener{
         friend = getIntent().getExtras().getString("otherUser");
         user = getIntent().getExtras().getString("username");
         Number = getIntent().getExtras().getString("Number");
-        final View mainView = findViewById(R.id.Profileview);
+        final View mainView = findViewById(R.id.myLayout);
         usernameTextView = (TextView)findViewById(R.id.friendTextView);
         BioView = (TextView)findViewById(R.id.friendBio);
         commentView = (TextView)findViewById(R.id.friendlastcomment);
@@ -193,6 +193,7 @@ public class FProfile extends Activity implements OnClickListener{
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("friend", friend));
+                params.add(new BasicNameValuePair("Number", Number));
 
                 Log.d("request!", "starting");
 
@@ -270,7 +271,7 @@ public class FProfile extends Activity implements OnClickListener{
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 

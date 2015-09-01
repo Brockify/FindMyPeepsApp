@@ -24,6 +24,16 @@ def check_user(username):
     else:
         return True
 
+def crypt(veriable):
+    veriable = str(veriable)
+    veriable = base64.b64encode(veriable)
+    return veriable
+
+def dcrypt(veriable):
+    veriable = str(veriable)
+    veriable = base64.b64decode(veriable)
+    return veriable
+
 def get_vnumber(number, username):
     username = username.lower()
     number = base64.b64decode(number)
@@ -32,6 +42,15 @@ def get_vnumber(number, username):
     CUR.execute(sql, [username])
     ID = CUR.fetchone()[0]
     if number == ID:
+        return True
+    else:
+        return False
+
+def get_verinum(username):
+    sql = "select verified from Users where Username=%s"
+    CUR.execute(sql, [username])
+    ID = CUR.fetchone()[0]
+    if ID == 1:
         return True
     else:
         return False
@@ -223,8 +242,8 @@ def profanity_filter(word):
 def update_location(latitude, longitude, notification, username, address, comments, lastUpdated):
     sql = "update Users set latitude = %s  , longitude = %s, address = %s, comments = %s, lastupdated = %s  where username =  %s"
     CUR.execute(sql, (latitude, longitude, address, comments, lastUpdated, username))
-    sql = "insert into notifications(username,date, notification) values (%s, %s, %s)"
-    CUR.execute(sql, (username,lastUpdated , notification))
+    sql = "insert into notifications(username, notification) values (%s, %s)"
+    CUR.execute(sql, (username, notification))
     return "location updated"
 
 def accept_or_deny_friend_request(username, friend, yesorno):
@@ -346,7 +365,7 @@ def hash_password(password, salt=None):
 
 def login_hash_password(password, username):
     sql = "select Salt from Users where Username=%s"
-    CUR.execute(sql, username)
+    CUR.execute(sql, [username])
     salt = CUR.fetchone()[0]
     hashed_password = hashlib.sha512(password + salt).hexdigest()
     return (hashed_password)
@@ -379,8 +398,45 @@ def get_notifications(friendslist):
                     userDict["notification"] = i
                     result.append(userDict)
     result[::-1]
-    return result
-
+    totalResult = []
+    if len(result) <= 50:
+        for i in range(len(result)):
+            totalResult.append(result[i])
+    else:
+        for i in range(50):
+            totalResult.append(result[i])
+    return totalResult
+   
 def profile_notification(username, notification):
     sql = "insert into notifications(username, notification) values (%s, %s)"
+    CUR.execute(sql, (username, notification))   
+    return True
+    
+def bio_notification(username, notification):
+    sql = "insert into notifications(username, notification) values (%s, %s)"
     CUR.execute(sql, (username, notification))
+    return True
+    
+def ever_generator(size=20, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def store_ever(username, ever):
+    sql = "update Users set vnum=%s where Username=%s"
+    CUR.execute(sql, (ever, username))
+    return True
+    
+def update_ever(username, ever):   
+    sql = "select vnum from Users where Username=%s"
+    CUR.execute(sql, [username])
+    result = CUR.fetchone()[0]
+    if ever == result:
+        return "True"
+    else:
+        return "False"
+                
+def update_ever_final(username, ever, very):
+    sql = "update Users set vnum='null', verified=%s where Username=%s"
+    CUR.execute(sql, (very, username))
+    return True
+
+print get_vnumber(get_verify("Brockify", login_hash_password("Brockify", "Brock114039")), "Brockify")

@@ -362,6 +362,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("username", user));
+            nameValuePair.add(new BasicNameValuePair("Number", Number));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
@@ -444,7 +445,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
-        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 1);
+        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 1, Number);
         httpPost.execute();
         //end post
 
@@ -473,7 +474,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
         //send the post
         HTTPSendPost httpPost = new HTTPSendPost();
-        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 0);
+        httpPost.SetUpOnlyUrl(user, "http://www.skyrealmstudio.com/cgi-bin/AcceptOrDenyFriendRequest.py", pendingUserText, 0, Number);
         httpPost.execute();
         //end post
 
@@ -509,6 +510,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("fromUser", user));
             nameValuePair.add(new BasicNameValuePair("toUser", friendEditText.getText().toString()));
+            nameValuePair.add(new BasicNameValuePair("Number", Number));
 
 
             try {
@@ -596,7 +598,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 

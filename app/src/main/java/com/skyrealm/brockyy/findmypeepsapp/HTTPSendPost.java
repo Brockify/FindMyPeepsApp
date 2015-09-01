@@ -48,8 +48,9 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
     private int YesOrNo;
     static String response = null;
     String time;
+    String Number;
 
-    public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments, String lastUpdated, String time) {
+    public void Setup(String user,double longitude, double latitude, String address, String htmlUrl, String comments, String lastUpdated, String time, String Number) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
@@ -58,20 +59,23 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
         this.user = user;
         this.lastUpdated = lastUpdated;
         this.time = time;
+        this.Number = Number;
 
     }
-    public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, int yesorno)
+    public void SetUpOnlyUrl(String user, String htmlUrl, String pendingUser, int yesorno, String Number)
     {
         this.htmlUrl = htmlUrl;
         this.pendingUser = pendingUser;
         this.YesOrNo = yesorno;
         this.user = user;
+        this.Number = Number;
     }
-    public void setUpOnDeleteFriend(String user,String friend, String htmlUrl)
+    public void setUpOnDeleteFriend(String user,String friend, String htmlUrl, String Number)
     {
         this.user = user;
         this.friend = friend;
         this.htmlUrl = htmlUrl;
+        this.Number = Number;
     }
 
     protected String doInBackground(String... params) {

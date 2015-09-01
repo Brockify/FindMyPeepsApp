@@ -22,4 +22,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_friend_profile">FriendProfile</string>
     <string name="title_activity_status">StatusActivity</string>
+    <string name="banner_ad_unit_id">ca-app-pub-2935071563002230/1200550907</string>
 </resources>

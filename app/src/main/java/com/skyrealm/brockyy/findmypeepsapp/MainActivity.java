@@ -450,7 +450,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments, lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, comments, lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 
@@ -593,6 +593,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username", user));
+                nameValuePairs.add(new BasicNameValuePair("Number", Number));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 // Execute HTTP Post Request

@@ -27,6 +27,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -73,6 +76,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
     ArrayList<String> usernameArrayList = new ArrayList<String>();
     ArrayList<String> dateArrayList = new ArrayList<String>();
     ArrayList<String> timeArrayList = new ArrayList<String>();
+    AdView mAdView;
 
 
     @Override
@@ -80,10 +84,22 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
         //setup the actionbar first
+
         getSupportActionBar().setDisplayOptions(DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.statusactivity_actionbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3366CC")));
+        mAdView = (AdView) findViewById(R.id.adView);
+        // Create an ad request. Check logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
+
         final View statusView = findViewById(R.id.statusActivity);
         notificationList = (ListView) findViewById(R.id.notificationsListView);
         //DECLARATION
@@ -299,6 +315,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username", user));
+                nameValuePairs.add(new BasicNameValuePair("Number", Number));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 // Execute HTTP Post Request
@@ -437,7 +454,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 
@@ -458,5 +475,31 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             gps.stopUsingGps();
 
         }
+    }
+    /** Called when leaving the activity */
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 }

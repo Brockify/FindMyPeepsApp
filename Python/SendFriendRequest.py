@@ -2,23 +2,23 @@
 
 import FindMyPeepsAPI
 import cgi
+import json
 
-print "Content-type: text/html\r\n\r\n"
+print "Content-Type: html/text\n\n"
 
 arguments = cgi.FieldStorage()
-fromUser = arguments.getvalue('fromUser')
-toUser = arguments.getvalue('toUser')   
-
-if fromUser == None or toUser == None:
-    print "Missing parameters"
-else:
-    if FindMyPeepsAPI.check_user(toUser):
-        if FindMyPeepsAPI.check_if_two_users_are_pending(fromUser, toUser):
-            print "Request already sent to this user"
-        elif FindMyPeepsAPI.check_if_two_users_are_friends(fromUser, toUser):
-            print "Already friend"
-        else:
-            FindMyPeepsAPI.send_friend_request(fromUser, toUser)
-            print "Friend added"
+username = arguments.getvalue("Username")
+Number = arguments.getvalue('Number')
+if FindMyPeepsAPI.get_vnumber(Number, username):
+    if username == None:
+        print "Missing parameters"
     else:
-        print "User doesn't exist"
+        user = {}
+        user["latitude"] = FindMyPeepsAPI.get_latitude(username)
+        user["longitude"] = FindMyPeepsAPI.get_longitude(username)
+        user["comments"] = FindMyPeepsAPI.get_comment(username)
+        list = []
+        list.append(user)
+        print json.dumps(list)
+else:
+    print "ERROR: ID"

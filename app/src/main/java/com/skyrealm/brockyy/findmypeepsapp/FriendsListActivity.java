@@ -333,7 +333,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                         String htmlUrl = "http://www.skyrealmstudio.com/cgi-bin/DeleteFriend.py";
                         HTTPSendPost sendPost = new HTTPSendPost();
                         userDelete[0] = userDeleteText.getText().toString();
-                        sendPost.setUpOnDeleteFriend(user, userDelete[0], htmlUrl);
+                        sendPost.setUpOnDeleteFriend(user, userDelete[0], htmlUrl, Number);
                         sendPost.execute();
                         Toast.makeText(getApplicationContext(), userDelete[0] + " deleted.", Toast.LENGTH_LONG).show();
                         //set everything to be not visible
@@ -404,6 +404,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("username", user));
+            nameValuePair.add(new BasicNameValuePair("Number", Number));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
@@ -486,6 +487,8 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
             nameValuePair.add(new BasicNameValuePair("Username", userBeingClicked));
+            nameValuePair.add(new BasicNameValuePair("accountusername", user));
+            nameValuePair.add(new BasicNameValuePair("Number", Number));
 
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
@@ -606,7 +609,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 

@@ -253,6 +253,7 @@ public class UserSettings extends Activity implements OnClickListener{
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("Newuser", newuser));
                 params.add(new BasicNameValuePair("username", user));
+                params.add(new BasicNameValuePair("Number", Number));
 
                 Log.d("request!", "starting");
 
@@ -337,7 +338,7 @@ public class UserSettings extends Activity implements OnClickListener{
 
             //send the post and execute it
             HTTPSendPost postSender = new HTTPSendPost();
-            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time);
+            postSender.Setup(user, longitude, latitude, address, htmlUrl, "Auto updating", lastUpdated, time, Number);
             postSender.execute();
             //done executing post
 
@@ -394,6 +395,7 @@ public class UserSettings extends Activity implements OnClickListener{
                     List<NameValuePair> delete = new ArrayList<NameValuePair>();
                     delete.add(new BasicNameValuePair("Verify", vuser));
                     delete.add(new BasicNameValuePair("username", user));
+                    delete.add(new BasicNameValuePair("Number", Number));
 
                     Log.d("request!", "starting");
 
@@ -471,6 +473,7 @@ public class UserSettings extends Activity implements OnClickListener{
                     params.add(new BasicNameValuePair("oldpass", oldpsw));
                     params.add(new BasicNameValuePair("newpass", newpsw));
                     params.add(new BasicNameValuePair("user", user));
+                    params.add(new BasicNameValuePair("Number", Number));
 
                     Log.d("request!", "starting");
 

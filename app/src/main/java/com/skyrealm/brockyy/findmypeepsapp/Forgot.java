@@ -98,7 +98,6 @@ public class Forgot extends Activity implements OnClickListener{
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("useremail", ue));
-
                 Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
