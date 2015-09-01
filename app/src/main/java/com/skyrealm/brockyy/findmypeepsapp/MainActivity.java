@@ -19,6 +19,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationListener;
 
 import android.os.AsyncTask;
@@ -663,5 +665,23 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 pDialog.cancel();
 
         }
+    }
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(this);
+        // When Play services not found in device
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                // Show Error dialog to install Play services
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, 9000).show();
+            } else {
+                Toast.makeText(MainActivity.this, "This device doesn't support Play services, App will not work normally", Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return false;
+        } else {
+            Toast.makeText(MainActivity.this, "This device supports Play services, App will work normally", Toast.LENGTH_LONG).show();
+        }
+        return true;
     }
 }
