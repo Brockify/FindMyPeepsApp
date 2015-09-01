@@ -1,114 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:background="@drawable/background">
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:focusableInTouchMode="true"
         android:id="@+id/myLayout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical|center_horizontal"
-    android:background="@drawable/background">
-
+        android:layout_height="fill_parent" >
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Profileview"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Settings"
-            android:id="@+id/Title"
+            android:id="@+id/title"
             android:textSize="100px"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/Change"
-            android:layout_toStartOf="@+id/Change" />
-
-        <Button
-
-            android:id="@+id/Change"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reset"
-            android:background="#3366CC"
-            android:textColor="#B0E0E6"
-            android:bottomLeftRadius="8dp"
-            android:bottomRightRadius="8dp"
-            android:topLeftRadius="8dp"
-            android:topRightRadius="8dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_above="@+id/oldpass"
-            android:layout_toRightOf="@+id/Newuser"
-            android:layout_toEndOf="@+id/Newuser" />
+            android:layout_centerHorizontal="true" />
 
         <EditText
             android:id="@+id/Newuser"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:focusable="true"
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/primary_text_light"
             android:hint="Change Username"
-            android:imeOptions="actionNext"
-            android:layout_below="@+id/Verify"
-            android:layout_alignLeft="@+id/Verify"
-            android:layout_alignStart="@+id/Verify"
-            android:layout_marginTop="36dp"
+            android:imeOptions="actionDone"
+            android:layout_below="@+id/title"
+
+            android:layout_marginTop="20dp"
             android:gravity="fill_horizontal|center_vertical|center_horizontal"
             android:layout_centerInParent="true" />
 
+
         <Button
 
-            android:id="@+id/Delete"
-            android:layout_width="wrap_content"
+            android:id="@+id/Change"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Delete Account"
+            android:text="Reset"
             android:background="#3366CC"
             android:textColor="#B0E0E6"
             android:bottomLeftRadius="8dp"
             android:bottomRightRadius="8dp"
-            android:topLeftRadius="8dp"
-            android:topRightRadius="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_above="@+id/Newuser"
-            android:layout_alignLeft="@+id/autoLocationSwitch"
-            android:layout_alignStart="@+id/autoLocationSwitch"
-            android:layout_alignRight="@+id/Change"
-            android:layout_alignEnd="@+id/Change" />
-
-        <EditText
-            android:id="@+id/Verify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:focusable="true"
-            android:hint="Confirm Username"
-            android:background="@android:drawable/edit_text"
-            android:textColor="@android:color/primary_text_light"
-            android:imeOptions="actionNext"
-            android:gravity="fill_horizontal|center_vertical|center_horizontal"
-            android:layout_marginTop="47dp"
-            android:layout_below="@+id/Title"
-            android:layout_alignLeft="@+id/oldpass"
-             />
-
-        <Button
-            android:id="@+id/restpass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reset Password"
-            android:background="#3366CC"
-            android:textColor="#B0E0E6"
-            android:bottomLeftRadius="8dp"
-            android:bottomRightRadius="8dp"
-            android:topLeftRadius="8dp"
-            android:topRightRadius="8dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_alignTop="@+id/oldpass"
-            android:layout_alignLeft="@+id/Change"
-            android:layout_alignStart="@+id/Change"
-            android:layout_alignRight="@+id/Change"
-            android:layout_alignEnd="@+id/Change" />
+            android:layout_below="@+id/Newuser"
+            />
 
         <EditText
             android:id="@+id/oldpass"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:focusable="true"
@@ -116,18 +68,17 @@
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/primary_text_light"
             android:imeOptions="actionNext"
-            android:layout_below="@+id/Newuser"
-            android:layout_alignLeft="@+id/newpass"
-            android:layout_alignStart="@+id/newpass"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="20dp"
+            android:password="true"
             android:gravity="fill_horizontal|center_vertical|center_horizontal"
-            android:layout_centerInParent="true" />
-
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/Change"/>
         <EditText
             android:id="@+id/newpass"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:password="true"
             android:focusable="true"
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/primary_text_light"
@@ -136,7 +87,15 @@
             android:layout_below="@+id/oldpass"
             android:gravity="fill_horizontal|center_vertical|center_horizontal"
             android:layout_centerInParent="true" />
-
+        <Button
+            android:id="@+id/restpass"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Reset Password"
+            android:background="#3366CC"
+            android:textColor="#B0E0E6"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/newpass" />
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -145,9 +104,7 @@
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/primary_text_light"
             android:id="@+id/minuteEditText"
-            android:layout_below="@+id/newpass"
-            android:layout_alignRight="@+id/newpass"
-            android:layout_alignEnd="@+id/newpass"
+            android:layout_below="@+id/restpass"
             android:layout_marginTop="70dp"
             android:hint="Update every x minutes"
             android:gravity="fill_horizontal|center_vertical|center_horizontal"
@@ -162,4 +119,44 @@
             android:layout_alignBottom="@+id/minuteEditText"
             android:layout_toRightOf="@+id/minuteEditText"
             android:layout_toEndOf="@+id/minuteEditText" />
+
+
+        <EditText
+            android:id="@+id/Verify"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="Confirm Username"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
+            android:imeOptions="actionDone"
+            android:gravity="fill_horizontal|center_vertical|center_horizontal"
+            android:layout_marginTop="47dp"
+            android:layout_below="@+id/autoLocationSwitch"
+            />
+        <Button
+
+            android:id="@+id/Delete"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Account"
+            android:background="#3366CC"
+            android:textColor="#B0E0E6"
+            android:bottomLeftRadius="8dp"
+            android:bottomRightRadius="8dp"
+            android:topLeftRadius="8dp"
+            android:topRightRadius="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/Verify"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:layout_alignParentEnd="true"/>
+
+
+
+
+
+
     </RelativeLayout>
+</ScrollView>
