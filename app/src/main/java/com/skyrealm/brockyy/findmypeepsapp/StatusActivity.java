@@ -313,71 +313,71 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             System.out.println(responseStr);
             try {
                 json = new JSONArray(responseStr);
+                if (json.length() > 0) {
+                    for (int counter = 0; counter < json.length(); counter++)
+                        try {
+                            notification = json.getJSONObject(counter).getString("notification");
+                            usernames = json.getJSONObject(counter).getString("username");
+                            char secondNum = notification.charAt(11);
+                            char firstNum = notification.charAt(12);
+                            String numberDone = String.valueOf(secondNum) + String.valueOf(firstNum);
+                            String finalText;
+                            String date;
+                            String time;
+                            if (Integer.parseInt(numberDone) > 12) {
+                                int numberTesting = Integer.parseInt(numberDone);
+                                int finalNum;
+                                finalNum = numberTesting - 12;
+                                if (finalNum >= 10) {
+                                    finalText = String.valueOf(finalNum);
+                                } else {
+                                    finalText = "0" + String.valueOf(finalNum);
+                                }
+
+                                String finalNotification;
+                                finalNotification = notification.substring(0, 11) + finalText + notification.substring(13);
+                                notification = finalNotification;
+                            }
+                            SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
+                            date = notification.substring(5, 10);
+                            time = notification.substring(11, 22);
+                            String todaysDate = todaysDateC.format(new Date());
+                            Bitmap userIcon = null;
+                            String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
+                            InputStream in = null;
+                            try {
+                                in = new URL(urldisplay).openStream();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            userIcon = BitmapFactory.decodeStream(in);
+                            //make the icon a circle,'
+                            userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
+                            usernameArrayList.add(usernames);
+                            int length = usernames.length();
+                            notification = notification.substring(24 + length + 1);
+                            notifications.add(notification);
+                            userIcons.add(userIcon);
+                            if (todaysDate.equals(date.toString())) {
+                                date = "Today";
+                            }
+                            dateArrayList.add(date);
+                            String tempTime;
+                            tempTime = time.substring(0, 1) + time.substring(1, 2);
+                            if (Integer.parseInt(tempTime) < 10) {
+                                time = time.substring(1, 5) + time.substring(8);
+                            } else {
+                                time = time.substring(0, 5) + time.substring(8);
+                            }
+                            timeArrayList.add(time);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (int counter = 0; counter < json.length(); counter++)
-                try {
-                    notification = json.getJSONObject(counter).getString("notification");
-                    usernames = json.getJSONObject(counter).getString("username");
-                    char secondNum = notification.charAt(11);
-                    char firstNum = notification.charAt(12);
-                    String numberDone = String.valueOf(secondNum) + String.valueOf(firstNum);
-                    String finalText;
-                    String date;
-                    String time;
-                    if(Integer.parseInt(numberDone) > 12)
-                    {
-                        int numberTesting = Integer.parseInt(numberDone);
-                        int finalNum;
-                        finalNum = numberTesting - 12;
-                        if (finalNum >= 10)
-                        {
-                            finalText = String.valueOf(finalNum);
-                        } else {
-                            finalText = "0" + String.valueOf(finalNum);
-                        }
-
-                        String finalNotification;
-                        finalNotification = notification.substring(0,11) + finalText + notification.substring(13);
-                        notification = finalNotification;
-                    }
-                    SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
-                    date = notification.substring(5, 10);
-                    time = notification.substring(11, 22);
-                    String todaysDate = todaysDateC.format(new Date());
-                    Bitmap userIcon = null;
-                    String urldisplay = "http://skyrealmstudio.com/img/" + usernames.toLowerCase() + ".jpg";
-                    InputStream in = null;
-                    try {
-                        in = new URL(urldisplay).openStream();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    userIcon = BitmapFactory.decodeStream(in);
-                        //make the icon a circle,'
-                    userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
-                    usernameArrayList.add(usernames);
-                    int length = usernames.length();
-                    notification = notification.substring(24 + length + 1);
-                    notifications.add(notification);
-                    userIcons.add(userIcon);
-                    if(todaysDate.equals(date.toString()))
-                    {
-                        date = "Today";
-                    }
-                    dateArrayList.add(date);
-                    String tempTime;
-                    tempTime = time.substring(0, 1) + time.substring(1, 2);
-                    if (Integer.parseInt(tempTime) < 10) {
-                        time = time.substring(1, 5) + time.substring(8);
-                    } else {
-                        time = time.substring(0, 5) + time.substring(8);
-                    }
-                    timeArrayList.add(time);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             return null;
         }
         @Override
