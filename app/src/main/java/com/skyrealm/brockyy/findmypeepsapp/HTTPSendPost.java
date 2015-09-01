@@ -111,7 +111,6 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 HttpResponse response = httpClient.execute(httpPost);
 
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (ClientProtocolException e) {
                 // writing exception to log
                 e.printStackTrace();
@@ -141,7 +140,6 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 response = httpClient.execute(httpPost);
 
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,7 +164,6 @@ public class HTTPSendPost extends AsyncTask<String,Double, String> {
                 response = httpClient.execute(httpPost);
 
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

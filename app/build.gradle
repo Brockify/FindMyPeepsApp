@@ -1,20 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'skyrealm'
+            keyPassword 'AndrewBrock@2013'
+            storeFile file('/Users/RockyFish/keystores/findmypeeps.jks')
+            storePassword 'AndrewBrock@2013'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
-        applicationId "com.skyrealm.brockyy.findmypeepsapp"
+        applicationId "com.skyrealm.RockyFish.findmypeepsapp"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            zipAlignEnabled true
+        }
+        debug {
+            debuggable false
+            signingConfig signingConfigs.config
         }
     }
 }

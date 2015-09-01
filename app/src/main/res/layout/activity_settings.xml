@@ -9,7 +9,6 @@
         android:focusableInTouchMode="true"
         android:id="@+id/myLayout"
         android:layout_width="fill_parent"
-<<<<<<< Updated upstream
         android:layout_height="fill_parent" >
         <View
             android:layout_width="wrap_content"
@@ -18,14 +17,6 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-=======
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical|center_horizontal"
-    android:background="@drawable/background"
-    >
-
->>>>>>> Stashed changes
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

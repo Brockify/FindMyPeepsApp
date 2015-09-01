@@ -193,13 +193,11 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
                 params.add(new BasicNameValuePair("username", username));
                 params.add(new BasicNameValuePair("password", password));
 
-                Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
                         LOGIN_URL, "POST", params);
 
                 // checking  log for json response
-                Log.d("Login attempt", json.toString());
 
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
@@ -208,7 +206,6 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
                 if (success == 1) {
 
                     Number = json.getString(TAG_ID);
-                    Log.d("Successfully Login!", json.toString());
                     Intent ii = new Intent(Login.this, MainActivity.class);
                     ii.putExtra("username", users.getText().toString());
                     ii.putExtra("Number", Number);

@@ -255,19 +255,16 @@ public class UserSettings extends Activity implements OnClickListener{
                 params.add(new BasicNameValuePair("username", user));
                 params.add(new BasicNameValuePair("Number", Number));
 
-                Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
                         LOGIN_URL, "POST", params);
 
                 // checking  log for json response
-                Log.d("Registry attempt", json.toString());
 
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     user = newuser;
-                    Log.d("Username Changed!", json.toString());
                     return json.getString(TAG_MESSAGE);
                 }else{
 
@@ -397,13 +394,11 @@ public class UserSettings extends Activity implements OnClickListener{
                     delete.add(new BasicNameValuePair("username", user));
                     delete.add(new BasicNameValuePair("Number", Number));
 
-                    Log.d("request!", "starting");
 
                     JSONObject json = jsonParser.makeHttpRequest(
                             LOGIN_URL2, "POST", delete);
 
                     // checking  log for json response
-                    Log.d("Registry attempt", json.toString());
 
                     // success tag for json
                     success = json.getInt(TAG_SUCCESS);
@@ -413,7 +408,6 @@ public class UserSettings extends Activity implements OnClickListener{
 
                         // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity
                         startActivity(ii);
-                        Log.d("Account Deleted", json.toString());
                         return json.getString(TAG_MESSAGE);
                     } else {
 
@@ -475,18 +469,15 @@ public class UserSettings extends Activity implements OnClickListener{
                     params.add(new BasicNameValuePair("user", user));
                     params.add(new BasicNameValuePair("Number", Number));
 
-                    Log.d("request!", "starting");
 
                     JSONObject json = jsonParser.makeHttpRequest(
                             LOGIN_URL3, "POST", params);
 
                     // checking  log for json response
-                    Log.d("Registry attempt", json.toString());
 
                     // success tag for json
                     success = json.getInt(TAG_SUCCESS);
                     if (success == 1) {
-                        Log.d("Password Changed!", json.toString());
                         return json.getString(TAG_MESSAGE);
                     } else {
 

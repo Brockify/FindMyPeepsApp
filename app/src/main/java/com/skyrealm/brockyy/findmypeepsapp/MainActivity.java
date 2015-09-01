@@ -134,7 +134,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         Number = getIntent().getExtras().getString("Number");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
         seconds = getIntent().getExtras().getInt("seconds");
-        Log.d("Message:", "Seconds = " + seconds);
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
 
@@ -536,7 +535,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
@@ -663,7 +661,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
                             userIcon = getCroppedBitmap(userIcon);
                         } catch (Exception e) {
-                            Log.e("Error", e.getMessage());
                             e.printStackTrace();
                         }
 

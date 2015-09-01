@@ -73,14 +73,12 @@ public class JSONParser {
             // string builder data conversion  to string.
             json = str.toString();
         } catch (Exception e) {
-            Log.e("Error", " something wrong with converting result " + e.toString());
         }
 
         // Try block used for pasrseing String to a json object
         try {
             jsonObj = new JSONObject(json);
         } catch (JSONException e) {
-            Log.e("json Parsering", "" + e.toString());
         }
 
         // Returning json Object.

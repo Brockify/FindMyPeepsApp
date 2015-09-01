@@ -415,14 +415,12 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                 response = httpClient.execute(httpPost);
                 responseBody = EntityUtils.toString(response.getEntity());
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             //end the post response
             String jsonStr = responseBody;
 
-            Log.d("Response: ", "> " + jsonStr);
             if (jsonStr != null) {
                 try {
                     JSONArray jsonArr = new JSONArray(jsonStr);
@@ -499,7 +497,6 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
                 response = httpClient.execute(httpPost);
                 responseBody = EntityUtils.toString(response.getEntity());
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -508,7 +505,6 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
             //JSON the string that is got from the post.
             String jsonStr = responseBody;
 
-            Log.d("Response: ", "> " + jsonStr);
             if (jsonStr != null) {
                 try {
                     JSONArray jsonArr = new JSONArray(jsonStr);

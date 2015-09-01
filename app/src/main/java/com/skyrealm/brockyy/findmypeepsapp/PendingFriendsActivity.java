@@ -373,7 +373,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 response = httpClient.execute(httpPost);
                 responseBody = EntityUtils.toString(response.getEntity());
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -382,7 +381,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         //JSON the string that is got from the post.
             String jsonStr = responseBody;
 
-            Log.d("Response: ", "> " + jsonStr);
             if (jsonStr != null) {
                 try {
                     JSONArray jsonArr = new JSONArray(jsonStr);
@@ -523,7 +521,6 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
                 responseBody = EntityUtils.toString(response.getEntity());
 
                 // writing response to log
-                Log.d("Http Response:", response.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -98,18 +98,15 @@ public class Forgot extends Activity implements OnClickListener{
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("useremail", ue));
-                Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
                         LOGIN_URL, "POST", params);
 
                 // checking  log for json response
-                Log.d("Reset attempt", json.toString());
 
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    Log.d("Successful reset", json.toString());
                     Intent ii = new Intent(Forgot.this,Login.class);
                     finish();
                     // this finish() method is used to tell android os that we are done with current //activity now! Moving to other activity

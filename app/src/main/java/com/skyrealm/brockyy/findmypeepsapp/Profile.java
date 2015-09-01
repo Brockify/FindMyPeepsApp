@@ -179,7 +179,6 @@ public class Profile extends Activity implements OnClickListener {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
@@ -603,18 +602,15 @@ public class Profile extends Activity implements OnClickListener {
                 params.add(new BasicNameValuePair("Time", time));
                 params.add(new BasicNameValuePair("LastUpdated", lastUpdated));
 
-                Log.d("request!", "starting");
 
                 JSONObject json = jsonParser.makeHttpRequest(
                         LOGIN_URL, "POST", params);
 
                 // checking  log for json response
-                Log.d("Registry attempt", json.toString());
                 response = json.getString(TAG_MESSAGE);
                 // success tag for json
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    Log.d("Bio Sent!", json.toString());
 
                     return json.getString(TAG_MESSAGE);
                 } else {
