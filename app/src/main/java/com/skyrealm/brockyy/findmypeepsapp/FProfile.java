@@ -191,6 +191,7 @@ public class FProfile extends Activity implements OnClickListener{
             try {
 
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("username", user));
                 params.add(new BasicNameValuePair("friend", friend));
                 params.add(new BasicNameValuePair("Number", Number));
 
