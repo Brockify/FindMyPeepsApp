@@ -2,27 +2,36 @@ package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.ActionBar;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -47,6 +56,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +88,10 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     private static Timer timer;
     ProgressDialog pDialog;
     EditText friendEditText;
+    ArrayList<String> ContactList;
+    ArrayList<ArrayList<String>> sendContactList;
+    ArrayList<ArrayList<String>> fullContacts;
+    ArrayList<Integer> selList=new ArrayList();
 
 
     @Override
@@ -101,6 +115,9 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         Number = getIntent().getExtras().getString("Number");
         seconds = getIntent().getExtras().getInt("seconds");
         gps = new GPSTracker(PendingFriendsActivity.this);
+        sendContactList = new ArrayList<ArrayList<String>>();
+        fullContacts = new ArrayList<ArrayList<String>>();
+
 
         //set a swipe refresh layout
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -327,6 +344,130 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void getContacts(final View view) {
+        ContactList = new ArrayList<String>();
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                ArrayList<String> contact = new ArrayList<String>();
+
+                String phoneNo = null;
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                //name
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                if (Integer.parseInt(cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        //phone number
+                        phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (!phoneNo.isEmpty()) {
+                            if (!name.equals("AT&T Service Contacts")) {
+                                contact.add(name);
+                                contact.add(phoneNo);
+                                ContactList.add(name);
+                                fullContacts.add(contact);
+
+                            }
+
+                        }
+                    }
+                    pCur.close();
+                }
+            }
+
+            final AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setTitle("Invite Friends");
+            CharSequence[] ar = new String[ContactList.size()];
+            for (int i = 0; i < ContactList.size(); i++) {
+                ar[i] = ContactList.get(i);
+            }
+
+            boolean[] bl = new boolean[ContactList.size()];
+            ad.setMultiChoiceItems(ar, bl, new DialogInterface.OnMultiChoiceClickListener() {
+
+                @Override
+                public void onClick(DialogInterface arg0, int arg1, boolean arg2) {
+                    // TODO Auto-generated method stub
+
+                    if (arg2) {
+
+                        selList.add(arg1);
+                       // if(ContactList.get(arg1).equals("Check All"))
+                       // {
+                        //    AlertDialog dialog = (AlertDialog) arg0 ;
+                       //     ListView v = dialog.getListView();
+                        //    int i = arg1;
+                         //   while(i < ContactList.size()) {
+                           //     if(!v.isItemChecked(i)) {
+                            //        v.setItemChecked(i, true);
+                             //       selList.add(i);
+                             //   }
+                              //      i++;
+                           // }
+                        //}
+                    } else if (selList.contains(arg1)) {
+                        // if the item is already selected then remove it
+                      //  if(ContactList.get(arg1).equals("Check All"))
+                        //{
+                          //  AlertDialog dialog = (AlertDialog) arg0 ;
+                            //ListView v = dialog.getListView();
+                            //int i = 0;
+                            //while(i < ContactList.size()) {
+                              //  if(v.isItemChecked(i)) {
+                                //    v.setItemChecked(i, false);
+                                  //  selList.remove(Integer.valueOf(i));
+                                 //}
+
+                               // i++;
+                           // }
+                      //  } else {
+                            selList.remove(Integer.valueOf(arg1));
+                     //   }
+                    }
+                }
+            });
+            ad.setPositiveButton("Send Invites", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                    for (int i = 0; i < selList.size(); i++) {
+                        sendSMS(fullContacts.get(selList.get(i)).get(1));
+                    }
+                }
+            });
+            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                }
+            });
+            ad.show();
+        }
+    }
+
+    public void contactCheckBoxClicked(View view)
+    {
+        RelativeLayout vwParentRow = (RelativeLayout)view.getParent();
+        CheckBox contactCheckBox = (CheckBox) vwParentRow.findViewById(R.id.sendCheckBox);
+        Toast.makeText(this, contactCheckBox.getText().toString(),Toast.LENGTH_LONG).show();
+    }
+    private void sendSMS(String phoneNumber)
+    {
+        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                new Intent(PendingFriendsActivity.this, PendingFriendsActivity.class), 0);
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, "Join the find my peeps community today!(http://www.google.com)",pi, null);
     }
 
     //slide up to refresh

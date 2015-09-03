@@ -82,8 +82,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //current user
     String user;
     String Number;
-    Double latitude;
-    Double longitude;
+    Float latitude;
+    Float longitude;
     String lastUpdated = null;
     Marker userMarker = null;
     LatLng userCurrentLocation;
@@ -114,6 +114,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     LatLngBounds friendsListBoundaries;
     Handler mainHandler;
     Bitmap icon;
+    String first;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,8 +172,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //called once the map is done loading
             public void onMapLoaded() {
                 if (gps.isGPSEnabledOrNot()) {
-                    latitude = gps.getLocation().getLatitude();
-                    longitude = gps.getLocation().getLongitude();
+                    latitude = (float)gps.getLocation().getLatitude();
+                    longitude = (float)gps.getLocation().getLongitude();
                     userCurrentLocation = new LatLng(latitude, longitude);
                     if (isOtherUserClicked) {
                         //get the extras
@@ -431,8 +432,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected Void doInBackground(Void... params) {
 
             //If the update location button is clicked------------------------------------------\
-            latitude = gps.getLocation().getLatitude();
-            longitude = gps.getLocation().getLongitude();
+            latitude = (float) gps.getLocation().getLatitude();
+            longitude = (float) gps.getLocation().getLongitude();
 
             //get time and date
             Calendar c = Calendar.getInstance();
