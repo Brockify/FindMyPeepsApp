@@ -54,7 +54,9 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private static final String TAG_ID = "number";
+    private static final String TAG_FIRSTLOG = "firstlog";
     private String Number;
+    private String First;
     private String username;
     private String password;
     private Toast backtoast;
@@ -204,11 +206,12 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
 
 
                 if (success == 1) {
-
+                    First = json.getString(TAG_FIRSTLOG);
                     Number = json.getString(TAG_ID);
                     Intent ii = new Intent(Login.this, MainActivity.class);
                     ii.putExtra("username", users.getText().toString());
                     ii.putExtra("Number", Number);
+                    ii.putExtra("First",First);
 
                     finish();
 

@@ -7,6 +7,17 @@
     android:background="@drawable/background"
     android:gravity="center_vertical|center_horizontal">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Register"
+        android:textSize="30dp"
+        android:id="@+id/title"
+        android:layout_above="@+id/username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="83dp" />
+
         <Button
             android:id="@+id/registerbutton"
             android:layout_width="118dp"

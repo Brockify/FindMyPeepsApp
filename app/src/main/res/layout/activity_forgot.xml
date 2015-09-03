@@ -1,41 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/background"
-    android:theme="@style/Theme.AppCompat">
+    android:gravity="center_vertical|center_horizontal"
+    >
+
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/forgotuser"
-        android:hint="Username or e-mail"
-        android:singleLine="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/edit_text"
+        android:textColor="@android:color/primary_text_light"
         android:ems="10"
+        android:hint="Username or e-mail"
         android:imeOptions="actionDone"
-        android:layout_gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/title"
-        android:layout_alignEnd="@+id/title"
-        android:layout_marginTop="43dp" />
+        android:singleLine="true"
+        android:gravity="center"
+        android:selectAllOnFocus="true"
+        android:layout_below="@+id/title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:id="@+id/forgotbutton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignRight="@+id/password"
+        android:layout_below="@+id/forgotuser"
+        android:text="Reset Password"
+        android:nestedScrollingEnabled="false"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="false"
+        android:gravity="center" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Forgot Password"
-        android:id="@+id/title"
+        android:textSize="30dp"
+        android:id="@+id/textView4"
+        android:layout_above="@+id/forgotuser"
         android:layout_centerHorizontal="true"
-        />
-    <Button
-        android:id="@+id/forgotbutton"
-        android:layout_width="118dp"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/title"
-        android:layout_alignRight="@+id/title"
-        android:layout_below="@+id/forgotuser"
-        android:text="Reset Password" />
+        android:layout_marginBottom="83dp" />
 
 </RelativeLayout>
