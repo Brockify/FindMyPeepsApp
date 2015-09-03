@@ -347,6 +347,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
     }
 
     public void getContacts(final View view) {
+        RelativeLayout vwParentRow = (RelativeLayout) view.getParent();
         ContactList = new ArrayList<String>();
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -467,7 +468,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
         PendingIntent pi = PendingIntent.getActivity(this, 0,
                 new Intent(PendingFriendsActivity.this, PendingFriendsActivity.class), 0);
         SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, "Join the find my peeps community today!(http://www.google.com)",pi, null);
+        sms.sendTextMessage(phoneNumber, null, "Hey, check out this awesome app I just found called Find My Peeps. Join me and the Find My Peeps community today!(In the Android store now)",pi, null);
     }
 
     //slide up to refresh

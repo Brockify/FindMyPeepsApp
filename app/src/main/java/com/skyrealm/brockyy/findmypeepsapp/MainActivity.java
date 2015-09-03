@@ -3,9 +3,12 @@ package com.skyrealm.brockyy.findmypeepsapp;
 
 import android.app.ActionBar;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -29,9 +32,11 @@ import android.os.Looper;
 
 import android.os.Bundle;
 
+import android.provider.ContactsContract;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.telephony.SmsManager;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,6 +120,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     Handler mainHandler;
     Bitmap icon;
     String first;
+    ArrayList<String> ContactList;
+    ArrayList<ArrayList<String>> sendContactList;
+    ArrayList<ArrayList<String>> fullContacts;
+    ArrayList<Integer> selList=new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +144,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         Number = getIntent().getExtras().getString("Number");
         isOtherUserClicked = getIntent().getExtras().getBoolean("isOtherUserClicked");
         seconds = getIntent().getExtras().getInt("seconds");
+        first = getIntent().getExtras().getString("First");
+        sendContactList = new ArrayList<ArrayList<String>>();
+        fullContacts = new ArrayList<ArrayList<String>>();
         //set OnClickListeners
         getLocationButton.setOnClickListener(this);
 
@@ -156,6 +168,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
+
+        if (first.equals("0"))
+        {
+            getContacts();
+        }
         //set Main Intent
         MainIntent = getIntent();
 
@@ -274,6 +291,122 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+    public void getContacts() {
+        ContactList = new ArrayList<String>();
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                ArrayList<String> contact = new ArrayList<String>();
+
+                String phoneNo = null;
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                //name
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                if (Integer.parseInt(cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        //phone number
+                        phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (!phoneNo.isEmpty()) {
+                            if (!name.equals("AT&T Service Contacts")) {
+                                contact.add(name);
+                                contact.add(phoneNo);
+                                ContactList.add(name);
+                                fullContacts.add(contact);
+
+                            }
+
+                        }
+                    }
+                    pCur.close();
+                }
+            }
+
+            final AlertDialog.Builder ad = new AlertDialog.Builder(this);
+            ad.setTitle("Invite Friends");
+            CharSequence[] ar = new String[ContactList.size()];
+            for (int i = 0; i < ContactList.size(); i++) {
+                ar[i] = ContactList.get(i);
+            }
+
+            boolean[] bl = new boolean[ContactList.size()];
+            ad.setMultiChoiceItems(ar, bl, new DialogInterface.OnMultiChoiceClickListener() {
+
+                @Override
+                public void onClick(DialogInterface arg0, int arg1, boolean arg2) {
+                    // TODO Auto-generated method stub
+
+                    if (arg2) {
+
+                        selList.add(arg1);
+                        // if(ContactList.get(arg1).equals("Check All"))
+                        // {
+                        //    AlertDialog dialog = (AlertDialog) arg0 ;
+                        //     ListView v = dialog.getListView();
+                        //    int i = arg1;
+                        //   while(i < ContactList.size()) {
+                        //     if(!v.isItemChecked(i)) {
+                        //        v.setItemChecked(i, true);
+                        //       selList.add(i);
+                        //   }
+                        //      i++;
+                        // }
+                        //}
+                    } else if (selList.contains(arg1)) {
+                        // if the item is already selected then remove it
+                        //  if(ContactList.get(arg1).equals("Check All"))
+                        //{
+                        //  AlertDialog dialog = (AlertDialog) arg0 ;
+                        //ListView v = dialog.getListView();
+                        //int i = 0;
+                        //while(i < ContactList.size()) {
+                        //  if(v.isItemChecked(i)) {
+                        //    v.setItemChecked(i, false);
+                        //  selList.remove(Integer.valueOf(i));
+                        //}
+
+                        // i++;
+                        // }
+                        //  } else {
+                        selList.remove(Integer.valueOf(arg1));
+                        //   }
+                    }
+                }
+            });
+            ad.setPositiveButton("Send Invites", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                    for (int i = 0; i < selList.size(); i++) {
+                        sendSMS(fullContacts.get(selList.get(i)).get(1));
+                    }
+                }
+            });
+            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                }
+            });
+            ad.show();
+        }
+    }
+    private void sendSMS(String phoneNumber)
+    {
+        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                new Intent(MainActivity.this, MainActivity.class), 0);
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, "Hey, check out this awesome app I just found called Find My Peeps. Join me and the Find My Peeps community today! (In the android store now)",pi, null);
     }
     @Override
     public void onBackPressed() {
