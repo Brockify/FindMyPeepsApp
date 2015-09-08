@@ -87,8 +87,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //current user
     String user;
     String Number;
-    Float latitude;
-    Float longitude;
+    Double latitude;
+    Double longitude;
     String lastUpdated = null;
     Marker userMarker = null;
     LatLng userCurrentLocation;
@@ -168,11 +168,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-
-        if (first.equals("0"))
-        {
-            getContacts();
-        }
         //set Main Intent
         MainIntent = getIntent();
 
@@ -189,8 +184,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //called once the map is done loading
             public void onMapLoaded() {
                 if (gps.isGPSEnabledOrNot()) {
-                    latitude = (float)gps.getLocation().getLatitude();
-                    longitude = (float)gps.getLocation().getLongitude();
+                    latitude = gps.getLocation().getLatitude();
+                    longitude = gps.getLocation().getLongitude();
                     userCurrentLocation = new LatLng(latitude, longitude);
                     if (isOtherUserClicked) {
                         //get the extras
@@ -565,8 +560,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         protected Void doInBackground(Void... params) {
 
             //If the update location button is clicked------------------------------------------\
-            latitude = (float) gps.getLocation().getLatitude();
-            longitude = (float) gps.getLocation().getLongitude();
+            latitude = gps.getLocation().getLatitude();
+            longitude = gps.getLocation().getLongitude();
 
             //get time and date
             Calendar c = Calendar.getInstance();
@@ -765,46 +760,46 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         latitude = json.getJSONObject(counter).getString("Latitude");
                         longitude = json.getJSONObject(counter).getString("Longitude");
                         lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
-                        String tempDate = lastUpdated.substring(5,10);
-                        SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
-                        String todaysDate = todaysDateC.format(new Date());
-                        if (tempDate.equals(todaysDate))
+                        if (latitude.isEmpty()|| longitude.isEmpty() || lastUpdated.isEmpty())
                         {
-                            tempDate = "Today";
-                        }
-
-                        String tempTime = lastUpdated.substring(11,13);
-                        if (Integer.parseInt(tempTime) > 12)
-                        {
-                            tempTime = String.valueOf((Integer.parseInt(tempTime) - 12));
-                        }
-
-                        if (Integer.parseInt(tempTime) < 10)
-                        {
-                            tempTime = tempTime.substring(1);
-                        }
-                        String amOrPm = lastUpdated.substring(20, 22);
-                        lastUpdated = tempDate + " " + tempTime + lastUpdated.substring(13,16) + amOrPm ;
-
-                        Bitmap userIcon = null;
-                        String urldisplay = "http://skyrealmstudio.com/img/" + username.toLowerCase() + ".jpg";
-                        try {
-                            InputStream in = new URL(urldisplay).openStream();
-                            userIcon = BitmapFactory.decodeStream(in);
-                            //make the icon a circle,'
-                            userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
-                            userIcon = getCroppedBitmap(userIcon);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        //log the data
-                        if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
 
                         } else {
-                            MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + " - " + comment).icon(BitmapDescriptorFactory.fromBitmap(userIcon));
-                            mMyMarkersArray.add(userCounter, markerOption);
-                            userCounter++;
+                            String tempDate = lastUpdated.substring(5, 10);
+                            SimpleDateFormat todaysDateC = new SimpleDateFormat("MM-dd");
+                            String todaysDate = todaysDateC.format(new Date());
+                            if (tempDate.equals(todaysDate)) {
+                                tempDate = "Today";
+                            }
+
+                            String tempTime = lastUpdated.substring(11, 13);
+                            if (Integer.parseInt(tempTime) > 12) {
+                                tempTime = String.valueOf((Integer.parseInt(tempTime) - 12));
+                            }else if (Integer.parseInt(tempTime) < 10) {
+                                tempTime = tempTime.substring(1);
+                            }
+                            String amOrPm = lastUpdated.substring(20, 22);
+                            lastUpdated = tempDate + " " + tempTime + lastUpdated.substring(13, 16) + amOrPm;
+
+                            Bitmap userIcon = null;
+                            String urldisplay = "http://skyrealmstudio.com/img/" + username.toLowerCase() + ".jpg";
+                            try {
+                                InputStream in = new URL(urldisplay).openStream();
+                                userIcon = BitmapFactory.decodeStream(in);
+                                //make the icon a circle,'
+                                userIcon = userIcon.createScaledBitmap(userIcon, userIcon.getWidth(), userIcon.getHeight(), false);
+                                userIcon = getCroppedBitmap(userIcon);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            //log the data
+                            if (latitude.equals("User did not update location") || longitude.equals("User did not update location") || latitude.equals("") || longitude.equals("")) {
+
+                            } else {
+                                MarkerOptions markerOption = new MarkerOptions().position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).title(username).snippet(lastUpdated + " - " + comment).icon(BitmapDescriptorFactory.fromBitmap(userIcon));
+                                mMyMarkersArray.add(userCounter, markerOption);
+                                userCounter++;
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -812,6 +807,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             return null;
         }
         //insert data onto map and set the boundaries

@@ -39,7 +39,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Get Location"
+        android:text="Update Location"
         android:id="@+id/getLocationButton"
         android:nestedScrollingEnabled="true"
         android:onClick="getLocation"
