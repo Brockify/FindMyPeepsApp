@@ -168,7 +168,7 @@ public class FProfile extends Activity implements OnClickListener{
         }
     }
 
-    class AttemptGrabs extends AsyncTask<String, String, String> {
+    class AttemptGrabs extends AsyncTask<String, String, Void> {
         /**
          * Before starting background thread Show Progress Dialog
          * */
@@ -185,7 +185,7 @@ public class FProfile extends Activity implements OnClickListener{
         }
 
         @Override
-        protected String doInBackground(String... args) {
+        protected Void doInBackground(String... args) {
             // TODO Auto-generated method stub
             // here Check for success tag
             try {
@@ -206,11 +206,9 @@ public class FProfile extends Activity implements OnClickListener{
                     comment = json.getString(TAG_COMMENT);
 
 
-                return json.getString(TAG_MESSAGE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
 
 
             return null;
@@ -218,7 +216,7 @@ public class FProfile extends Activity implements OnClickListener{
         /**
          * Once the background process is done we need to  Dismiss the progress dialog asap
          * **/
-        protected void onPostExecute(String message) {
+        protected void onPostExecute(Void message) {
             BioView.setText(Bio);
             commentView.setText(comment);
             pDialog.dismiss();
