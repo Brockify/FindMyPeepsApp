@@ -87,6 +87,7 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
         saveLoginCheckBox = (CheckBox) findViewById(R.id.remember);
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
+        Boolean LoggedOut = getIntent().getBooleanExtra("LoggedOut", false);
 
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
         if (saveLogin == true) {
@@ -94,6 +95,31 @@ public class Login extends Activity implements OnClickListener, View.OnTouchList
             pass.setText(loginPreferences.getString("password", ""));
             saveLoginCheckBox.setChecked(true);
         }
+        if (saveLoginCheckBox.isChecked() && !LoggedOut)
+        {
+            username = users.getText().toString();
+            password = pass.getText().toString();
+
+            if (saveLoginCheckBox.isChecked()) {
+                loginPrefsEditor.putBoolean("saveLogin", true);
+                loginPrefsEditor.putString("username", username);
+                loginPrefsEditor.putString("password", password);
+                loginPrefsEditor.commit();
+            } else {
+                loginPrefsEditor.clear();
+                loginPrefsEditor.commit();
+            }
+            if(gps.haveNetworkConnection())
+            {
+                new AttemptLogin().execute();
+            }else
+            {
+                gps.LoginAlert();
+            }
+        } else {
+            saveLoginCheckBox.setChecked(false);
+        }
+
     }
 
     @Override

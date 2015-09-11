@@ -296,6 +296,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
             Intent ii = new Intent(FriendsListActivity.this, Login.class);
             if (timer != null)
                 timer.cancel();
+            ii.putExtra("LoggedOut", true);
             startActivity(ii);
             finish();
             return true;

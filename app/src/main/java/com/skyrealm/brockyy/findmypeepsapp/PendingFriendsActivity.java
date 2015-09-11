@@ -327,6 +327,7 @@ public class PendingFriendsActivity extends ActionBarActivity implements SwipeRe
             Intent ii = new Intent(PendingFriendsActivity.this, Login.class);
             if (timer != null)
                 timer.cancel();
+            ii.putExtra("LoggedOut", true);
             startActivity(ii);
             finish();
             return true;

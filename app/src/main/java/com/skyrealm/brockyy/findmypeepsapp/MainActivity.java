@@ -410,6 +410,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (timer != null)
                 timer.cancel();
             Intent intent = new Intent(this, Login.class);
+            intent.putExtra("LoggedOut", true);
             finish();
             startActivity(intent);
         } else {
@@ -496,6 +497,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Intent ii = new Intent(MainActivity.this, Login.class);
             if (timer != null)
                 timer.cancel();
+            ii.putExtra("LoggedOut", true);
             startActivity(ii);
             finish();
             return true;

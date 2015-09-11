@@ -261,6 +261,7 @@ public class StatusActivity extends ActionBarActivity implements SwipeRefreshLay
             Intent ii = new Intent(StatusActivity.this, Login.class);
             if (timer != null)
                 timer.cancel();
+            ii.putExtra("LoggedOut", true);
             startActivity(ii);
             finish();
             return true;
