@@ -292,8 +292,6 @@ public class Profile extends Activity implements OnClickListener {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imgPath = cursor.getString(columnIndex);
                 cursor.close();
-                final CheckBox checkBox = (CheckBox) findViewById(R.id.image);
-                checkBox.setChecked(true);
                 ImageView imgView = (ImageView) findViewById(R.id.imgView);
                 imgView.setImageBitmap(bitmap);
 

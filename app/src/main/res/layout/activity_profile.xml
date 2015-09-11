@@ -33,7 +33,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="uploadImage"
-        android:text="Upload"
+        android:text="Update"
         android:id="@+id/button"
         android:layout_below="@+id/Top"
         android:layout_alignParentLeft="true"
@@ -50,17 +50,6 @@
         android:background="@color/grey"
         >
     </ImageView>
-
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/image"
-        android:checked="false"
-        android:clickable = "false"
-
-        android:layout_alignBottom="@+id/imgView"
-        android:layout_toLeftOf="@+id/Bottom"
-        android:layout_toStartOf="@+id/Bottom" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -90,7 +79,7 @@
         android:id="@+id/SendBio"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Send New Bio"
+        android:text="Update Bio"
         android:layout_below="@+id/biotext"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
