@@ -533,7 +533,7 @@ public class FriendsListActivity extends ActionBarActivity implements SwipeRefre
 
         protected void onPostExecute(Void result) {
             String address = null;
-            if (latitude == 0|| longitude == 0) {
+            if (latitude == null|| longitude == null){
                 Toast.makeText(getApplicationContext(), "User has not updated their location.", Toast.LENGTH_LONG).show();
                 pDialog.dismiss();
             } else {
