@@ -174,16 +174,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //create new gps with MainActivity as context
         gps = new GPSTracker(MainActivity.this);
 
-        //set the map when created
-        googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMap);
-
         //sets a listener for the map
         //if a specific user is clicked, zoom into that user and your current location
         googleMap.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             //called once the map is done loading
             public void onMapLoaded() {
-                if (gps.isGPSEnabledOrNot()) {
+                if (gps.isGPSEnabledOrNot() && gps.canGetLocation() && gps.getLatitude() != 0 && gps.getLongitude() != 0) {
                     latitude = gps.getLocation().getLatitude();
                     longitude = gps.getLocation().getLongitude();
                     userCurrentLocation = new LatLng(latitude, longitude);
@@ -436,7 +433,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 //build a dialog for sending the location
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setView(R.layout.activity_popup_comment);
-                if (gps.isGPSEnabledOrNot()) {
+                if (gps.isGPSEnabledOrNot() && gps.canGetLocation()) {
                     //sends a alert dialog making sure they want to delete the user
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
