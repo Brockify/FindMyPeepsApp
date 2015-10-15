@@ -55,4 +55,14 @@
         android:layout_width="wrap_content"
         android:id="@+id/linearLayout"
         android:orientation="horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Groups"
+        android:id="@+id/GroupsButton"
+        android:layout_above="@+id/getLocationButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="onClickGroup" />
 </RelativeLayout>

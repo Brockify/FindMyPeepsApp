@@ -44,9 +44,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -123,7 +125,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     ArrayList<String> ContactList;
     ArrayList<ArrayList<String>> sendContactList;
     ArrayList<ArrayList<String>> fullContacts;
-    ArrayList<Integer> selList=new ArrayList();
+    ArrayList<Integer> selList = new ArrayList();
+    ArrayList<String> groupnames = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
 
                     }
-                }else {
+                } else {
                     gps.showSettingsAlert();
                 }
             }
@@ -287,6 +291,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .addApi(LocationServices.API)
                 .build();
     }
+
     public void getContacts() {
         ContactList = new ArrayList<String>();
         ContentResolver cr = getContentResolver();
@@ -396,13 +401,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             ad.show();
         }
     }
-    private void sendSMS(String phoneNumber)
-    {
+
+    private void sendSMS(String phoneNumber) {
         PendingIntent pi = PendingIntent.getActivity(this, 0,
                 new Intent(MainActivity.this, MainActivity.class), 0);
         SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, "Hey, check out this awesome app I just found called Find My Peeps. Join me and the Find My Peeps community today! (In the android store now)",pi, null);
+        sms.sendTextMessage(phoneNumber, null, "Hey, check out this awesome app I just found called Find My Peeps. Join me and the Find My Peeps community today! (In the android store now)", pi, null);
     }
+
     @Override
     public void onBackPressed() {
 
@@ -441,7 +447,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Dialog dialoger = (Dialog) dialog;
-                            switch (which){
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     EditText commentEditText = (EditText) dialoger.findViewById(R.id.commentEditText);
                                     comments = commentEditText.getText().toString();
@@ -568,8 +574,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             int amorpmint = c.get(Calendar.AM_PM);
             String amorpm;
-            if (amorpmint == 0)
-            {
+            if (amorpmint == 0) {
                 amorpm = "AM";
             } else {
                 amorpm = "PM";
@@ -683,6 +688,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         }
     }
+
     public Bitmap getCroppedBitmap(Bitmap bitmap) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
                 bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -707,8 +713,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     class MarkerScript extends AsyncTask<String, Void, Void> {
         int userCounter = 0;
-        protected void onPreExecute()
-        {
+
+        protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Loading friends onto map...");
@@ -716,6 +722,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             pDialog.setCancelable(false);
             pDialog.show();
         }
+
         @Override
         protected Void doInBackground(String... strings) {
             HttpResponse response;
@@ -760,8 +767,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         latitude = json.getJSONObject(counter).getString("Latitude");
                         longitude = json.getJSONObject(counter).getString("Longitude");
                         lastUpdated = json.getJSONObject(counter).getString("LastUpdated");
-                        if (latitude.isEmpty()|| longitude.isEmpty() || lastUpdated.isEmpty())
-                        {
+                        if (latitude.isEmpty() || longitude.isEmpty() || lastUpdated.isEmpty()) {
 
                         } else {
                             String tempDate = lastUpdated.substring(5, 10);
@@ -774,7 +780,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             String tempTime = lastUpdated.substring(11, 13);
                             if (Integer.parseInt(tempTime) > 12) {
                                 tempTime = String.valueOf((Integer.parseInt(tempTime) - 12));
-                            }else if (Integer.parseInt(tempTime) < 10) {
+                            } else if (Integer.parseInt(tempTime) < 10) {
                                 tempTime = tempTime.substring(1);
                             }
                             String amOrPm = lastUpdated.substring(20, 22);
@@ -810,28 +816,29 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             return null;
         }
+
         //insert data onto map and set the boundaries
         protected void onPostExecute(Void result) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for(int counter = 0; counter < mMyMarkersArray.size(); counter++) {
-                LatLng userLatLng= new LatLng(mMyMarkersArray.get(counter).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
+            for (int counter = 0; counter < mMyMarkersArray.size(); counter++) {
+                LatLng userLatLng = new LatLng(mMyMarkersArray.get(counter).getPosition().latitude, mMyMarkersArray.get(counter).getPosition().longitude);
                 builder.include(userLatLng);
             }
-            for(int counter = 0; counter < mMyMarkersArray.size(); counter++)
-            {
+            for (int counter = 0; counter < mMyMarkersArray.size(); counter++) {
                 googleMap.getMap().addMarker(mMyMarkersArray.get(counter));
             }
-                if (userMarker != null) {
-                    userMarker.remove();
-                    userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-                    builder.include(userCurrentLocation);
-                }
+            if (userMarker != null) {
+                userMarker.remove();
+                userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+                builder.include(userCurrentLocation);
+            }
             friendsListBoundaries = builder.build();
-                googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
-                pDialog.cancel();
+            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(friendsListBoundaries, 100));
+            pDialog.cancel();
 
         }
     }
+
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
@@ -849,5 +856,113 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Toast.makeText(MainActivity.this, "This device supports Play services, App will work normally", Toast.LENGTH_LONG).show();
         }
         return true;
+    }
+
+    public void onClickGroup(View v) {
+        switch (v.getId()) {
+            //if Get Location button is clicked
+            case R.id.GroupsButton:
+                groupnames = new ArrayList<String>();
+                new getGroups().execute();
+                ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, R.layout.activity_group_list_layout, R.id.groupname, groupnames);
+                ListView listView = (ListView) findViewById(R.id.grouplistView);
+                listView.setAdapter(adapter);
+                //build a dialog for sending the location
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(R.layout.activity_popup_groups);
+                if (gps.isGPSEnabledOrNot()) {
+                    //sends a alert dialog making sure they want to delete the user
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Dialog dialoger = (Dialog) dialog;
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+                    };
+                    //build the dialog box
+                    builder.setTitle("Send Location");
+                    builder.setPositiveButton("Update Location", dialogClickListener);
+                    builder.setNegativeButton("Cancel", dialogClickListener);
+                    builder.create();
+                    builder.show();
+                } else {
+                    gps.showSettingsAlert();
+                }
+        }
+    }
+
+    class getGroups extends AsyncTask<Void, Void, Void>{
+
+        private ProgressDialog pDialog;
+        String responseStr;
+
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("getting groups");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            HttpResponse response;
+            String responseStr = null;
+            String groups;
+            String jsonStr = null;
+            JSONArray json = null;
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://www.skyrealmstudio.com/cgi-bin/testcgi-bin/ListGroups.py");
+
+
+            try {
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username", user));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                response = httpclient.execute(httppost);
+                responseStr = EntityUtils.toString(response.getEntity());
+                jsonStr = responseStr;
+
+
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+            System.out.println(responseStr);
+            try {
+                json = new JSONArray(jsonStr);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (int counter = 0; counter < json.length(); counter++)
+                try {
+                    groups = json.getJSONObject(counter).getString("groups");
+                    groupnames.add(groups);
+                    Log.d("Message:", groupnames.get(counter));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            return null;
+
+        }
+
+        public void onPostExecute(Void result)
+        {
+            pDialog.dismiss();
+        }
     }
 }

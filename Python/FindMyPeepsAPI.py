@@ -11,8 +11,8 @@ import re
 import os
 import os.path
 import shutil
-
-db = MySQLdb.connect("173.254.28.39", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
+##173.254.28.39
+db = MySQLdb.connect("localhost", "skyrealm","AndrewBrock@2013","skyrealm_FindMyPeeps")
 CUR = db.cursor()
 
 def check_user(username):
@@ -438,5 +438,93 @@ def update_ever_final(username, ever, very):
     sql = "update Users set vnum='null', verified=%s where Username=%s"
     CUR.execute(sql, (very, username))
     return True
+def create_group(username, group):
+    sql = "select all group_name from Groups where group_name=%s"
+    CUR.execute(sql, [group])
+    takennames = CUR.fetchall()
+    if takennames == ():
+        groupnumber = 1
+    else:
+        groupnumber = 1
+        for i in takennames:
 
-print get_vnumber(get_verify("Brockify", login_hash_password("Brockify", "Brock114039")), "Brockify")
+            groupnumber = groupnumber + 1
+    usernamelist = [username]
+    usernamelist.append(":")
+    groupusers = ''.join(usernamelist)
+    sql = "insert into Groups (group_number, group_name, group_users, raid_leader) values (%s, %s, %s, %s)"
+    CUR.execute(sql, (groupnumber, group, groupusers, username))
+    groups = []
+    groups.append(group)
+    groups.append(":")
+    groupnames = ''.join(groups)
+    sql = "update Users set groups=%s where Username=%s"
+    CUR.execute(sql, (groupnames, username))
+    return "Group Created"
+def send_group_request(username, group_number, group_name, otheruser):
+    sql = "insert into pendingGroups(username, group_number, group_name, otheruser) values(%s, %s, %s, %s)"
+    CUR.execute(sql,(username, group_number, group_name,otheruser))
+    return "Group Request Sent"
+def accept_group_request(username, otheruser, group, groupnumber):
+    sql = "delete from pendingGroups where username=%s and group_name=%s and group_number=%s and otheruser=%s"
+    CUR.execute(sql, (otheruser, group, groupnumber, username))
+    sql = "select group_users from Groups where raid_leader=%s and group_name=%s and group_number=%s"
+    CUR.execute(sql, (otheruser, group, groupnumber))
+    originalusers = CUR.fetchone()[0]
+
+    sql = "update Groups set group_users=%s where group_name=%s and group_number=%s and raid_leader=%s"
+    fixedusername = [username]
+    fixedusername.append(":")
+    groupusers = ''.join(fixedusername)
+    newusers = str(originalusers) + groupusers
+    CUR.execute(sql, (newusers, group, groupnumber, otheruser))
+    sql = "select groups from Users where Username=%s"
+    CUR.execute(sql, (otheruser))
+    originalgroups = CUR.fetchone()[0]
+    sql = "update Users set groups=%s where Username=%s"
+    fixedgroupname = [group]
+    fixedgroupname.append(":")
+    groupnames = ''.join(fixedgroupname)
+    newgroupnames = str(originalgroups) + groupnames
+    CUR.execute(sql, (newgroupnames, username))
+    return "Request Accepted"
+def list_group_members(username, group, groupnumber, raidleader):
+    sql = "select group_users from Groups where group_name=%s and raid_leader=%s and group_number=%s"
+    CUR.execute(sql, (group, raidleader, groupnumber))
+    result = []
+    groupmembers = CUR.fetchone()[0]
+    if groupmembers == 0:
+        sql = "delete from Groups where group_name=%s and raid_leader=%s and group_number=%s"
+        CUR.execute(sql,group, )
+        return "group deleted"
+    else:
+        sql = "select group_users from Groups where raid_leader=%s and group_name=%s and group_number=%s"
+        CUR.execute(sql, (raidleader, group, groupnumber))
+        groupmembers = CUR.fetchone()[0]
+        for i in groupmembers.split(":"):
+            userDict = {}
+            userDict["users"] = i
+            result.append(userDict)
+    print result
+def list_pending_group_invites(username): ##otheruser is current user and username is used as otheruser
+    sql = "select all group_name from pendingGroups where otheruser=%s "
+    CUR.execute(sql, (username))
+    pendingGroups = CUR.fetchall()
+    result = []
+    for i in pendingGroups:
+        groupDict = {}
+        groupDict["groups"] = i
+        result.append(groupDict)
+    print result
+def list_groups(username):
+    sql = "select groups from Users where Username=%s"
+    CUR.execute(sql, (username))
+    groupnames = CUR.fetchone()[0]
+    result = []
+    for i in groupnames.split(":"):
+        groupDict = {}
+        groupDict["groups"] = i
+        result.append(groupDict)
+    print result
+
+
