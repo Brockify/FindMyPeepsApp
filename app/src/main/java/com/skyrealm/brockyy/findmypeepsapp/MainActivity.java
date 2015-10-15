@@ -188,9 +188,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //called once the map is done loading
             public void onMapLoaded() {
                 if (gps.isGPSEnabledOrNot()) {
-                    latitude = gps.getLocation().getLatitude();
-                    longitude = gps.getLocation().getLongitude();
-                    userCurrentLocation = new LatLng(latitude, longitude);
+                    //latitude = gps.getLocation().getLatitude();
+                    //longitude = gps.getLocation().getLongitude();
+                    //userCurrentLocation = new LatLng(latitude, longitude);
                     if (isOtherUserClicked) {
                         //get the extras
                         otherUserLat = getIntent().getExtras().getDouble("otherLat");
@@ -211,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     } else {
                         //set friends on the map
                         new MarkerScript().execute();
-                        userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+                        //userMarker = googleMap.getMap().addMarker(new MarkerOptions().title(user).position(userCurrentLocation).icon(BitmapDescriptorFactory.fromBitmap(icon)));
 
                     }
                 } else {
@@ -864,9 +864,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             case R.id.GroupsButton:
                 groupnames = new ArrayList<String>();
                 new getGroups().execute();
-                ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, R.layout.activity_group_list_layout, R.id.groupname, groupnames);
-                ListView listView = (ListView) findViewById(R.id.grouplistView);
-                listView.setAdapter(adapter);
+
                 //build a dialog for sending the location
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setView(R.layout.activity_popup_groups);
@@ -962,6 +960,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         public void onPostExecute(Void result)
         {
+            ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, R.layout.activity_popup_groups, R.id.groupname, groupnames);
+            ListView listView = (ListView) findViewById(R.id.grouplistView);
+            listView.setAdapter(adapter);
             pDialog.dismiss();
         }
     }
